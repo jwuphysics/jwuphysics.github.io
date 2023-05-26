@@ -1,12 +1,12 @@
 # main links links
 main:
-  - title: "Publications"
-    url: /publications/
+  - title: "Papers"
+    url: /papers/
 
   - title: "Research"
     url: /research/    
         
-  - title: "Blog Posts"
+  - title: "Blog"
     url: https://jwuphysics.substack.com/
     
   - title: "CV"
