@@ -15,4 +15,4 @@ My research focuses on studying galaxies with multi-wavelength observations and 
 
 Contact
 ------
-Feel free to shoot me an [email](mailto:jowu@stsci.edu) or view a copy of my [curriculum vitae](JFWuCV.pdf).
+Feel free to shoot me an [email](mailto:jowu@stsci.edu) or view a copy of my [curriculum vitae](files/JFWuCV.pdf).
