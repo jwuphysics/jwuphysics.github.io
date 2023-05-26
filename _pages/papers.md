@@ -1,11 +1,10 @@
 ---
-permalink: /papers.html
+permalink: /papers/
 title: "Papers"
 excerpt: "Papers"
 author_profile: true
 redirect_from: 
-  - /papers/
-  - /papers.html
+  - papers.html
 ---
 
 You can view a list of all my papers on [NASA ADS](https://ui.adsabs.harvard.edu/user/libraries/cEIZdS8tReiOS8sKk7LR7g).
