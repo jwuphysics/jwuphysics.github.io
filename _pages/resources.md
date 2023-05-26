@@ -1,7 +1,7 @@
 ---
 permalink: /resources/
 title: "Resources"
-excerpt: "Resources: code and stuff"
+excerpt: "Resources"
 author_profile: true
 redirect_from: 
   - /research.html
