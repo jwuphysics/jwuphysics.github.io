@@ -175,7 +175,7 @@ kramdown:
 
 # Collections
 collections:
-  papers:
+  publications:
     output: true
     permalink: /:collection/:path/
   research:
@@ -185,6 +185,33 @@ collections:
 
 # Defaults
 defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      comments: false
+      share: false
+      related: false
+  # _pages
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: single
+      author_profile: true
+  # _teaching
+  - scope:
+      path: ""
+      type: teaching
+    values:
+      layout: single
+      author_profile: true
+      share: false
+      comments: false
   # _papers
   - scope:
       path: ""
@@ -194,12 +221,21 @@ defaults:
       author_profile: true
       share: false
       comments: false
+  # _portfolio
+  - scope:
+      path: ""
+      type: portfolio
+    values:
+      layout: single
+      author_profile: true
+      share: false
+      comment: false
   # _research
   - scope:
       path: ""
-      type: research
+      type: teaching
     values:
-      layout: default
+      layout: single
       author_profile: true
       share: false
 
