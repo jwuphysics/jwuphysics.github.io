@@ -1,4 +1,4 @@
-# main links links
+# main links
 main:
 
   - title: "About"
@@ -10,8 +10,8 @@ main:
   - title: "Research"
     url: /research/    
         
-  - title: "Blog"
-    url: https://jwuphysics.substack.com/
+  - title: "Resources"
+    url: /resources/
     
   - title: "CV"
     url: /files/JFWuCV.pdf

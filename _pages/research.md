@@ -7,7 +7,7 @@ redirect_from:
   - /research.html
 ---
 
-Mu research group seeks to understanding how galaxies grow and evolve, from low-mass satellite galaxies in the low-redshift universe to massive galaxies residing in enormous clusters. We study the interplay of galaxies' internal physical processes galaxy and their environments by using wide-area astronomical surveys, and simulation data, targeted multi-wavelength observations, and machine learning techniques.
+My research group seeks to understanding how galaxies grow and evolve, from low-mass satellite galaxies in the low-redshift universe to massive galaxies residing in enormous clusters. We study the interplay of galaxies' internal physical processes galaxy and their environments by using wide-area astronomical surveys, and simulation data, targeted multi-wavelength observations, and machine learning techniques.
 
 ## Graph Neural Networks
 
@@ -25,3 +25,4 @@ Low-mass galaxies are vital for studying galaxy formation physics, because they 
 
 ## Gas in Diverse Galaxy Populations
 As part of [my thesis work](https://rucore.libraries.rutgers.edu/rutgers-lib/62065/), I studied the star-forming interstellar medium of galaxies across a diverse range of environments. These galaxy populations include [members of massive clusters](https://ui.adsabs.harvard.edu/abs/2018ApJ...853..195W/abstract), [Lyman break galaxy analogs](https://ui.adsabs.harvard.edu/abs/2019ApJ...887..251W/abstract), and [neutral hydrogen-rich galaxies at *z* > 1](https://ui.adsabs.harvard.edu/abs/2016mks..confE...4B/abstract).
+
