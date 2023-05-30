@@ -17,6 +17,8 @@ Graph neural networks, or GNNs, are remarkably adept at representing galaxies an
 
 Convolutional neural networks, or CNNs, can represent complex morphological information in images. Because galaxy appearances encode their physical properties and formation history, we can train CNNs to extract information that might otherwise be only accesible via spectroscopic observations or detailed physical modeling. For example, we are able to [predict galaxy optical spectra directly from image cutouts](https://ui.adsabs.harvard.edu/abs/2020arXiv200912318W/abstract). 
 
+![An example figure showing predicted and observed galaxy spectra and image cutouts from Wu & Peek 2020.](/files/predicting-spectra.png){: width="70%"}
+
 Using these techniques, we can also estimate galaxies' [gas metallicities](https://ui.adsabs.harvard.edu/abs/2019MNRAS.484.4683W/abstract), [neutral hydrogen gas mass](https://ui.adsabs.harvard.edu/abs/2020ApJ...900..142W/abstract), [nuclear activity](https://ui.adsabs.harvard.edu/abs/2021ApJ...914..142H/abstract), and [excitation state](https://ui.adsabs.harvard.edu/abs/2022arXiv221207881G/abstract). We have also found CNNs to be useful for [enhancing X-ray observations](https://ui.adsabs.harvard.edu/abs/2022ApJ...940...60S/abstract) and [removing artifacts from photometric catalogs](https://ui.adsabs.harvard.edu/abs/2023AJ....165..123D/abstract).
 
 
