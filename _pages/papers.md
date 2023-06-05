@@ -7,7 +7,7 @@ redirect_from:
   - papers.html
 ---
 
-A library of all my papers can be viewed on [NASA ADS](https://ui.adsabs.harvard.edu/user/libraries/cEIZdS8tReiOS8sKk7LR7g).
+A library of all my papers can be viewed on [NASA ADS](https://ui.adsabs.harvard.edu/public-libraries/cEIZdS8tReiOS8sKk7LR7g).
 
 # Selected publications
 * [Target Selection and Sample Characterization for the DESI LOW-Z Secondary Target Program](https://ui.adsabs.harvard.edu/abs/2022arXiv221207433D/abstract)
