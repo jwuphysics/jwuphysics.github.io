@@ -10,7 +10,7 @@ redirect_from:
 I am interested in understanding how galaxies grow and evolve. My research program focuses on galaxy evolution in the context of their surroundings, ranging from low-mass satellite galaxies in the low-redshift universe to massive galaxies residing in enormous clusters. By using wide-area astronomical surveys, and simulation data, targeted multi-wavelength observations, and machine learning techniques, we can investigate the interplay of galaxies' internal physical processes and environmental effects.
 
 
-![A figure showing predicted and observed galaxy spectra and image cutouts from Wu & Peek 2020.](/files/predicting-spectra.png){: width="90%"; style="text-align:center;"}
+![A figure showing predicted and observed galaxy spectra and image cutouts from Wu & Peek 2020.](/files/predicting-spectra.png){: width="100%"; style="text-align:center;"}
 
 
 ## Convolutional Neural Networks
