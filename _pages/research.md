@@ -7,23 +7,22 @@ redirect_from:
   - /research.html
 ---
 
-I am interested in understanding how galaxies grow and evolve. My research program focuses on galaxy evolution in the context of their surroundings, ranging from low-mass satellite galaxies in the low-redshift universe to massive galaxies residing in enormous clusters. By using wide-area astronomical surveys, and simulation data, targeted multi-wavelength observations, and machine learning techniques, we can investigate the interplay of galaxies' internal physical processes and environmental effects.
+I am interested in understanding how galaxies grow and evolve. My research program focuses on galaxy evolution in the context of their surroundings, ranging from low-mass satellite galaxies in the low-redshift universe to massive galaxies residing in enormous clusters. By using wide-area astronomical surveys, and simulation data, targeted multi-wavelength observations, and machine learning (ML) techniques, we can investigate the interplay of galaxies' internal physical processes and environmental effects.
 
 
-![A figure showing predicted and observed galaxy spectra and image cutouts from Wu & Peek 2020.](/files/predicting-spectra.png){: width="100%"; style="text-align:center;"}
+
+## Graph Neural Networks
+
+Graph neural networks, or GNNs, are remarkably adept at representing galaxies and their physical interactions admist large scale structure. My collaborators and I have successfully used GNNs to augment the galaxy-halo connection by incorporating information from galaxy surroundings on [several-Mpc scales](/files/GNN-poster.pdf). For ["painting" galaxies onto dark matter halos](https://ui.adsabs.harvard.edu/abs/2023arXiv230612327W/abstract), we found that GNNs outperform abundance matching and other ML methods, likely because they can model the galaxy-halo-environment connection. 
 
 
 ## Convolutional Neural Networks
 
 Convolutional neural networks, or CNNs, can represent complex morphological information in images. Because galaxy appearances encode their physical properties and formation history, we can train CNNs to extract information that might otherwise be only accesible via spectroscopic observations or detailed physical modeling. For example, we are able to [predict galaxy optical spectra directly from image cutouts](https://ui.adsabs.harvard.edu/abs/2020arXiv200912318W/abstract). 
 
+![A figure showing predicted and observed galaxy spectra and image cutouts from Wu & Peek 2020.](/files/predicting-spectra.png){: width="100%"; style="text-align:center;"}
 
 Using these techniques, we can also estimate galaxies' [gas metallicities](https://ui.adsabs.harvard.edu/abs/2019MNRAS.484.4683W/abstract), [neutral hydrogen gas mass](https://ui.adsabs.harvard.edu/abs/2020ApJ...900..142W/abstract), [nuclear activity](https://ui.adsabs.harvard.edu/abs/2021ApJ...914..142H/abstract), and [excitation state](https://ui.adsabs.harvard.edu/abs/2022arXiv221207881G/abstract). We have also found CNNs to be useful for [enhancing X-ray observations](https://ui.adsabs.harvard.edu/abs/2022ApJ...940...60S/abstract) and [removing artifacts from photometric catalogs](https://ui.adsabs.harvard.edu/abs/2023AJ....165..123D/abstract).
-
-
-## Graph Neural Networks
-
-Graph neural networks, or GNNs, are remarkably adept at representing galaxies and their physical interactions admist large scale structure. My collaborators and I have successfully used GNNs to augment the galaxy-halo connection by incorporating information from galaxy surroundings on [several-Mpc scales](/files/GNN-poster.pdf). 
 
 
 ## Low-mass Galaxies
