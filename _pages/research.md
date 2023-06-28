@@ -15,7 +15,7 @@ I am interested in understanding how galaxies grow and evolve. My research progr
 
 Graph neural networks, or GNNs, are remarkably adept at representing galaxies and their physical interactions admist large scale structure. My collaborators and I have successfully used GNNs to augment the galaxy-halo connection by incorporating information from galaxy surroundings on [several-Mpc scales](/files/GNN-poster.pdf). For ["painting" galaxies onto dark matter halos](https://ui.adsabs.harvard.edu/abs/2023arXiv230612327W/abstract), we found that GNNs outperform abundance matching and other ML methods, likely because they can model the galaxy-halo-environment connection. 
 
-![A mathematical graph showing galaxies/halos amidst their large-scale environments from the IllustrisTNG-300 simulation.](/images/halo-gnns.png){:width="50%"; .align-center}
+![A mathematical graph showing galaxies/halos amidst their large-scale environments from the IllustrisTNG-300 simulation.](/images/halo-gnns.png){:width="50%" .align-center}
 
 
 ## Convolutional Neural Networks
