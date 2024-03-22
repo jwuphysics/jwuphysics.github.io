@@ -13,7 +13,7 @@ A library of all my papers can be viewed on [NASA ADS](https://ui.adsabs.harvard
 
 * [How the Galaxy-Halo Connection Depends on Large-Scale Environment](https://ui.adsabs.harvard.edu/abs/2024arXiv240207995W/abstract)
 
-  ** J. F. Wu**, C. Kragh Jespersen, R. H. Wechsler, *ApJ* submitted, arXiv:2402.07995
+  **J. F. Wu**, C. Kragh Jespersen, R. H. Wechsler, *ApJ* submitted, arXiv:2402.07995
 
 * [Learning the galaxy-environment connection with graph neural networks](https://ui.adsabs.harvard.edu/abs/2023arXiv230612327W/abstract)
 
