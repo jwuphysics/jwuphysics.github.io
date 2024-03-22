@@ -10,13 +10,18 @@ redirect_from:
 A library of all my papers can be viewed on [NASA ADS](https://ui.adsabs.harvard.edu/public-libraries/cEIZdS8tReiOS8sKk7LR7g).
 
 # Selected publications
+
+* [How the Galaxy-Halo Connection Depends on Large-Scale Environment](https://ui.adsabs.harvard.edu/abs/2024arXiv240207995W/abstract)
+
+  ** J. F. Wu**, C. Kragh Jespersen, R. H. Wechsler, *ApJ* submitted, arXiv:2402.07995
+
 * [Learning the galaxy-environment connection with graph neural networks](https://ui.adsabs.harvard.edu/abs/2023arXiv230612327W/abstract)
 
   **J. F. Wu**, C. Kragh Jespersen, 2023, *ICML 2023 ML4astro*, arXiv:2306.12327 
 
-* [Target Selection and Sample Characterization for the DESI LOW-Z Secondary Target Program](https://ui.adsabs.harvard.edu/abs/2022arXiv221207433D/abstract)
+* [Target Selection and Sample Characterization for the DESI LOW-Z Secondary Target Program](https://ui.adsabs.harvard.edu/abs/2023ApJ...954..149D/abstract)
 
-  E. Darragh-Ford, **J. F. Wu**, Y.-Y. Mao, R. H. Wechsler, et al., 2022, *ApJ* submitted, arXiv:2212.07433
+  E. Darragh-Ford, **J. F. Wu**, Y.-Y. Mao, R. H. Wechsler, et al., 2023, *ApJ*, 954, 149
 
 * [Extending the SAGA Survey (xSAGA). I. Satellite Radial Profiles as a Function of Host-galaxy Properties](https://ui.adsabs.harvard.edu/abs/2022ApJ...927..121W/abstract)
 
