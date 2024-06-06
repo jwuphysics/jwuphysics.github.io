@@ -12,6 +12,8 @@ I am a tenure-track assistant astronomer at STScI working in the Roman Telescope
 
 My research focuses on studying galaxies with multi-wavelength observations and machine learning. I am particularly interested in using **graph neural networks** (GNNs) to represent galaxies amidst their large scale environments, and using **convolutional neural networks** (CNNs) to encode the connection between galaxy appearances and their other properties.
 
+In 2024, I was named the [Maryland Outstanding Young Scientist](https://hubblesite.org/contents/news-releases/2024/news-2024-019).
+
 
 Contact
 ------
