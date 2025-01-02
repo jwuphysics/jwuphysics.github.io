@@ -8,9 +8,9 @@ redirect_from:
   - /about.html
 ---
 
-I am a tenure-track assistant astronomer at STScI working in the Roman Telescope Branch of the Instruments Division. I am also an Associate Research Scientist in the Center for Astrophysical Sciences at JHU.
+I am a tenure-track *Assistant astronomer* at STScI, and hold the title of Data Science Mission Office (DSMO) *Applied AI Scientist*. I am also an *Associate Research Scientist* in JHU Department of Physics & Astronomy and Department of Computer Science.
 
-My research focuses on studying galaxies with multi-wavelength observations and machine learning. I am particularly interested in using **graph neural networks** (GNNs) to represent galaxies amidst their large scale environments, and using **convolutional neural networks** (CNNs) to encode the connection between galaxy appearances and their other properties.
+My research focuses on studying galaxies with multi-wavelength observations, machine learning, and artificial intelligence (AI) for scientific discovery. I am particularly interested in using **graph neural networks** (GNNs) to represent galaxies and their large-scale surroundings, and using interpretable **convolutional neural networks** (CNNs) to encode the connection between galaxy appearances and their physical properties. I am also leading an effort to improve the astronomical research process via AI tools.
 
 In 2024, I was named the [Maryland Outstanding Young Scientist](https://hubblesite.org/contents/news-releases/2024/news-2024-019).
 
