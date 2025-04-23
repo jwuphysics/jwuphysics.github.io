@@ -7,8 +7,14 @@ redirect_from:
   - /research.html
 ---
 
-I am interested in understanding how galaxies grow and evolve. My research program focuses on galaxy evolution in the context of their surroundings, ranging from low-mass satellite galaxies in the low-redshift universe to massive galaxies residing in enormous clusters. By using wide-area astronomical surveys, and simulation data, targeted multi-wavelength observations, and machine learning (ML) techniques, we can investigate the interplay of galaxies' internal physical processes and environmental effects.
+I am interested in understanding how galaxies grow and evolve. My research program focuses on galaxy evolution in the context of their surroundings, ranging from low-mass satellite galaxies in the low-redshift universe to massive galaxies residing in enormous clusters. By using wide-area astronomical surveys, and simulation data, targeted multi-wavelength observations, and interpretable machine learning (ML) techniques, we can investigate the interplay of galaxies' internal physical processes and environmental effects.
 
+
+## Interpretable ML in Astrophysics
+
+Standard deep learning models are remarkably effective at predicting galaxy properties from images, but their internal workings often remain opaque. Learned features can be distributed across many neurons (superposition), and single neurons can represent multiple concepts (polysemanticity), obscuring the link between galaxy appearances and physical properties.
+
+In an effort to remedy this, I've developed [Sparse Feature Networks (SFNets)](https://ui.adsabs.harvard.edu/abs/2025ApJ...980..183W/abstract). These networks learn a large dictionary of distinct morphological features but activate only a very small number for any given galaxy. Physical properties can then be estimated as a simple linear combination of these sparse, active features. SFNets provide direct interpretability: we can see exactly which learned image features contribute to a prediction, without sacrificing the predictive accuracy achieved by deep neural networks. By leveraging mechanistic interpretability techniques directly during the model training procedure, SFNets enable us to build a clearer morphological and physical understanding of galaxy evolution.
 
 
 ## Graph Neural Networks
