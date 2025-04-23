@@ -230,7 +230,7 @@ Once this is functional, we can view our data set! As we can see, the images hav
 dls.show_batch(nrows=2, ncols=4)
 ```
 
-![png](images/2020-05-26-training-a-deep-cnn_29_0.png)    
+![Batch of galaxies in training data set]({{ site.baseurl }}/images/2020-05-26-training-a-deep-cnn_29_0.png)    
 
 
 Pardon the excessive number of significant figures. We can fix this up by creating custom classes extending `Transform` and `ShowTitle`, but this is beyond the scope of the current project. Maybe I'll come back to this in a future post!
@@ -273,7 +273,7 @@ Some of these tweaks are described in greater detail in [Chapter 14](https://git
 
 The concept of attention has gotten a lot of, well, *attention* in deep learning, particularly in natural language processing (NLP). This is because the attention mechanism is a core part of the [Transformer architecture](https://arxiv.org/abs/1706.03762), which has revolutionized our ability to learn from text data. I won't cover the Transformer architecture or NLP in this post, since it's way out of scope, but suffice it to say that lots of deep learning folks are interested in this idea.
 
-![](images/self_attention.png "An example of the attention mechanism using query f, key g, and value h, to encode interactions across a convolutional feature map. Figure from Han Zhang et al. 2018.")
+![self-attenetion]({{ site.baseurl }}/images/self_attention.png "An example of the attention mechanism using query f, key g, and value h, to encode interactions across a convolutional feature map. Figure from Han Zhang et al. 2018.")
 
 The attention mechanism allows a neural network layer to encode interactions from inputs on scales larger than the size of a typical convolutional filter. Self-attention is simply when these relationships, encoded via a *query/key/value* system, are applied using the same input. As a concrete example, self-attention added to CNNs in our scenario -- estimating metallicity from galaxy images -- may allow the network to learn morphological features that often require long-range dependencies, such as the orientation and position angle of a galaxy.
 
@@ -337,9 +337,9 @@ Generally, before the loss starts to diverge, the learning rate will be suitable
 learn.lr_find()
 ```
 
-    SuggestedLRs(lr_min=0.03630780577659607, lr_steep=0.02290867641568184)
+SuggestedLRs(lr_min=0.03630780577659607, lr_steep=0.02290867641568184)
 
-![png](2020-05-26-training-a-deep-cnn_files/2020-05-26-training-a-deep-cnn_57_2.png)    
+![LR finder plot]({{ site.baseurl }}/images/2020-05-26-training-a-deep-cnn_57_2.png)    
 
 
 ## Training the neural network with a "one-cycle" schedule
@@ -420,10 +420,7 @@ learn.recorder.plot_loss()
 plt.ylim(0, 0.4);
 ```
 
-
-    
-![png](2020-05-26-training-a-deep-cnn_files/2020-05-26-training-a-deep-cnn_63_0.png)
-    
+![Training losses]({{ site.baseurl }}/images/2020-05-26-training-a-deep-cnn_63_0.png)
 
 
 # Evaluating our results
@@ -437,9 +434,7 @@ preds, trues = learn.tta()
 
 Note that we'll want to flatten these `Tensor` objects and convert them to numpy arrays, e.g., `preds = np.array(preds.view(-1))`. At this point, we can plot our results. Everything looks good!
 
-    
-![png](2020-05-26-training-a-deep-cnn_files/2020-05-26-training-a-deep-cnn_69_0.png)
-    
+![Plotting predictions]({{ site.baseurl }}/images/2020-05-26-training-a-deep-cnn_69_0.png)    
 
 
 It appears that we didn't get a lower RMSE using TTA, but that's okay. TTA is usually worth a shot after you've finished training, since evaluating the neural network is relatively quick.
