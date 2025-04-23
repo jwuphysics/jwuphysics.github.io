@@ -1,5 +1,6 @@
 ---
 title: 'Training a deep CNN to learn about galaxies in 15 minutes'
+subtitle: "Let's train a deep neural network from scratch! In this post, I provide a demonstration of how to optimize a model in order to predict galaxy metallicities using images, and I discuss some tricks for speeding up training and obtaining better results."
 date: 2020-05-26
 permalink: /blog/2020/05/galaxy-cnn/
 tags:
@@ -9,12 +10,12 @@ tags:
   - original-blog
 ---
 
-**Note:** This post was migrated from my old blog. 
-{: .notice}
-
 
 # Training a deep CNN to learn about galaxies in 15 minutes
 > Let's train a deep neural network from scratch! In this post, I provide a demonstration of how to optimize a model in order to predict galaxy metallicities using images, and I discuss some tricks for speeding up training and obtaining better results. 
+
+**Note:** This post was migrated from my old blog. 
+{: .notice}
 
 
 # Predicting metallicities from pictures: obtaining the data
