@@ -1,7 +1,7 @@
 ---
 title: 'Training a deep CNN to learn about galaxies in 15 minutes'
 date: 2020-05-26
-permalink: /posts/2020/05/galaxy-cnn/
+permalink: /blog/2020/05/galaxy-cnn/
 tags:
   - galaxies
   - vision
@@ -9,7 +9,8 @@ tags:
   - original-blog
 ---
 
-**Note:** This post was migrated from my old blog. {: .notice}
+**Note:** This post was migrated from my old blog. 
+{: .notice}
 
 
 # Training a deep CNN to learn about galaxies in 15 minutes
@@ -142,7 +143,6 @@ Okay, now let's take a look at each part.
 First, we want to make use of the handy `ImageBlock` class for handling our input images. Since we're using galaxy images in the JPG format, we can rely on the `PIL` backend of `ImageBlock` to open the images efficiently. If, for example, we instead wanted to use images in the astronomical `FITS` format, we could extend the `TensorImage` class and define the following bit of code:
 
 
-<details>
 ```python
 class FITSImage(TensorImage):
     @classmethod
@@ -169,7 +169,6 @@ def FITSImageBlock():
     """
     return TransformBlock(partial(FITSImage.create))
 ```
-</details>
 
 For our task, the vanilla `ImageBlock` will suffice. 
 
@@ -231,10 +230,7 @@ Once this is functional, we can view our data set! As we can see, the images hav
 dls.show_batch(nrows=2, ncols=4)
 ```
 
-
-    
-![png](2020-05-26-training-a-deep-cnn_files/2020-05-26-training-a-deep-cnn_29_0.png)
-    
+![png](images/2020-05-26-training-a-deep-cnn_29_0.png)    
 
 
 Pardon the excessive number of significant figures. We can fix this up by creating custom classes extending `Transform` and `ShowTitle`, but this is beyond the scope of the current project. Maybe I'll come back to this in a future post!
@@ -341,21 +337,9 @@ Generally, before the loss starts to diverge, the learning rate will be suitable
 learn.lr_find()
 ```
 
-
-
-
-
-
-
-
     SuggestedLRs(lr_min=0.03630780577659607, lr_steep=0.02290867641568184)
 
-
-
-
-    
-![png](2020-05-26-training-a-deep-cnn_files/2020-05-26-training-a-deep-cnn_57_2.png)
-    
+![png](2020-05-26-training-a-deep-cnn_files/2020-05-26-training-a-deep-cnn_57_2.png)    
 
 
 ## Training the neural network with a "one-cycle" schedule
