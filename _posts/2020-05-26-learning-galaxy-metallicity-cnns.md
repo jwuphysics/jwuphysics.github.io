@@ -13,9 +13,6 @@ tags:
 
 Let's train a deep neural network from scratch! In this post, I provide a demonstration of how to optimize a model in order to predict galaxy metallicities using images, and I discuss some tricks for speeding up training and obtaining better results. 
 
-**Note:** This post was migrated from my old blog. 
-{: .notice}
-
 
 ## Predicting metallicities from pictures: obtaining the data
 
