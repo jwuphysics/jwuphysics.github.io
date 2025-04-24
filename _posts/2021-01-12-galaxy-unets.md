@@ -1,6 +1,5 @@
 ---
-title: 'Astronomical Super-resolution, Part I: U-Nets
-'
+title: 'Astronomical Super-resolution, Part I: U-Nets'
 date: 2021-01-12
 permalink: /blog/2021/01/galaxy-unets/
 tags:
