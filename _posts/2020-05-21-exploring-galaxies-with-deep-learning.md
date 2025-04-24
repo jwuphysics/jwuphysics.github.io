@@ -60,7 +60,7 @@ As we have discussed, it is well-known that galaxies' star formation and chemica
 
 We decided to investigate the relationship between galaxy masses and metallicities measured two ways. The original MZR is constructed from *observed metallicities* (shown in black below), and we also use *CNN-predicted metallicities* (shown in red below) to reconstruct the MZR.
 
-![The mass-metallicity relation using metallicities measured via spectroscopy, and via CNN predictions.]({{ site.baseurl }}/images/blog/WB19_mzr.jpg "")
+![The mass-metallicity relation using metallicities measured via spectroscopy, and via CNN predictions.]({{ site.baseurl }}/images/blog/WB19_mzr.jpg)
 
 The two versions of the MZR are extremely similar! Both the CNN predictions and the optical spectroscopy give metallicities that correlate with stellar mass to within 0.10 dex (i.e., extremely tight scatter). But the optical spectroscopy served as the *ground truth* for our CNN, so how could it be that the CNN predictions do not add even a little extra scatter into this original relationship? 
 
@@ -72,6 +72,6 @@ In our paper, which was published in [*Monthly Notices of the Royal Astronomical
 
 These findings imply that morphological information is essential for understanding how galaxies grow and evolve. Although classification systems and simple parameterizations of their morphological features are useful for encoding this information, they are not nearly as flexible as CNNs.
 
-If you're interested in seeing some of the more technical details, then please stay tuned for my next post (**update: [here it is](https://jwuphysics.github.io/blog/2020/05/exploring-galaxies-with-deep-learning)**)! I'll be showcasing some of the analysis using the [Fastai v2](http://dev.fast.ai/) codebase. Otherwise, take a look at the original [Github repository for the paper](https://github.com/jwuphysics/galaxy-cnns), or a [demo version](https://github.com/jwuphysics/convnet-demo) of the code (which includes a small subset of the data).
+If you're interested in seeing some of the more technical details, then please stay tuned for my next post (**update: [here it is](https://jwuphysics.github.io/blog/2020/05/learning-galaxy-metallicity-cnns/)**)! I'll be showcasing some of the analysis using the [Fastai v2](http://dev.fast.ai/) codebase. Otherwise, take a look at the original [Github repository for the paper](https://github.com/jwuphysics/galaxy-cnns), or a [demo version](https://github.com/jwuphysics/convnet-demo) of the code (which includes a small subset of the data).
 
 **Last updated**: 2025-04-23
