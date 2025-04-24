@@ -11,14 +11,13 @@ tags:
 ---
 
 
-# Training a deep CNN to learn about galaxies in 15 minutes
-> Let's train a deep neural network from scratch! In this post, I provide a demonstration of how to optimize a model in order to predict galaxy metallicities using images, and I discuss some tricks for speeding up training and obtaining better results. 
+Let's train a deep neural network from scratch! In this post, I provide a demonstration of how to optimize a model in order to predict galaxy metallicities using images, and I discuss some tricks for speeding up training and obtaining better results. 
 
 **Note:** This post was migrated from my old blog. 
 {: .notice}
 
 
-# Predicting metallicities from pictures: obtaining the data
+## Predicting metallicities from pictures: obtaining the data
 
 In my [previous post](https://github.com/jwuphysics/blog/blob/master/_notebooks/2020-05-21-exploring-galaxies-with-deep-learning.ipynb), I described the problem that we now want to solve. To summarize, we want to train a convolutional neural network (CNN) to perform regression. The inputs are images of individual galaxies (although sometimes we're photobombed by other galaxies). The outputs are metallicities, $Z$, which usually take on a value between 7.8 and 9.4.
 
@@ -30,7 +29,7 @@ Galaxy metallicities can be obtained from the SDSS SkyServer using a [SQL query]
 
 The code for the original published work ([Wu & Boada 2019](https://ui.adsabs.harvard.edu/abs/2019MNRAS.484.4683W/abstract)) can be found in my [Github repo](https://github.com/jwuphysics/galaxy-cnns). However, this code (from 2018) used `fastai` *version 0.7*, and I want to show an updated version using the new and improved `fastai` *version 2* codebase. Also, some of the "best practices" for deep learning and computer vision have evolved since then, so I'd like to highlight those updates as well!
 
-# Organizing the data using the `fastai` DataBlock API
+## Organizing the data using the `fastai` DataBlock API
 
 Suppose that we now have a directory full of galaxy images, and a `csv` file with the object identifier, coordinates, and metallcity for each galaxy. The `csv` table can be [read using Pandas](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html), so let's store that in a DataFrame `df`. We can take a look at five random rows of the table by calling `df.sample(5)`:
 
@@ -139,7 +138,7 @@ dblock = DataBlock(
 
 Okay, now let's take a look at each part.
 
-## Input and output blocks
+### Input and output blocks
 
 First, we want to make use of the handy `ImageBlock` class for handling our input images. Since we're using galaxy images in the JPG format, we can rely on the `PIL` backend of `ImageBlock` to open the images efficiently. If, for example, we instead wanted to use images in the astronomical `FITS` format, we could extend the `TensorImage` class and define the following bit of code:
 
@@ -177,7 +176,7 @@ We also want to define an output block, which will be a `RegressionBlock` for ou
 
 We can pass in these arguments in the form of a tuple: `blocks=(ImageBlock, RegressionBlock)`.
 
-## Input and output object getters
+### Input and output object getters
 
 Next, we want to be able to access the table, `df`, which contain the columns `objID` and `metallicity`. As we've discussed above, each galaxy's `objID` can be used to access the JPG image on disk, which is stored at `{ROOT}/images/{objID}.jpg`. Fortunately, this is easy to do with the fastai `ColumnReader` method! We just have to supply it with the column name (`objID`), a prefix (`{ROOT}/images/`), and a suffix (`.jpg`); since the prefix/suffix is only used for file paths, the function knows that the file needs to be opened (rather than interpreting it as a string). So far we have:
 ```python
@@ -191,7 +190,7 @@ get_y=ColReader(['metallicity'])
 
 (At this point, we haven't yet specified that `df` is the DataFrame we're working with. The `DataBlock` object knows how to handle the input/output information, but isn't able to load it until we provide it with `df` -- that will come later!)
 
-## Splitting the data set 
+### Splitting the data set 
 
 For the sake of simplicity, we'll just randomly split our data set using the aptly named `RandomSplitter` function. We can provide it with a number between 0 and 1 (corresponding to the fraction of data that will become the validation set), and also a random seed if we wish. If we want to set aside 20% of the data for validation, we can use this:
 
@@ -199,7 +198,7 @@ For the sake of simplicity, we'll just randomly split our data set using the apt
 splitter=RandomSplitter(0.2, seed=56)
 ```
 
-## Transformations and data augmentation
+### Transformations and data augmentation
 
 Next, I'll want to determine some data augmentation transformations. These are handy for varying our image data: crops, flips, and rotations can be applied at random using fastai's `aug_transforms()` in order to dramatically expand our data set. Even though we have >100,000 unique galaxy images, our CNN model will contain millions of trainable parameters. Augmenting the data set will be especially valuable for mitigating overfitting.
 
@@ -215,7 +214,7 @@ batch_tfms=aug_transforms(max_zoom=1., flip_vert=True, max_lighting=0., max_warp
 
 > Note: `Normalize` will pull the batch statistics from your images, and apply it any time you load in new data (see below). Sometimes this can lead to unintended consequences, for example, if you're loading in a test data set which is characterized by different image statistics. In that case, I recommend saving your batch statistics and then using them later, e.g., `Normalize.from_stats(*image_statistics)`.
 
-## Putting it all together and loading the data
+### Putting it all together and loading the data
 
 We've now gone through each of the steps, but we haven't yet loaded the data! `ImageDataLoaders` has a class method called `from_dblock()` that loads everything in quite nicely if we give it a data source. We can pass along the `DataBlock` object that we've constructed, the DataFrame `df`, the file path `ROOT`, and a batch size. We've set the batch size `bs=128` because that fits on the GPU, and it ensures speedy training, but I've found that values between 32 and 128 often work well.
 
@@ -236,7 +235,7 @@ dls.show_batch(nrows=2, ncols=4)
 
 Pardon the excessive number of significant figures. We can fix this up by creating custom classes extending `Transform` and `ShowTitle`, but this is beyond the scope of the current project. Maybe I'll come back to this in a future post!
 
-# Neural network architecture and optimization
+## Neural network architecture and optimization
 
 ![A residual block, the basis for super-deep resnets. Figure from He et al. 2015.]({{ site.baseurl }}/_blog/images/resblock.png)
 
@@ -261,7 +260,7 @@ model = xresnet34(n_out=dls.c, sa=True, act_cls=MishCuda)
 
 So why did I say that we're using an "enhanced" resnet -- an "xresnet"? And what does `sa=True` and `act_cls=MishCuda` mean? I'll describe these tweaks below. 
 
-## A more powerful resnet
+### A more powerful resnet
 
 The ["bag of tricks" paper](https://arxiv.org/abs/1812.01187) by Tong He et al. (2018) summarizes many small tweaks that can be combined to dramatically improve the performance of a CNN. They describe several updates to the resnet model architecture in Section 4 of their paper. The fastai library takes these into account, and also implements a few other tweaks, in order to increase performance and speed. I've listed some of them below:
 - The CNN stem (first few layers) is updated using efficient $3 \times 3$ convolutions rather than a single expensive layer of $7\times 7$ convolutions.
@@ -270,7 +269,7 @@ The ["bag of tricks" paper](https://arxiv.org/abs/1812.01187) by Tong He et al. 
 
 Some of these tweaks are described in greater detail in [Chapter 14](https://github.com/fastai/fastbook/blob/master/14_resnet.ipynb) of the fastai book, "Deep Learning for Coders with fastai and Pytorch" (which can be also be purchased on [Amazon](https://www.amazon.com/Deep-Learning-Coders-fastai-PyTorch/dp/1492045527)).
 
-## Self-attention layers
+### Self-attention layers
 
 The concept of attention has gotten a lot of, well, *attention* in deep learning, particularly in natural language processing (NLP). This is because the attention mechanism is a core part of the [Transformer architecture](https://arxiv.org/abs/1706.03762), which has revolutionized our ability to learn from text data. I won't cover the Transformer architecture or NLP in this post, since it's way out of scope, but suffice it to say that lots of deep learning folks are interested in this idea.
 
@@ -282,7 +281,7 @@ In fastai, we can set `sa=True` when initializing a CNN in order to get the [sel
 
 Another way to let a CNN process global information is to use [Squeeze-and-Excitation Networks](https://arxiv.org/abs/1709.01507), which are also [included in fastai](https://github.com/fastai/fastai2/blob/44cc025d9e5e2823d6fd033b84245b0be0c5c9df/fastai2/layers.py#L562). Or, one could even [entirely replace convolutions with self-attention](https://arxiv.org/abs/1906.05909). But we're starting to get off-topic...
 
-## The Mish activation function
+### The Mish activation function
 
 Typically, the Rectified Linear Unit (ReLU) is the non-linear activation function of choice for nearly all deep learning tasks. It is both cheap to compute and simple to understand: `ReLU(x) = max(0, x)`.
 
@@ -292,7 +291,7 @@ The intuition behind the Mish activation function's success is similar to the re
 
 Although Mish is a little bit slower than ReLU, a [CUDA implementation](https://github.com/thomasbrandon/mish-cuda/) helps speed things up a bit. We need to `pip install` it and then import it with `from mish_cuda import MishCuda`. Then, we can substitute it into the model when initializing our CNN using `act_cls=MishCuda`.
 
-## RMSE loss
+### RMSE loss
 
 Next we want to select a loss function. The mean squared error (MSE) is suitable for training the network, but we can more easily interpret the root mean squared error (RMSE). We need to create a function to compute the RMSE loss between predictions `p` and true metalllicity values `y`.
 
@@ -305,7 +304,7 @@ def root_mean_squared_error(p, y):
 
 ```
 
-## Ranger: a combined RAdam + LookAhead optimzation function
+### Ranger: a combined RAdam + LookAhead optimzation function
 
 Around mid-2019, we saw two new papers regarding the stability of training neural networks: [LookAhead](https://arxiv.org/abs/1907.08610) and [Rectified Adam (RAdam)](https://arxiv.org/abs/1908.03265). Both papers feature novel optimizers that address the problem of excess variance during training. LookAhead mitigates the variance problem by scouting a few steps ahead, and then choosing how to optimally update the model's parameters. RAdam adds a term while computing the adaptive learning rate in order to address training instabilities (see, e.g., the original [Adam optimizer](https://arxiv.org/abs/1412.6980)).
 
@@ -323,7 +322,7 @@ learn = Learner(
 )
 ```
 
-## Selecting a learning rate
+### Selecting a learning rate
 
 Fastai offers a nice feature for determining an optimal learning rate, taken from [Leslie Smith (2015)](https://arxiv.org/abs/1506.01186). All we have to do is call `learn.lr_find()`.
 
@@ -343,7 +342,7 @@ SuggestedLRs(lr_min=0.03630780577659607, lr_steep=0.02290867641568184)
 ![LR finder plot]({{ site.baseurl }}/_blog/images/2020-05-26-training-a-deep-cnn_57_2.png)    
 
 
-## Training the neural network with a "one-cycle" schedule
+### Training the neural network with a "one-cycle" schedule
 
 Finally, now that we've selected a learning rate ($0.01$), we can train for a few epochs. Remember that an *epoch* is just a run-through using all of our training data (and we send in one batch of 64 images at a time). Sometimes, researchers simply train at a particular learning rate and wait until the results converge, and then lower the learning rate in order for the model to continue learning. This is because the model needs some serious updates toward the beginning of training (given that it has been initialized with random weights), and then needs to start taking smaller steps once its weights are in the right ballpark. However, the learning rate can't be too high in th beginning, or the loss will diverge! Traditionally, researchers will select a safe (i.e., low) learning rate in the beginning, which can take a long time to converge.
 
@@ -353,7 +352,6 @@ Fastai offers a few optimization *schedules*, which involve altering the learnin
 ```python
 learn.fit_one_cycle(7, 1e-2)
 ```
-
 
 <table border="1" class="dataframe">
   <thead>
@@ -424,7 +422,7 @@ plt.ylim(0, 0.4);
 ![Training losses]({{ site.baseurl }}/_blog/images/2020-05-26-training-a-deep-cnn_63_0.png)
 
 
-# Evaluating our results
+## Evaluating our results
 
 Finally, we'll perform another round of [data augmentation](#Transformations-and-data-augmentation) on the validation set in order to see if the results improve. This can be done using `learn.tta()`, where TTA stands for test-time augmentation.
 
@@ -440,7 +438,7 @@ Note that we'll want to flatten these `Tensor` objects and convert them to numpy
 
 It appears that we didn't get a lower RMSE using TTA, but that's okay. TTA is usually worth a shot after you've finished training, since evaluating the neural network is relatively quick.
 
-# Summary
+## Summary
 
 In summary, we were able to train a deep convolutional neural network to predict galaxy metallicity from three-color images in under 15 minutes. Our data set contained over 100,000 galaxies, so this was no easy feat! Data augmentation, neural network architecture design, and clever optimization tricks were essential for improving performance. With these tools in hand, we can quickly adapt our methodology to tackle many other kinds of problems!
 
@@ -448,5 +446,5 @@ In summary, we were able to train a deep convolutional neural network to predict
 
 **Acknowledgments**: I want to thank fastai core development team, [Jeremy Howard](https://twitter.com/jeremyphoward) and [Sylvain Gugger](https://twitter.com/GuggerSylvain), as well as other contributors and invaluable members of the community, including [Less Wright](https://github.com/lessw2020), [Diganta Misra](https://twitter.com/digantamisra1?lang=en), and [Zachary Mueller](https://muellerzr.github.io/). I also want to acknowledge Google for their support via GCP credits for academic research. Finally, I want to give a shout out to [Steven Boada](https://github.com/boada), my original collaborator and co-author on [our paper](https://arxiv.org/abs/1810.12913).
 
-**Last updated**: November 16, 2020
+**Last updated**: 2025-04-23
 
