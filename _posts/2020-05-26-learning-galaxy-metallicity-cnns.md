@@ -1,8 +1,9 @@
 ---
 title: 'Training a deep CNN to learn about galaxies in 15 minutes'
 date: 2020-05-26
-permalink: /blog/2020/05/galaxy-cnn/
-teaser: /images/blog/WB19_fig1.jpg
+permalink: /blog/2020/05/learning-galaxy-metallicity-cnns/
+header:
+  teaser: https://jwuphysics.github.io/images/blog/WB19_fig1.jpg
 tags:
   - galaxies
   - vision
@@ -18,7 +19,7 @@ Let's train a deep neural network from scratch! In this post, I provide a demons
 
 ## Predicting metallicities from pictures: obtaining the data
 
-In my [previous post](https://github.com/jwuphysics/blog/blob/master/_notebooks/2020-05-21-exploring-galaxies-with-deep-learning.ipynb), I described the problem that we now want to solve. To summarize, we want to train a convolutional neural network (CNN) to perform regression. The inputs are images of individual galaxies (although sometimes we're photobombed by other galaxies). The outputs are metallicities, \\(Z\\), which usually take on a value between 7.8 and 9.4.
+In my [previous post](https://jwuphysics.github.io/blog/2020/05/exploring-galaxies-with-deep-learning), I described the problem that we now want to solve. To summarize, we want to train a convolutional neural network (CNN) to perform regression. The inputs are images of individual galaxies (although sometimes we're photobombed by other galaxies). The outputs are metallicities, \\(Z\\), which usually take on a value between 7.8 and 9.4.
 
 The first step, of course, is to actually get the data. Galaxy images can be fetched using calls to the Sloan Digital Sky Survey (SDSS) SkyServer `getJpeg` cutout service via their [RESTful API](http://skyserver.sdss.org/dr16/en/help/docs/api.aspx#imgcutout). For instance, [this URL](http://skyserver.sdss.org/dr16/SkyserverWS/ImgCutout/getjpeg?ra=39.8486&dec=1.094&scale=1&width=224&height=224) grabs a three-channel, \\(224 \times 224\\)-pixel JPG image:
 ![](images/blog/sdss_example.jpg "An example galaxy at the coordinates RA = 39.8486 and Dec = 1.094")
