@@ -168,14 +168,6 @@ excerpt_separator: "\n\n"
 incremental: false
 
 
-# Table of Contents
-toc:
-  min_level: 1
-  max_level: 3
-  list_class: toc__list
-  sublist_class: toc__sublist
-
-
 # Markdown Processing
 kramdown:
   input: GFM
@@ -186,6 +178,7 @@ kramdown:
   toc_levels: 1..6
   smart_quotes: lsquo,rsquo,ldquo,rdquo
   enable_coderay: false
+  parse_block_html: true
 
 
 # These settings control the types of collections used by the template
@@ -276,7 +269,6 @@ plugins:
   - jekyll-paginate
   - jekyll-sitemap
   - jekyll-redirect-from
-  - jekyll-toc
   - jemoji
 
 # Mimic GitHub Pages with --safe
@@ -286,7 +278,6 @@ whitelist:
   - jekyll-paginate
   - jekyll-sitemap
   - jekyll-redirect-from
-  - jekyll-toc
   - jemoji
 
 
