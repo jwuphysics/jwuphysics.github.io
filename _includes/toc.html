@@ -1,0 +1,6 @@
+<nav class="toc" markdown="1">
+  <header>
+    <h4 class="nav__title">{{ include.title | default: site.data.ui-text[site.locale].toc_label | default: "Table of contents" }}</h4>
+  </header>
+  {:toc .toc__menu}
+</nav>
