@@ -2,8 +2,7 @@
 title: 'Training a deep CNN to learn about galaxies in 15 minutes'
 date: 2020-05-26
 permalink: /blog/2020/05/galaxy-cnn/
-header:
-  teaser: {{ site.baseurl }}/images/blog/WB19_fig1.jpg
+teaser: /images/blog/WB19_fig1.jpg
 tags:
   - galaxies
   - vision
