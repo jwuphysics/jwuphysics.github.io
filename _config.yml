@@ -111,7 +111,7 @@ author:
   orcid            : "https://orcid.org/0000-0002-5077-881X"
   pinterest        :
   soundcloud       :
-  stackoverflow    : # http://stackoverflow.com/users/123456/username
+  stackoverflow    : 
   steam            :
   tumblr           :
   twitter          : "jwuphysics"
@@ -200,6 +200,7 @@ defaults:
       layout: single
       author_profile: true
       read_time: true
+      toc: true
       comments: false
       share: false
       related: false
