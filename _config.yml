@@ -168,6 +168,14 @@ excerpt_separator: "\n\n"
 incremental: false
 
 
+# Table of Contents
+toc:
+  min_level: 1
+  max_level: 3
+  list_class: toc__list
+  sublist_class: toc__sublist
+
+
 # Markdown Processing
 kramdown:
   input: GFM
@@ -175,7 +183,7 @@ kramdown:
   auto_ids: true
   footnote_nr: 1
   entity_output: as_char
-  toc_levels: 2..6
+  toc_levels: 1..6
   smart_quotes: lsquo,rsquo,ldquo,rdquo
   enable_coderay: false
 
@@ -269,6 +277,8 @@ plugins:
   - jekyll-sitemap
   - jekyll-redirect-from
   - jemoji
+  - jekyll-toc
+
 
 # Mimic GitHub Pages with --safe
 whitelist:

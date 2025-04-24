@@ -47,10 +47,11 @@ toc: true
 
       <section class="page__content" itemprop="text">
 
-        {% if page.toc %}
-          {% include toc.html %}
-        {% endif %}
-
+        <div id="toc">
+          {% toc %}
+        </div>
+        <br />
+        
         {{ content }}
 
         {% if page.citation and page.paperurl and page.slidesurl and page.bibtexurl %}
