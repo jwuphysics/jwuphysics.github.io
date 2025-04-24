@@ -1,7 +1,7 @@
 ---
 title: 'Visualizing deep learning with galaxies, part 2'
-date: 2020-07-27
-permalink: /blog/2020/07/visualizing-cnn-attributions/
+date: 2020-08-27
+permalink: /blog/2020/08/visualizing-cnn-attributions/
 header:
   teaser: https://jwuphysics.github.io/images/blog/gradcam.png
 tags:
@@ -14,7 +14,7 @@ tags:
 In the previous post, we examined the feature space of galaxy morphological features. Now, we will use the Grad-CAM algorithm to visualize the parts of a galaxy image that are most strongly associated with certain classifications. This will allows us to identify exactly which morphological features are correlated with low- and high-metallicity predictions.
 
 
-# Galaxies, neural networks, and interpretability
+## Galaxies, neural networks, and interpretability
 
 Up til this point, we have been interested in predicting a galaxy's elemental abundances from optical-wavelength imaging. Using the `fast.ai` library, we were able to [train a deep CNN and estimate metallicity to incredibly low error](https://jwuphysics.github.io/blog/2020/05/learning-galaxy-metallicity-cnns/) in under 15 minutes. We then used dimensionality reduction techniques to help [visualize the latent structure of CNN activations](https://jwuphysics.github.io/blog/2020/07/visualizing-cnn-features-pca/), and identified how morphological features of galaxies are associated with higher or lower metallicities.
 
@@ -39,7 +39,7 @@ seed = 256
 ROOT = Path('../').resolve()
 ```
 
-## Binning the galaxies into metallicity classes
+### Binning the galaxies into metallicity classes
 
 First, we need to define the classes using the parent data set. Below, I plot a histogram of the metallicities for the entire galaxy catalog, where we can see that the mean of the distribution is about \\(Z = 8.9\\).
 
@@ -434,7 +434,9 @@ with HookGradient(target_layer) as hookg:
 ```
 
 Finally, computing the Grad-CAM map is super easy! We average the gradients across the spatial axes (leaving only the "feature" axis) and then take the inner product with the activation maps. In the language of mathematics, we are computing 
-\\[ \sum_{k} \frac{\partial y}{\partial \mathbf{A}^{(k)}_{ij}} \left [ \frac{1}{N_i N_j}\sum_{i,j} \mathbf{A}^{(k)}_{ij} \right ],\\]
+
+\\( \sum_{k} \frac{\partial y}{\partial \mathbf{A}^{(k)}_{ij}} \left [ \frac{1}{N_i N_j}\sum_{i,j} \mathbf{A}^{(k)}_{ij} \right ], \\)
+
 for the \\(k\\) feature maps, \\(\mathbf{A}^{(k)}_{i,j}\\), and the target class \\(y\\). Note that the feature maps have shape \\(N_i \times N_j\\), which ends up in the denominator as a constant, but this just gives us an arbitrary scaling factor. Finally, we stop Pytorch from computing any more gradients and pop it off the GPU with `.detach()` and `.cpu()`. We can then plot the map below.
 
 
@@ -445,7 +447,6 @@ gradcam_map = (w * act[0]).sum(0).detach().cpu()
 
 
 ```python
-#hide_input
 fig, ax = plt.subplots(1, 1, figsize=(4,4), dpi=100)
 
 x_img.show(ax=ax)
@@ -458,7 +459,7 @@ ax.set_axis_off()
 
 
     
-![png](2020-08-27-image-attribution-for-galaxies_files/2020-08-27-image-attribution-for-galaxies_51_0.png)
+![]({{ site.baseurl }}/images/blog/2020-08-27-image-attribution-for-galaxies_51_0.png)
     
 
 
