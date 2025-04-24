@@ -1,15 +1,16 @@
 ---
 title: 'Training a deep CNN to learn about galaxies in 15 minutes'
-subtitle: "Let's train a deep neural network from scratch! In this post, I provide a demonstration of how to optimize a model in order to predict galaxy metallicities using images, and I discuss some tricks for speeding up training and obtaining better results."
 date: 2020-05-26
 permalink: /blog/2020/05/galaxy-cnn/
+mathjax: true
+header:
+  teaser: /images/blog/WB19_fig1.jpg
 tags:
   - galaxies
   - vision
   - tutorial
   - original-blog
 ---
-
 
 Let's train a deep neural network from scratch! In this post, I provide a demonstration of how to optimize a model in order to predict galaxy metallicities using images, and I discuss some tricks for speeding up training and obtaining better results. 
 
@@ -22,7 +23,7 @@ Let's train a deep neural network from scratch! In this post, I provide a demons
 In my [previous post](https://github.com/jwuphysics/blog/blob/master/_notebooks/2020-05-21-exploring-galaxies-with-deep-learning.ipynb), I described the problem that we now want to solve. To summarize, we want to train a convolutional neural network (CNN) to perform regression. The inputs are images of individual galaxies (although sometimes we're photobombed by other galaxies). The outputs are metallicities, $Z$, which usually take on a value between 7.8 and 9.4.
 
 The first step, of course, is to actually get the data. Galaxy images can be fetched using calls to the Sloan Digital Sky Survey (SDSS) SkyServer `getJpeg` cutout service via their [RESTful API](http://skyserver.sdss.org/dr16/en/help/docs/api.aspx#imgcutout). For instance, [this URL](http://skyserver.sdss.org/dr16/SkyserverWS/ImgCutout/getjpeg?ra=39.8486&dec=1.094&scale=1&width=224&height=224) grabs a three-channel, $224 \times 224$-pixel JPG image:
-![](images/sdss_example.jpg "An example galaxy at the coordinates RA = 39.8486 and Dec = 1.094")
+![](images/blog/sdss_example.jpg "An example galaxy at the coordinates RA = 39.8486 and Dec = 1.094")
 
 
 Galaxy metallicities can be obtained from the SDSS SkyServer using a [SQL query](http://skyserver.sdss.org/dr16/en/help/docs/sql_help.aspx) and a bit of `JOIN` magic. All in all, we use 130,000 galaxies with metallicity measurements as our training + validation data set.
@@ -230,18 +231,18 @@ Once this is functional, we can view our data set! As we can see, the images hav
 dls.show_batch(nrows=2, ncols=4)
 ```
 
-![Batch of galaxies in training data set]({{ site.baseurl }}/blog/images/2020-05-26-training-a-deep-cnn_29_0.png)    
+![Batch of galaxies in training data set]({{ site.baseurl }}/images/blog/2020-05-26-training-a-deep-cnn_29_0.png)    
 
 
 Pardon the excessive number of significant figures. We can fix this up by creating custom classes extending `Transform` and `ShowTitle`, but this is beyond the scope of the current project. Maybe I'll come back to this in a future post!
 
 ## Neural network architecture and optimization
 
-![A residual block, the basis for super-deep resnets. Figure from He et al. 2015.]({{ site.baseurl }}/blog/images/resblock.png)
+![A residual block, the basis for super-deep resnets. Figure from He et al. 2015.]({{ site.baseurl }}/images/blog/resblock.png)
 
 There's no way that I can describe all of the tweaks and improvements that machine learning researchers have made in the past couple of years, but I'd like to highlight a few that really help out our cause. We need to use some kind of residual CNNs (or resnets), introduced by [Kaiming He et al. (2015)](https://arxiv.org/abs/1512.03385). Resnets outperform previous CNNs such as the AlexNet or VGG architectures because they can leverage gains from "going deeper" (i.e., by extending the resnets with additional layers). The paper is quite readable and interesting, and there are plenty of other works explaining why resnets are so successful (e.g., a [blog post by Anand Saha](http://teleported.in/posts/decoding-resnet-architecture/) and [a deep dive into residual blocks by He et al.](https://arxiv.org/abs/1603.05027)).
 
-![One reason why resnets are so much more successful than traditional CNNs is because their loss landscapes are much smoother, and thus easier to optimize. We can also re-shape the loss landscape through our choice of activation function, which we will see below. Figure from Hao Li et al. 2017.]({{ site.baseurl }}/blog/images/resnet_loss.png)
+![One reason why resnets are so much more successful than traditional CNNs is because their loss landscapes are much smoother, and thus easier to optimize. We can also re-shape the loss landscape through our choice of activation function, which we will see below. Figure from Hao Li et al. 2017.]({{ site.baseurl }}/images/blog/resnet_loss.png)
 
 In `fastai`, we can instantiate a 34-layer *enhanced* resnet model by using `model = xresnet34()`. We could have created a 18-layer model with `model = xresnet18()`, or even defined our own custom 9-layer resnet using 
 ```python
@@ -273,7 +274,7 @@ Some of these tweaks are described in greater detail in [Chapter 14](https://git
 
 The concept of attention has gotten a lot of, well, *attention* in deep learning, particularly in natural language processing (NLP). This is because the attention mechanism is a core part of the [Transformer architecture](https://arxiv.org/abs/1706.03762), which has revolutionized our ability to learn from text data. I won't cover the Transformer architecture or NLP in this post, since it's way out of scope, but suffice it to say that lots of deep learning folks are interested in this idea.
 
-![An example of the attention mechanism using query f, key g, and value h, to encode interactions across a convolutional feature map. Figure from Han Zhang et al. 2018.]({{ site.baseurl }}/blog/images/self_attention.png)
+![An example of the attention mechanism using query f, key g, and value h, to encode interactions across a convolutional feature map. Figure from Han Zhang et al. 2018.]({{ site.baseurl }}/images/blog/self_attention.png)
 
 The attention mechanism allows a neural network layer to encode interactions from inputs on scales larger than the size of a typical convolutional filter. Self-attention is simply when these relationships, encoded via a *query/key/value* system, are applied using the same input. As a concrete example, self-attention added to CNNs in our scenario -- estimating metallicity from galaxy images -- may allow the network to learn morphological features that often require long-range dependencies, such as the orientation and position angle of a galaxy.
 
@@ -328,7 +329,7 @@ Fastai offers a nice feature for determining an optimal learning rate, taken fro
 
 The idea is to begin feeding your CNN batches of data, while exponentially increasing learning rates (i.e., step sizes) and monitoring the loss. At some point the loss will bottom out, and then begin to increase and diverge wildly, which is a sign that the learn rate is now too high.
 
-![Example of the impacts of learning rates and step sizes while exploring a loss landscape. Figure from https://www.jeremyjordan.me/nn-learning-rate/]({{ site.baseurl }}/blog/images/learning-rate.png)
+![Example of the impacts of learning rates and step sizes while exploring a loss landscape. Figure from https://www.jeremyjordan.me/nn-learning-rate/]({{ site.baseurl }}/images/blog/learning-rate.png)
 
 Generally, before the loss starts to diverge, the learning rate will be suitable for the loss to steadily decrease. We can generally read an optimal learning rate off the plot -- the suggested learning rate is around $0.03$ (since that is about an order of magnitude below the learning rate at which the loss "bottoms out" and is also where the loss is decreasing most quickly). I tend to choose a slightly lower learning rate (here I'll select $0.01$), since that seems to work better for my regression problems.
 
@@ -339,7 +340,7 @@ learn.lr_find()
 
 SuggestedLRs(lr_min=0.03630780577659607, lr_steep=0.02290867641568184)
 
-![LR finder plot]({{ site.baseurl }}/blog/images/2020-05-26-training-a-deep-cnn_57_2.png)    
+![LR finder plot]({{ site.baseurl }}/images/blog/2020-05-26-training-a-deep-cnn_57_2.png)    
 
 
 ### Training the neural network with a "one-cycle" schedule
@@ -419,7 +420,7 @@ learn.recorder.plot_loss()
 plt.ylim(0, 0.4);
 ```
 
-![Training losses]({{ site.baseurl }}/blog/images/2020-05-26-training-a-deep-cnn_63_0.png)
+![Training losses]({{ site.baseurl }}/images/blog/2020-05-26-training-a-deep-cnn_63_0.png)
 
 
 ## Evaluating our results
@@ -433,7 +434,7 @@ preds, trues = learn.tta()
 
 Note that we'll want to flatten these `Tensor` objects and convert them to numpy arrays, e.g., `preds = np.array(preds.view(-1))`. At this point, we can plot our results. Everything looks good!
 
-![Plotting predictions]({{ site.baseurl }}/blog/images/2020-05-26-training-a-deep-cnn_69_0.png)    
+![Plotting predictions]({{ site.baseurl }}/images/blog/2020-05-26-training-a-deep-cnn_69_0.png)    
 
 
 It appears that we didn't get a lower RMSE using TTA, but that's okay. TTA is usually worth a shot after you've finished training, since evaluating the neural network is relatively quick.
