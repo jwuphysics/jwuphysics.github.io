@@ -48,13 +48,7 @@ toc: true
       <section class="page__content" itemprop="text">
 
         {% if page.toc %}
-        {# BEGIN TOC content pasted directly #}
-          <nav class="toc" markdown="1">
-            <header>
-              <h4 class="nav__title"><i class="fa fa-{{ include.icon | default: 'file-text' }}"></i> {{ include.title | default: site.data.ui-text[site.locale].toc_label | default: "On This Page" }}</h4>
-            </header>
-            {:toc .toc__menu}
-          </nav>
+          {% include toc %}
         {% endif %}
 
         {{ content }}
