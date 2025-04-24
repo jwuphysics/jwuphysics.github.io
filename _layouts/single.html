@@ -5,10 +5,6 @@ toc: true
 
 {% include base_path %}
 
-{% if page.toc %}
-  {% include toc %}
-{% endif %}
-
 {% if page.header.overlay_color or page.header.overlay_image or page.header.image %}
   {% include page__hero.html %}
 {% endif %}
@@ -50,6 +46,11 @@ toc: true
       {% endunless %}
 
       <section class="page__content" itemprop="text">
+
+        {% if page.toc %}
+          {% include toc.html %}
+        {% endif %}
+
         {{ content }}
 
         {% if page.citation and page.paperurl and page.slidesurl and page.bibtexurl %}
