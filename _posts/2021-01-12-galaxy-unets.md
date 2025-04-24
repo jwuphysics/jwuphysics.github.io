@@ -6,6 +6,7 @@ permalink: /blog/2021/01/galaxy-unets/
 tags:
   - galaxies
   - tutorial
+  - computer-vision
   - substack-blog
 ---
 
@@ -79,9 +80,9 @@ Our model should only be used for typical SDSS galaxies. As we have discussed ab
 
 We can set up our problem as before, now with minimal pre-processing. All we have to do is to obtain galaxy images from both SDSS and DECaLS and ensure that they have the same angular sizes. I’ve elected to use a large sample of 142,000 galaxies studied in [one of my previous papers](https://ui.adsabs.harvard.edu/abs/2019MNRAS.484.4683W/abstract) so that we can train our U-Net from scratch (and for longer). This time, the U-Net seems to perform quite well!
 
-![Example 3 of the SDSS image (left), our U-Net reconstructed image (center), and the higher-fidelity DECaLS image (right).]({{ site.baseurl }}/images/blog/unet-sdss-decals-1.png)
+![Example 1 of the SDSS image (left), our U-Net reconstructed image (center), and the higher-fidelity DECaLS image (right).]({{ site.baseurl }}/images/blog/unet-sdss-decals-1.png)
 
-![Example 3 of the SDSS image (left), our U-Net reconstructed image (center), and the higher-fidelity DECaLS image (right).]({{ site.baseurl }}/images/blog/unet-sdss-decals-2.png)
+![Example 2 of the SDSS image (left), our U-Net reconstructed image (center), and the higher-fidelity DECaLS image (right).]({{ site.baseurl }}/images/blog/unet-sdss-decals-2.png)
 
 ![Example 3 of the SDSS image (left), our U-Net reconstructed image (center), and the higher-fidelity DECaLS image (right).]({{ site.baseurl }}/images/blog/unet-sdss-decals-3.png)
 
@@ -91,9 +92,9 @@ However, we can also see some obvious errors. The noise profiles in the generate
 
 In order to produce more realistic DECaLS images, we can also train a GAN. Compare the previous images with their corresponding GAN outputs (center column) below:
 
-![Example 3 of the SDSS image (left), our GAN reconstructed image (center), and the higher-fidelity DECaLS image (right).]({{ site.baseurl }}/images/blog/gan-sdss-decals-1.png)
+![Example 1 of the SDSS image (left), our GAN reconstructed image (center), and the higher-fidelity DECaLS image (right).]({{ site.baseurl }}/images/blog/gan-sdss-decals-1.png)
 
-![Example 3 of the SDSS image (left), our GAN reconstructed image (center), and the higher-fidelity DECaLS image (right).]({{ site.baseurl }}/images/blog/gan-sdss-decals-2.png)
+![Example 2 of the SDSS image (left), our GAN reconstructed image (center), and the higher-fidelity DECaLS image (right).]({{ site.baseurl }}/images/blog/gan-sdss-decals-2.png)
 
 ![Example 3 of the SDSS image (left), our GAN reconstructed image (center), and the higher-fidelity DECaLS image (right).]({{ site.baseurl }}/images/blog/gan-sdss-decals-3.png)
 
@@ -101,9 +102,11 @@ Looks much more realistic! If you want to learn more, please tune in to Part II 
 
 Until next time!
 
+---
+
 You can find some of the code for this post in [this Github Gist](https://gist.github.com/jwuphysics/6fa184d732f50e678a70bf4490638724). Credit also goes to the [Fast.ai 2019 course](https://github.com/fastai/course-v3/blob/master/nbs/dl1/lesson7-superres.ipynb) (Jeremy Howard) and [*Walk with Fastai*](https://walkwithfastai.com/Super_Resolution) (Zach Mueller).
 
 ---
 
-This post was migrated from Substack to my blog on 2025-04-23
+This post was migrated from [Substack](https://jwuphysics.substack.com/) to my blog on 2025-04-23
 {: .notice}

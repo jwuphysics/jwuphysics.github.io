@@ -6,6 +6,7 @@ permalink: /blog/2021/01/galaxy-gans/
 tags:
   - galaxies
   - tutorial
+  - computer-vision
   - substack-blog
 ---
 

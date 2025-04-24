@@ -8,6 +8,7 @@ tags:
   - galaxies
   - visualization
   - tutorial
+  - computer-vision
   - original-blog
 ---
 Let's explore the morphological feature space of galaxies represented by a trained CNN. We will use PCA to reduce the dimensionality of the neural network's latent features, and then visualize these features with matplotlib.

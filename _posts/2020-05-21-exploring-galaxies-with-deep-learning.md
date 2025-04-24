@@ -6,7 +6,7 @@ header:
   teaser: https://jwuphysics.github.io/images/blog/galaxy-metallicities.jpg
 tags:
   - galaxies
-  - vision
+  - computer-vision
   - original-blog
 ---
 

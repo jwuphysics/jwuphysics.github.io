@@ -5,6 +5,7 @@ permalink: /blog/2020/12/galaxy-autoencoders/
 tags:
   - galaxies
   - tutorial
+  - computer-vision
   - substack-blog
 ---
 
@@ -89,5 +90,5 @@ All of the code to make the figures in this notebook can be found in my [Github 
 
 ---
 
-This post was migrated from Substack to my blog on 2025-04-23
+This post was migrated from [Substack](https://jwuphysics.substack.com/) to my blog on 2025-04-23
 {: .notice}
