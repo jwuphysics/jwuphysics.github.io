@@ -1,6 +1,5 @@
 ---
 layout: default
-toc: true
 ---
 
 {% include base_path %}
@@ -46,10 +45,6 @@ toc: true
       {% endunless %}
 
       <section class="page__content" itemprop="text">
-
-        {% if page.toc %}
-          {% include toc.html %}
-        {% endif %}
 
         {{ content }}
 
