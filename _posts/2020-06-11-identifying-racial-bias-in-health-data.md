@@ -370,3 +370,5 @@ One reason for this racial disparity may be that white patients have higher medi
 
 Fortunately, the authors present a solution, at least for the biased algorithm in the study. Instead of training the algorithm on medical costs, they use a combination of costs and health predictors as the training target and (at time of publication) are able to reduce racial bias by 84%. The takeaway is that **it is possible—and thus ethically imperative—to reduce bias in machine learning algorithms**, even as we make every effort to rectify human biases. It is a difficult task, of course, and data scientists will need to partner with domain experts in order to understand the many ways that algorithmic bias can appear. By exploring the data and forming teams with diverse backgrounds, we will be better equipped to handle biased data and correct biased algorithms.
 
+*This post was migrated to my new blog on 2025-04-23*
+{: .notice}
