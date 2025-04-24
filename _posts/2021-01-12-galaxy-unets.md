@@ -21,9 +21,7 @@ But oh dear, it’s too blurry! You can’t send out a picture like this. People
 
 ## Enhance! Enhance! Enhance!
 
-[![Enhance!]
-(https://img.youtube.com/vi/LhF_56SxrGk/maxresdefault.jpg)]
-(https://www.youtube.com/watch?v=LhF_56SxrGk)
+[![Enhance!](https://img.youtube.com/vi/LhF_56SxrGk/maxresdefault.jpg)](https://www.youtube.com/watch?v=LhF_56SxrGk)
 
 Memes and tired television tropes aside, deep learning might actually be able to get this job done. What if a neural network could *enhance* this image based on what it knows about the structure of galaxies? In other words, we are trying to perform astronomical image super-resolution, and perhaps get a final result that looks like this:
 
