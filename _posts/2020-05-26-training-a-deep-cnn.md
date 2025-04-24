@@ -2,9 +2,8 @@
 title: 'Training a deep CNN to learn about galaxies in 15 minutes'
 date: 2020-05-26
 permalink: /blog/2020/05/galaxy-cnn/
-mathjax: true
 header:
-  teaser: /images/blog/WB19_fig1.jpg
+  teaser: {{ site.baseurl }}/images/blog/WB19_fig1.jpg
 tags:
   - galaxies
   - vision
@@ -20,9 +19,9 @@ Let's train a deep neural network from scratch! In this post, I provide a demons
 
 ## Predicting metallicities from pictures: obtaining the data
 
-In my [previous post](https://github.com/jwuphysics/blog/blob/master/_notebooks/2020-05-21-exploring-galaxies-with-deep-learning.ipynb), I described the problem that we now want to solve. To summarize, we want to train a convolutional neural network (CNN) to perform regression. The inputs are images of individual galaxies (although sometimes we're photobombed by other galaxies). The outputs are metallicities, $Z$, which usually take on a value between 7.8 and 9.4.
+In my [previous post](https://github.com/jwuphysics/blog/blob/master/_notebooks/2020-05-21-exploring-galaxies-with-deep-learning.ipynb), I described the problem that we now want to solve. To summarize, we want to train a convolutional neural network (CNN) to perform regression. The inputs are images of individual galaxies (although sometimes we're photobombed by other galaxies). The outputs are metallicities, \\(Z\\), which usually take on a value between 7.8 and 9.4.
 
-The first step, of course, is to actually get the data. Galaxy images can be fetched using calls to the Sloan Digital Sky Survey (SDSS) SkyServer `getJpeg` cutout service via their [RESTful API](http://skyserver.sdss.org/dr16/en/help/docs/api.aspx#imgcutout). For instance, [this URL](http://skyserver.sdss.org/dr16/SkyserverWS/ImgCutout/getjpeg?ra=39.8486&dec=1.094&scale=1&width=224&height=224) grabs a three-channel, $224 \times 224$-pixel JPG image:
+The first step, of course, is to actually get the data. Galaxy images can be fetched using calls to the Sloan Digital Sky Survey (SDSS) SkyServer `getJpeg` cutout service via their [RESTful API](http://skyserver.sdss.org/dr16/en/help/docs/api.aspx#imgcutout). For instance, [this URL](http://skyserver.sdss.org/dr16/SkyserverWS/ImgCutout/getjpeg?ra=39.8486&dec=1.094&scale=1&width=224&height=224) grabs a three-channel, \\(224 \times 224\\)-pixel JPG image:
 ![](images/blog/sdss_example.jpg "An example galaxy at the coordinates RA = 39.8486 and Dec = 1.094")
 
 
@@ -101,7 +100,7 @@ Suppose that we now have a directory full of galaxy images, and a `csv` file wit
 
 
 
-This means that a galaxy with `objID` 1237654601557999788 is located at RA = 137.603036 deg, Dec = 3.508882 deg, and has a metallicity of $Z$ = 8.819281. Our directory structure is such that the corresponding image is stored in `{ROOT}/images/1237660634922090677.jpg`, where `ROOT` is the path to project repository. 
+This means that a galaxy with `objID` 1237654601557999788 is located at RA = 137.603036 deg, Dec = 3.508882 deg, and has a metallicity of \\(Z\\) = 8.819281. Our directory structure is such that the corresponding image is stored in `{ROOT}/images/1237660634922090677.jpg`, where `ROOT` is the path to project repository. 
 
 A tree-view from our `{ROOT}` directory might look like this:
 ```
@@ -205,7 +204,7 @@ Next, I'll want to determine some data augmentation transformations. These are h
 
 Translations, rotations, and reflections to our images should not change the properties of our galaxies. However, we won't want to zoom in and out of the images, since that might impact CNN's ability to infer unknown (but possibly important) quantities such as the galaxies' intrinsic sizes. Similarly, color shifts or image warps may alter the star formation properties or stellar structures of the galaxies, so we don't want to mess with that.
 
-We will center crop the image to $144 \times 144$ pixels using `CropPad()`, which reduces some of the surrounding black space (and other galaxies) near the edges of the images. We will then apply a $112 \times 112$-pixel `RandomCrop()` for some more translational freedom. This first set of image crop transformations, `item_tfms`, will be performed on images one by one using a CPU. Afterwards, the cropped images (which should all be the same size) will be loaded onto the GPU. At this stage, data augmentation transforms will be performed along with image normalization, which rescales the intensities in each channel so that they have zero mean and unit variance.  The second set of transformations, `batch_tfms`, will be applied one batch at a time on the GPU.
+We will center crop the image to \\(144 \times 144\\) pixels using `CropPad()`, which reduces some of the surrounding black space (and other galaxies) near the edges of the images. We will then apply a \\(112 \times 112\\)-pixel `RandomCrop()` for some more translational freedom. This first set of image crop transformations, `item_tfms`, will be performed on images one by one using a CPU. Afterwards, the cropped images (which should all be the same size) will be loaded onto the GPU. At this stage, data augmentation transforms will be performed along with image normalization, which rescales the intensities in each channel so that they have zero mean and unit variance.  The second set of transformations, `batch_tfms`, will be applied one batch at a time on the GPU.
 
 
 ```python
@@ -264,8 +263,8 @@ So why did I say that we're using an "enhanced" resnet -- an "xresnet"? And what
 ### A more powerful resnet
 
 The ["bag of tricks" paper](https://arxiv.org/abs/1812.01187) by Tong He et al. (2018) summarizes many small tweaks that can be combined to dramatically improve the performance of a CNN. They describe several updates to the resnet model architecture in Section 4 of their paper. The fastai library takes these into account, and also implements a few other tweaks, in order to increase performance and speed. I've listed some of them below:
-- The CNN stem (first few layers) is updated using efficient $3 \times 3$ convolutions rather than a single expensive layer of $7\times 7$ convolutions.
-- Residual blocks are changed so that $1 \times 1$ convolutions don't skip over useful information. This is done by altering the order of convolution strides in one path of the downsampling block, and adding a pooling layer in the other path (see Figure 2 of He et al. 2018).
+- The CNN stem (first few layers) is updated using efficient \\(3 \times 3\\) convolutions rather than a single expensive layer of \\(7\times 7\\) convolutions.
+- Residual blocks are changed so that \\(1 \times 1\\) convolutions don't skip over useful information. This is done by altering the order of convolution strides in one path of the downsampling block, and adding a pooling layer in the other path (see Figure 2 of He et al. 2018).
 - The model concatenates the outputs of both AveragePool and MaxPool layers (using `AdaptiveConcatPool2d`) rather than using just one.
 
 Some of these tweaks are described in greater detail in [Chapter 14](https://github.com/fastai/fastbook/blob/master/14_resnet.ipynb) of the fastai book, "Deep Learning for Coders with fastai and Pytorch" (which can be also be purchased on [Amazon](https://www.amazon.com/Deep-Learning-Coders-fastai-PyTorch/dp/1492045527)).
@@ -331,7 +330,7 @@ The idea is to begin feeding your CNN batches of data, while exponentially incre
 
 ![Example of the impacts of learning rates and step sizes while exploring a loss landscape. Figure from https://www.jeremyjordan.me/nn-learning-rate/]({{ site.baseurl }}/images/blog/learning-rate.png)
 
-Generally, before the loss starts to diverge, the learning rate will be suitable for the loss to steadily decrease. We can generally read an optimal learning rate off the plot -- the suggested learning rate is around $0.03$ (since that is about an order of magnitude below the learning rate at which the loss "bottoms out" and is also where the loss is decreasing most quickly). I tend to choose a slightly lower learning rate (here I'll select $0.01$), since that seems to work better for my regression problems.
+Generally, before the loss starts to diverge, the learning rate will be suitable for the loss to steadily decrease. We can generally read an optimal learning rate off the plot -- the suggested learning rate is around \\(0.03\\) (since that is about an order of magnitude below the learning rate at which the loss "bottoms out" and is also where the loss is decreasing most quickly). I tend to choose a slightly lower learning rate (here I'll select \\(0.01\\)), since that seems to work better for my regression problems.
 
 
 ```python
@@ -345,7 +344,7 @@ SuggestedLRs(lr_min=0.03630780577659607, lr_steep=0.02290867641568184)
 
 ### Training the neural network with a "one-cycle" schedule
 
-Finally, now that we've selected a learning rate ($0.01$), we can train for a few epochs. Remember that an *epoch* is just a run-through using all of our training data (and we send in one batch of 64 images at a time). Sometimes, researchers simply train at a particular learning rate and wait until the results converge, and then lower the learning rate in order for the model to continue learning. This is because the model needs some serious updates toward the beginning of training (given that it has been initialized with random weights), and then needs to start taking smaller steps once its weights are in the right ballpark. However, the learning rate can't be too high in th beginning, or the loss will diverge! Traditionally, researchers will select a safe (i.e., low) learning rate in the beginning, which can take a long time to converge.
+Finally, now that we've selected a learning rate (\\(0.01\\)), we can train for a few epochs. Remember that an *epoch* is just a run-through using all of our training data (and we send in one batch of 64 images at a time). Sometimes, researchers simply train at a particular learning rate and wait until the results converge, and then lower the learning rate in order for the model to continue learning. This is because the model needs some serious updates toward the beginning of training (given that it has been initialized with random weights), and then needs to start taking smaller steps once its weights are in the right ballpark. However, the learning rate can't be too high in th beginning, or the loss will diverge! Traditionally, researchers will select a safe (i.e., low) learning rate in the beginning, which can take a long time to converge.
 
 Fastai offers a few optimization *schedules*, which involve altering the learning rate over the course of training. The two most promising are called [`fit_flat_cos`](https://dev.fast.ai/callback.schedule#Learner.fit_flat_cos) and [`fit_one_cycle`](https://dev.fast.ai/callback.schedule#Learner.fit_one_cycle) ([see more here](https://arxiv.org/abs/1708.07120)). I've found that `fit_flat_cos` tends to work better for classification tasks, while `fit_one_cycle` tends to work better for regression problems. Either way, the empirical results are fantastic -- especially coupled with the Ranger optimizer and all of the other tweaks we've discussed.
 
