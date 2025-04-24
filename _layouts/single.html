@@ -46,6 +46,49 @@ layout: default
 
       <section class="page__content" itemprop="text">
 
+        {% assign toc_list = "" %}
+        {% assign heading_levels = "1,2,3,4,5,6" | split: "," %}
+
+        {% capture content_capture %}{{ content }}{% endcapture %}
+
+        {% assign content_parts = content_capture | split: "<h" %}
+
+        {% for part in content_parts offset:1 %}
+          {% assign heading_level = part | slice: 0 | plus: 0 %} {% comment %} Get the first character as number {% endcomment %}
+
+          {% if heading_levels contains part | slice: 0 %}
+            {% assign heading_content_and_rest = part | split: "</h" | first %}
+            {% assign heading_content = heading_content_and_rest | split: ">" | last %} 
+
+            {% assign heading_text = heading_content | strip_html | normalize_whitespace %} 
+            
+            {% if heading_text != "" %} 
+              {% assign heading_slug = heading_text | slugify %} 
+              
+              {% assign padding_style = "" %}
+              {% if heading_level > 1 %}
+                 {% assign indent = heading_level | minus: 1 | times: 20 %}
+                 {% capture padding_style %} style="padding-left: {{ indent }}px;"{% endcapture %}
+              {% endif %}
+
+              {% capture toc_item %}
+                <li{{ padding_style }}><a href="#{{ heading_slug }}">{{ heading_text }}</a></li>
+              {% endcapture %}
+              {% assign toc_list = toc_list | append: toc_item %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+
+        {% if toc_list != "" %}
+          <div class="toc">
+            <h2 id="toc-heading">Table of Contents</h2>
+            <ul>
+              {{ toc_list }}
+            </ul>
+          </div>
+          <hr> 
+        {% endif %}
+
         {{ content }}
 
         {% if page.citation and page.paperurl and page.slidesurl and page.bibtexurl %}
