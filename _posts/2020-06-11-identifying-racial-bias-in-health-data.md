@@ -1,7 +1,7 @@
 ---
 title: 'Identifying racial bias in health data'
 date: 2020-06-11
-permalink: /blog/2020/06/healthcare-bias.png
+permalink: /blog/2020/06/healthcare-bias
 header:
   teaser: https://jwuphysics.github.io/images/blog/healthcare-bias.png
 tags:
