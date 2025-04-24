@@ -16,7 +16,7 @@ body {
   padding: $masthead-height 0 0;
   padding-bottom: 9em;
   font-family: $global-font-family;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1.5;
 
   &.overflow--hidden {
@@ -29,7 +29,7 @@ h1, h2, h3, h4, h5, h6 {
   margin: 2em 0 0.5em;
   line-height: 1.2;
   font-family: $header-font-family;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 h1 {
@@ -72,6 +72,17 @@ ins {
   a {
     color: inherit;
   }
+}
+
+h1:hover .anchor, h2:hover .anchor, h3:hover .anchor {
+  visibility: visible;
+}
+
+.anchor {
+  visibility: hidden;
+  text-decoration: none;
+  padding-left: 0.5rem;
+  font-size: 0.8em;
 }
 
 del a {
