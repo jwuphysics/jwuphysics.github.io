@@ -108,5 +108,5 @@ You can find some of the code for this post in [this Github Gist](https://gist.g
 
 ---
 
-This post was migrated from [Substack](https://jwuphysics.substack.com/) to my blog on 2025-04-23
+This post was migrated from [Substack](https://jwuphysics.substack.com/p/u-nets) to my blog on 2025-04-23
 {: .notice}

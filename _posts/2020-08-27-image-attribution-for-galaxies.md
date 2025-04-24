@@ -627,5 +627,7 @@ If you're interested in some academic discussion of this sort of topic, then I e
 
 ![]({{ site.baseurl }}/images/blog/Wu2020-Fig11b.jpg "Figure 11 panel b from my recent paper.")
 
+---
+
 *This post was migrated to my new blog on 2025-04-23*
 {: .notice}

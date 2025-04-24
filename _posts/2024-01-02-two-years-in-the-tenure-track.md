@@ -9,7 +9,7 @@ tags:
   - substack-blog
 ---
 
-> Reflecting on my journey towards becoming a tenure-track astronomer
+Reflecting on my journey towards becoming a tenure-track astronomer
 
 
 ## Prelude
@@ -104,7 +104,7 @@ There are many other things I could say, about imposter syndrome, honing your co
 
 [^1]: The Assistant Astronomer position at STScI is analogous to Assistant Professor at an R1 University, except that you support a NASA mission (or something similar) rather than teach courses.
 [^2]: I didn’t really research this statistic, but it comports with my anecdata, and seems to be supported by others’ as well, e.g., [this Quora post](https://www.quora.com/What-is-the-percentage-of-PhDs-in-Physics-that-actually-are-able-to-obtain-tenure-or-tenure-track-faculty-positions).
-[^3]: One of the biggest advantages in academia is <em>privilege</em>. For example, tenure-track professors in the US are up to 25 times more likely to have a parent with a PhD (according to this [*Nature Human Behavior* article](https://www.nature.com/articles/s41562-022-01425-4). I am no different — my late father has a [PhD from Purdue University](https://www.proquest.com/openview/082cb1ab5dd18a3660b7476573734cdb/1?pq-origsite=gscholar&amp;cbl=18750&amp;diss=y), and I’ve benefited tremendously from his grit, sacrifice, determination, and wisdom. I am not only grateful for amazing opportunities that I’ve received, but also acutely aware of the challenges faced by underprivileged researchers.
+[^3]: One of the biggest advantages in academia is <em>privilege</em>. For example, tenure-track professors in the US are up to 25 times more likely to have a parent with a PhD (according to this [*Nature Human Behavior* article](https://www.nature.com/articles/s41562-022-01425-4)). I am no different — my late father has a [PhD from Purdue University](https://www.proquest.com/openview/082cb1ab5dd18a3660b7476573734cdb/1?pq-origsite=gscholar&amp;cbl=18750&amp;diss=y), and I’ve benefited tremendously from his grit, sacrifice, determination, and wisdom. I am not only grateful for amazing opportunities that I’ve received, but also acutely aware of the challenges faced by underprivileged researchers.
 [^4]: Although I had stopped reading fiction in favor of non-fiction books for 10+ years, Andrew convinced me to pick up the hobby of reading fiction again. He argued that reading fiction serves not just as a way to relax and relieve stress, but also as a way to stimulate creativity, practice empathy, and inspire new writing.
 [^5]: I’m also immensely grateful to Kunal Ghosh, my supportive and kind undergraduate advisor at CMU, Marc Rafelski, who served as my postdoc mentor at STScI, and Laurent Pueyo, who is currently my faculty mentor at STScI.
 [^6]: Yeah, fine, Caffe and Theano also existed at the time, but I didn’t get the sense that they were seeing great adoption either.
@@ -113,9 +113,7 @@ There are many other things I could say, about imposter syndrome, honing your co
 [^9]: I recommend taking the summer off before grad school, unless you’re absolutely sure that you’ll be bored to death by not working on something. You probably won’t get another “summer break” in your life again.
 [^10]: It’s okay to have a vision that’s not fully clear, and therefore experiment with multiple avenues of research until you have a better picture. This was the case for me for most of grad school! But within a few months of starting my postdoc, I knew what I wanted to do with my career.
 
----
-
-*Addendum*: I also noticed that Gemini 2.5 Pro (experimental), which I've been using to convert my old posts into markdown for this blog, refused to transcribe that third footnote about **privilege** in academia. I'm not sure why it's so scared of that word, and I got multiple refusals. The only way I could get it to help convert the original Substack HTML to Markdown was by removing the footnote about privilege, and putting it back in manually. Previously, I had no issues transcribing my previous post that discusses [bias in data science and anti-racism](https://jwuphysics.github.io/blog/2020/06/healthcare-bias), so I suspect that there's something strange triggering Google's Gemini content moderation.
-
 *This post was migrated from [Substack](https://jwuphysics.substack.com/p/two-years-in-the-tenure-track) to my new blog on 2025-04-24*
 {: .notice}
+
+*Addendum*: I also noticed that Gemini 2.5 Pro (experimental), which I've been using to convert my old posts into markdown for this blog, refused to transcribe that third footnote about **privilege** in academia. I'm not sure why it's so scared of that word, and I got multiple refusals. The only way I could get it to help convert the original Substack HTML to Markdown was by removing the footnote about privilege, and putting it back in manually. Previously, I had no issues transcribing my previous post that discusses [bias in data science and anti-racism](https://jwuphysics.github.io/blog/2020/06/healthcare-bias), so I suspect that there's something strange triggering Google's Gemini content moderation.

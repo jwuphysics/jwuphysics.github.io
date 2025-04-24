@@ -6,7 +6,7 @@ header:
   teaser: https://jwuphysics.github.io/images/blog/WB19_fig1.jpg
 tags:
   - galaxies
-  - vision
+  - computer-vision
   - tutorial
   - original-blog
 ---
@@ -458,7 +458,7 @@ In summary, we were able to train a deep convolutional neural network to predict
 
 **Acknowledgments**: I want to thank fastai core development team, [Jeremy Howard](https://twitter.com/jeremyphoward) and [Sylvain Gugger](https://twitter.com/GuggerSylvain), as well as other contributors and invaluable members of the community, including [Less Wright](https://github.com/lessw2020), [Diganta Misra](https://twitter.com/digantamisra1?lang=en), and [Zachary Mueller](https://muellerzr.github.io/). I also want to acknowledge Google for their support via GCP credits for academic research. Finally, I want to give a shout out to [Steven Boada](https://github.com/boada), my original collaborator and co-author on [our paper](https://arxiv.org/abs/1810.12913).
 
+---
+
 *This post was migrated to my new blog on 2025-04-23*
 {: .notice}
-
-

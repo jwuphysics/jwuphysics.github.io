@@ -74,5 +74,7 @@ These findings imply that morphological information is essential for understandi
 
 If you're interested in seeing some of the more technical details, then please stay tuned for my next post (**update: [here it is](https://jwuphysics.github.io/blog/2020/05/learning-galaxy-metallicity-cnns/)**)! I'll be showcasing some of the analysis using the [Fastai v2](http://dev.fast.ai/) codebase. Otherwise, take a look at the original [Github repository for the paper](https://github.com/jwuphysics/galaxy-cnns), or a [demo version](https://github.com/jwuphysics/convnet-demo) of the code (which includes a small subset of the data).
 
+---
+
 *This post was migrated to my new blog on 2025-04-23*
 {: .notice}

@@ -69,5 +69,5 @@ The associated Jupyter notebook can be viewed on [Github](https://gist.github.co
 
 ---
 
-This post was migrated from [Substack](https://jwuphysics.substack.com/) to my blog on 2025-04-23
+This post was migrated from [Substack](https://jwuphysics.substack.com/p/gans) to my blog on 2025-04-23
 {: .notice}

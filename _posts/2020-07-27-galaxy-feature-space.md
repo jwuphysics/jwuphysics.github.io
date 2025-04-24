@@ -285,5 +285,7 @@ Simple methods such as PCA can be powerful for understanding what a neural netwo
 
 In Part 2 of this series, we'll continue looking into deep learning visualization techniques. We will be using Gradient-weighted Class Activation Maps, or [Grad-CAM](https://arxiv.org/abs/1610.02391), to localize the image features that a CNN focuses on when it classifies a galaxy as metal-rich or metal-poor.
 
+---
+
 *This post was migrated to my new blog on 2025-04-23*
 {: .notice}
