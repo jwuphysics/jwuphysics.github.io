@@ -81,11 +81,11 @@
     {% endif %}
 
     {% if post.tags.size > 0 %}
-    <p class="page__meta tags"> {# Or use a div, span etc. Add a class for styling #}
-      <strong><i class="fas fa-tags" aria-hidden="true"></i> Tags: </strong> {# Optional label and icon #}
+    <p class="page__meta tags">
+      <strong><i class="fas fa-tags" aria-hidden="true"></i> Tags: </strong>
       <span itemprop="keywords">
       {% for tag in post.tags %}
-        <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}" class="tag">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
+        <a href="{{ site.baseurl }}/tags/#{{ tag | slugify }}" class="tag">{{ tag }}</a>{% unless forloop.last %} &#183; {% endunless %}
       {% endfor %}
       </span>
     </p>
