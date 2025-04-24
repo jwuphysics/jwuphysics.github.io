@@ -26,10 +26,25 @@ Galaxy metallicities can be obtained from the SDSS SkyServer using a [SQL query]
 
 The code for the original published work ([Wu & Boada 2019](https://ui.adsabs.harvard.edu/abs/2019MNRAS.484.4683W/abstract)) can be found in my [Github repo](https://github.com/jwuphysics/galaxy-cnns). However, this code (from 2018) used `fastai` *version 0.7*, and I want to show an updated version using the new and improved `fastai` *version 2* codebase. Also, some of the "best practices" for deep learning and computer vision have evolved since then, so I'd like to highlight those updates as well!
 
+```python
+# imports
+from fastai2.basics import *
+from fastai2.vision.all import *
+from mish_cuda import MishCuda
+
+from matplotlib.colors import LogNorm
+
+ROOT = Path('../').resolve()
+```
+
 ## Organizing the data using the `fastai` DataBlock API
 
 Suppose that we now have a directory full of galaxy images, and a `csv` file with the object identifier, coordinates, and metallcity for each galaxy. The `csv` table can be [read using Pandas](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html), so let's store that in a DataFrame `df`. We can take a look at five random rows of the table by calling `df.sample(5)`:
 
+```python
+df = pd.read_csv(f'{ROOT}/data/master.csv', dtype={'objID': str}).rename({'oh_p50': 'metallicity'}, axis=1)
+df[['objID', 'ra', 'dec', 'metallicity']].sample(5)
+```
 
 <div>
 <style scoped>
