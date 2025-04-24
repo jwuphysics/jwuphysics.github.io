@@ -8,7 +8,7 @@
 
 # Basic Site Settings
 locale                   : "en-US"
-title                    : "John F. Wu"
+title                    : "jwuphysics"
 title_separator          : "-"
 name                     : &name "John F. Wu"
 description              : &description "John F. Wu is a tenure-track Associate Astronomer at STScI."
