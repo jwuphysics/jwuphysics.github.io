@@ -10,6 +10,7 @@ tags:
 
 Exploring the latent space of galaxy images with autoencoders.
 
+## Prelude
 
 How much information do we actually use from astronomical imaging? I’ve always wondered about this as I [gaze at wide-field survey imaging data](https://www.legacysurvey.org/viewer/). After all, galaxies are complex collections of stars, gas, and dust, but for convenience, astronomers often represent them using just a few numbers that describe their colors, shapes, and sizes. Seems a bit unfair, right?
 

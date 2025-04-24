@@ -21,13 +21,15 @@ But oh dear, it’s too blurry! You can’t send out a picture like this. People
 
 ## Enhance! Enhance! Enhance!
 
-{% include video id="LhF_56SxrGk" provider="youtube" %}
+[![Enhance!]
+(https://img.youtube.com/vi/LhF_56SxrGk/maxresdefault.jpg)]
+(https://www.youtube.com/watch?v=LhF_56SxrGk)
 
 Memes and tired television tropes aside, deep learning might actually be able to get this job done. What if a neural network could *enhance* this image based on what it knows about the structure of galaxies? In other words, we are trying to perform astronomical image super-resolution, and perhaps get a final result that looks like this:
 
 ![This is what you wish your galaxy looked like.]({{ site.baseurl }}/images/blog/gan-galaxy-enhanced.png)
 
-Is it possible? The answer is… maybe. It really depends on your data set and use case. But we’ve been surprised by the power of deep learning before: [grainy black and white photographs from the early 1900s can be colorized and modernized](https://deoldify.ai/)! In this case, deep learning can recolor and restore old photographs, because people, grass, and houses from back then still kind of look like people, grass, and houses today. Another reason for deep learning’s success is that we are able to create excellent training data sets, since it is simple to convert a color image to monochrome or add noise.
+Is it possible? The answer is... maybe. It really depends on your data set and use case. But we’ve been surprised by the power of deep learning before: [grainy black and white photographs from the early 1900s can be colorized and modernized](https://deoldify.ai/)! In this case, deep learning can recolor and restore old photographs, because people, grass, and houses from back then still kind of look like people, grass, and houses today. Another reason for deep learning’s success is that we are able to create excellent training data sets, since it is simple to convert a color image to monochrome or add noise.
 
 ![An example of image enhancement using DeOldify. Credit: https://github.com/jantic/DeOldify, Jason Antic]({{ site.baseurl }}/images/blog/deoldify.png)
 
