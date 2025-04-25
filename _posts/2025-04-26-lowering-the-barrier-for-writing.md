@@ -35,15 +35,15 @@ Now, I could put together some simple script to write most of boilerplate for me
 
 ## Tasking LLMs to write boilerplate text
 
-Soft logic sounds like a job for a local LLM! I will be using the Gemma 3 27B model with 4-bit Quantization-Aware Training (download on Ollama [here](https://ollama.com/library/gemma3:27b-it-qat)), which can fit into ~20 GB of memory and run in under 10 seconds on a GPU.[^1] 
+Soft logic sounds like a job for a large language model (LLM)! I will be using the Gemma 3 27B model with 4-bit Quantization-Aware Training (download on Ollama [here](https://ollama.com/library/gemma3:27b-it-qat)), which can fit into ~20 GB of memory and run in under 10 seconds on a GPU.[^1] 
 
-So I decided to use the simple [`llm`](https://llm.datasette.io/en/stable/) CLI tool come up with a short title, invent a few candidate tags, and then copy over the rest of the boilerplate.
+So I decided to use the simple [`llm`](https://llm.datasette.io/en/stable/) CLI tool to come up with a short title, invent a few candidate tags, and copy over the rest of the boilerplate.
 
-Again, this is just meant to get things started. It's okay if the LLM makes mistakes![^2] I'll still give the front matter a glance, and probably change a few of the tags. While writing this post, I decided to change the full title (that I originally specified)!
+Again, this is just meant to get things started. It's okay if the LLM makes mistakes![^2] I'll still give the front matter a glance, and probably change a few of the tags. In fact, while writing this post, I decided to change the full title that *I* originally specified!
 
 The full code I used to initiate this post can be found in this [Github Gist](https://gist.github.com/jwuphysics/99cd3fe53719933328038e748721eeba).
 
-## Making it easier 
+---
 
 [^1]: I strongly suspect that lightweight instruction-following models like the 3.8B parameter [phi4-mini](https://ollama.com/library/phi4-mini) or the 8B parameter [Llama 3.1 model](https://ollama.com/library/llama3.1) should do a great job, too.
 [^2]: During early testing, one of the models (Mistral 3.1 24B, I think), insisted on wrapping the output with triple-back quotes and explicitly denoting it as a `yaml` code block.
