@@ -8,11 +8,7 @@ tags:
   - productivity
 ---
 
-These posts are fun to write. 
-
-[Simon Willison](https://simonwillison.net/2025/Apr/25/backfill-your-blog/) also suggested backfilling the blog with previous posts made on other platforms. 
-
-But writing new posts can be time consuming... Let's be honest: am I going to stay motivated and continue writing blog posts? **To sustain good habits, you need to make those tasks easier for your future self.**
+These posts are fun to write. But writing new posts can be time consuming... Let's be honest: am I going to stay motivated and continue writing blog posts? **To sustain good habits, you need to make those tasks easier for your future self.**
 
 ## Making it easier to start new posts
 
