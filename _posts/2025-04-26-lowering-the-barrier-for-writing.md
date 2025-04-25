@@ -8,10 +8,9 @@ tags:
   - productivity
 ---
 
-These posts are fun to write. But writing new posts can be time consuming... Let's be honest: am I going to stay motivated and continue writing blog posts? **To sustain good habits, you need to make those tasks easier for your future self.**
+These posts are fun but time consuming to write. Let's be honest: am I going to stay motivated and continue posting on my blog? **To sustain a habit of writing, I'll need to create an easier path for my future self.**
 
 ## Making it easier to start new posts
-
 
 With that in mind, I decided to write a bash script that gets my boilerplate out of the way, and enables me to immediately write a post. I decided that I wanted it to take on this usage pattern:
 ```sh
