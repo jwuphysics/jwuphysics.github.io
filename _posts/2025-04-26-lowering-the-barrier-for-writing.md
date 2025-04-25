@@ -20,15 +20,17 @@ With that in mind, I decided to write a bash script that gets my boilerplate out
 
 and then it could write the "front matter" at the top of the blog post, which should look like this:
 
-  ---
-  title: 'Lowering the barrier to writing more frequently'
-  date: 2025-04-26
-  permalink: /blog/2025/04/lowering-the-barrier-for-writing/
-  tags:
-    - blogging
-    - llms
-    - productivity
-  ---
+```yaml
+---
+title: 'Lowering the barrier to writing more frequently'
+date: 2025-04-26
+permalink: /blog/2025/04/lowering-the-barrier-for-writing/
+tags:
+  - blogging
+  - llms
+  - productivity
+---
+```
 
 Now, I could put together some simple script to write most of boilerplate for me. But there's some soft logic in here: for example, I might want to abbreviate the title or remove special characters for the permalink. And I'll also want to think a bit creatively to come up with good tags. So what's the best way to code this up?
 
