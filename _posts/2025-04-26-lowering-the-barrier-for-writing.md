@@ -15,7 +15,7 @@ These posts are fun to write. But writing new posts can be time consuming... Let
 
 With that in mind, I decided to write a bash script that gets my boilerplate out of the way, and enables me to immediately write a post. I decided that I wanted it to take on this usage pattern:
 ```sh
-./start-blog-post.sh "This is the title of some future post!"
+./start-blog-post.sh "Lowering the barrier to writing more frequently"
 ```
 
 and then it could write the "front matter" at the top of the blog post, which should look like this:
