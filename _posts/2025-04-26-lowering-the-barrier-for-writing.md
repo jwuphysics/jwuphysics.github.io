@@ -45,7 +45,7 @@ Now, I could write a simple script to handle most of the boilerplate. But there'
 
 Soft logic sounds like a job for a large language model (LLM)! I will be using the Gemma 3 27B model with 4-bit Quantization-Aware Training (download on Ollama [here](https://ollama.com/library/gemma3:27b-it-qat)), which can fit into ~20 GB of memory and run in under 10 seconds on a GPU.[^1] 
 
-"So I used the simple [`llm`](https://llm.datasette.io/en/stable/) CLI tool to suggest a short title, generate relevant tags, and populate the rest of the boilerplate.
+So I used [Simon Willison](https://simonwillison.net/)'s [`llm`](https://llm.datasette.io/en/stable/) CLI tool to suggest a short title, generate relevant tags, and populate the rest of the boilerplate.
 
 Again, this is just meant to get things started. It's okay if the LLM makes mistakes![^2] I'll still give the front matter a glance, and probably change a few of the tags. In fact, while writing this post, I decided to change the full title that *I* originally specified!
 
