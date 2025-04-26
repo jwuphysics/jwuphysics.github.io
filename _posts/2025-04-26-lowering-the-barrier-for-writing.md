@@ -10,14 +10,20 @@ tags:
 
 These posts are fun but time consuming to write. Let's be honest: am I going to stay motivated and continue posting on my blog? **To sustain a habit of writing, I'll need to create an easier path for my future self.**
 
+## Introduction
+
+I've always got dozens of random ideas marinating in my head, and it's only after I start talking or writing about these ideas that they really come into fruition. Half of them are truly awful, by the way. Some of them I'm really proud of. But it's hard to know what's good and what's slop until I take the time to spell out and reorganize my thoughts.
+
+Writing is perfect for this. However, I mentioned that my previous blog-posting fell by the wayside because I got tired of maintaining my blog. It was also hard to even start writing, even when I had the time to do so, because I'd have to pivot my mental cycles toward starting a new blog post. By the time I had set up the boilerplate headers correctly, I'd have likely lost interest in writing.
+
 ## Making it easier to start new posts
 
-With that in mind, I decided to write a bash script that gets my boilerplate out of the way, and enables me to immediately write a post. I decided that I wanted it to take on this usage pattern:
+With that in mind, I decided to write a bash script that enables me to start writing immediately. I decided that the script should follow this usage pattern:
 ```sh
 ./start-blog-post.sh "Lowering the barrier to writing more frequently"
 ```
 
-and then it could write the "front matter" at the top of the blog post, which should look like this:
+and then it would create a new markdown file with a Jekyll style blog post, and pre-fill the "front matter" at the top of the blog post, which should look like this:
 
 ```yaml
 ---
@@ -46,4 +52,4 @@ The full code I used to initiate this post can be found in this [Github Gist](ht
 ---
 
 [^1]: I strongly suspect that lightweight instruction-following models like the 3.8B parameter [phi4-mini](https://ollama.com/library/phi4-mini) or the 8B parameter [Llama 3.1 model](https://ollama.com/library/llama3.1) should do a great job, too.
-[^2]: During early testing, one of the models (Mistral 3.1 24B, I think), insisted on wrapping the output with triple-back quotes and explicitly denoting it as a `yaml` code block.
+[^2]: During early testing, one of the models (Mistral 3.1 24B, I think), insisted on wrapping the output with triple-back quotes and explicitly denoting it as a `yaml` code block. I also considered using the LLM to directly output just the short-title and the tags according to some JSON schema, but then I'd need to invoke some additional tools like `jq` to parse the output, and it seemed like a lot of extra work. In any event, the local LLM has performed good enough for me.
