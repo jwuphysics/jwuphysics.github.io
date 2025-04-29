@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 LLM_COMMAND="llm"
-MODEL_NAME="gemma3:27b-it-qat"
+MODEL_NAME="qwen3:8b"
 POSTS_DIR="."
 
 # handle arguments
@@ -20,6 +20,7 @@ CURRENT_MONTH=$(date +%m)
 
 # LLM prompt -- note that short-title is extracted from this later via regex
 read -r -d '' LLM_PROMPT << EOM
+\no_think
 Today's date is: ${CURRENT_DATE}
 The blog post title is: "${POST_TITLE}"
 
@@ -48,6 +49,9 @@ EOM
 # LLM call
 echo "Generating front matter using LLM..."
 FRONT_MATTER=$($LLM_COMMAND -m "$MODEL_NAME" "$LLM_PROMPT")
+
+# remove thinking tokens and then empty newlines
+FRONT_MATTER=$(echo "$FRONT_MATTER" | perl -0777 -pe 's|<think>.*?</think>||gs; s/^\s*\n+//')
 
 if [ -z "$FRONT_MATTER" ]; then
     echo "Error: Failed to get response from LLM."
