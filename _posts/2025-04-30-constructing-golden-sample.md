@@ -61,35 +61,19 @@ To say it another way: our full dataset has a certain distribution across the fo
 
 The \\(M\\) vs. \\(H\\) sample that we reviewed can be split into four quadrants, but recall that the human classifications \\(H\\) are *not* the ground truths.
 
-Meanwhile, we can actually write a confusion matrix using \\(G\\) that were selected for review via stratified sampling. But, these are not representative of the full data set, so we cannot estimate the calibrated error rates using \\(M\\) vs. \\(G\\).
+Meanwhile, we can actually write a confusion matrix using \\(G\\) that were selected for review via stratified sampling. But, these are not representative of the full data set, so we cannot estimate the calibrated error rates using \\(M\\) vs. \\(G\\):
 
-<table>
-  <tbody>
-    <tr>
-      <td>\\(M^+/G^+\\) <br> ≠ TP!</td>
-      <td>\\(M^-/G^+\\) <br> ≠ FN!</td>
-    </tr>
-    <tr>
-      <td>\\(M^+/G^-\\) <br> ≠ FP!</td>
-      <td>\\(M^-/G^-\\) <br> ≠ TN!</td>
-    </tr>
-  </tbody>
-</table>
+| | |
+|---|---|
+| \\(M^+/G^+\\) **≠ TP**! | \\(M^-/G^+\\) **≠ FN**! |
+| \\(M^+/G^-\\) **≠ FP**! | \\(M^-/G^-\\) **≠ TN**! |
 
 So, how do we get the confusion matrix using *representative* proportions of \\(G\\)?
 
-<table>
-  <tbody>
-    <tr>
-      <td>\\(\text{TP}_{\text{est}}\\)</td>
-      <td>\\(\text{FN}_{\text{est}}\\)</td>
-    </tr>
-    <tr>
-      <td>\\(\text{FP}_{\text{est}}\\)</td>
-      <td>\\(\text{TN}_{\text{est}}\\)</td>
-    </tr>
-  </tbody>
-</table>
+| | |
+|---|---|
+| \\(\text{TP}_{\text{est}}\\) | \\(\text{FN}_{\text{est}}\\) |
+| \\(\text{FP}_{\text{est}}\\) | \\(\text{TN}_{\text{est}}\\) |
 
 We can apply corrections based on our knowledge of the *total counts* and the rates of \\(G^+\\) or \\(G^-\\) conditioned on the model/historical classifications.
 
@@ -97,7 +81,13 @@ We can apply corrections based on our knowledge of the *total counts* and the ra
 
 I now explain how to compute a *corrected* confusion matrix that is anchored on the high-quality golden sample, and can be extrapolated for the full historical sample. To estimate these corrected metrics for *M* vs. a re-weighted ground truth \\(G\\), we can perform the following steps:
 
-1. **Write down the total counts in each quadrant:** We need the total count of items in the *entire dataset* that fall into each of the four \\(M\\) vs. \\(H\\) categories. Let's designate the *sizes* of these four quadrants: \\(\mathcal{N}_{\text{total}}(M^+/H^+)\\), \\(\mathcal{N}_{\text{total}}(M^-/H^-)\\), \\(\mathcal{N}_{\text{total}}(M^+/H^-)\\), and \\(\mathcal{N}_{\text{total}}(M^-/H^+)\\). Together they should sum to the total number of items in the dataset.
+1. **Write down the total counts in each quadrant:** We need the total count of items in the *entire historical dataset* that fall into each of the four \\(M\\) vs. \\(H\\) categories. Let's designate the *sizes* of these four quadrants: 
+
+| | |
+|---|---|
+| \\(\mathcal{N}_{\text{total}}(M^+/H^+)\\) | \\(\mathcal{N}_{\text{total}}(M^-/H^+)\\) |
+| \\(\mathcal{N}_{\text{total}}(M^+/H^-)\\) | \\(\mathcal{N}_{\text{total}}(M^-/H^-)\\) |
+and together they should sum to the total number of items in the dataset.
 
 2. **Analyze Performance for each reviewed quadrant:** For the samples we *did* review in \\(G\\), determine the *true* outcome (\\(G^+\\) or \\(G^-\\)) for each item. Then, calculate the performance *within each reviewed quadrant*:
  - Example: Consider the \\(n(M^+/H^-)\\) items we reviewed from the \\(M^+/H^-\\) quadrant. Compute how many were truly \\(G^+\\) and how many were truly \\(G^-\\) after review.
@@ -106,7 +96,7 @@ I now explain how to compute a *corrected* confusion matrix that is anchored on 
  - Calculate the *rate* \\(\mathcal{R}(G^{\pm} \mid \cdot)\\) of actual positives/negatives within this reviewed sample—i.e., conditioned on the original model and historical classifications. For example:
   - \\(\mathcal{R}(G^+ \mid M^+/H^-) = n_{\text{reviewed}}(M^+/H^- \rightarrow G^+) / n(M^+/H^-)\\)
   - \\(\mathcal{R}(G^- \mid M^+/H^-) = n_{\text{reviewed}}(M^+/H^- \rightarrow G^-) / n(M^+/H^-)\\)
- - Repeat this process for all four quadrants sampled from (\\(M^+/H^+\\), \\(M^-/H^-\), \\(M^+/H^-\), \\(M^-/H^+\\)), calculating the rates \\(\mathcal{R}(G^+ \mid \text{quadrant})\\) and \\(\mathcal{R}(G^- \mid \text{quadrant})\\). These rates represent the *best estimates* of the *ground truth* probabilities for items that fall into each \\(M\\) vs. \\(H\\) quadrant.
+ - Repeat this process for all four quadrants sampled from (\\(M^+/H^+\\), \\(M^-/H^-\\), \\(M^+/H^-\\), \\(M^-/H^+\\)), calculating the rates \\(\mathcal{R}(G^+ \mid \text{quadrant})\\) and \\(\mathcal{R}(G^- \mid \text{quadrant})\\). These rates represent the *best estimates* of the *ground truth* probabilities for items that fall into each \\(M\\) vs. \\(H\\) quadrant.
 
 3. **Estimate the confusion matrix for model classifications (\\(M\\) vs. \\(G\\)):** Combine the population sizes and the *within-quadrant rates* to estimate the counts for the overall confusion matrix. Specifically, we can compute:
  - **Estimated True Positives (\\(\text{TP}_{\text{est}}\\)):**
@@ -139,17 +129,9 @@ However, there are still some caveats. To name a few:
 
 [^1]: The \\(M\\) vs. \\(H\\) agreement/disagreement resembles a confusion matrix, but we should not think about it this way. This is because historical classifications \\(H\\) are *not* the ground truths!
 
-<table>
-  <tbody>
-    <tr>
-      <td>\\(M^+/H^+\\)</td>
-      <td>\\(M^-/H^+\\)</td>
-    </tr>
-    <tr>
-      <td>\\(M^+/H^-\\)</td>
-      <td>\\(M^-/H^-\\)</td>
-    </tr>
-  </tbody>
-</table>
-    
+| | |
+|---|---|
+| \\(M^+/H^+\\) | \\(M^-/H^+\\) |
+| \\(M^+/H^-\\) | \\(M^-/H^-\\) |
+
 Instead, we can think of this as a way to stratify our historical data set into four quadrants for review.
