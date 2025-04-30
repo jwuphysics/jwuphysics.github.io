@@ -8,7 +8,7 @@ tags:
  - machine-learning
 ---
 
-In order to evaluate a classification model, you'll need to construct an unbiased evaluation dataset. This post presents a method for creating a high-quality "golden sample" for evaluating a binary classifier model, particularly in scenarios with imbalanced datasets and potentially unreliable historical human labels. However, the golden sample may contain a disproportionate ratio of positive/negative classes; therefore, I also describe a method for computing *de-biased* evaluation metrics.
+To know how well a classification model truly performs, you need a reliable, unbiased set of test data. This post explains a practical way to create such a high-quality test set, often called a "golden sample." This method is especially useful when dealing with situations where one class is much rarer than the other (imbalanced data) and your existing labels might not be entirely accurate. Since creating this golden sample involves carefully selecting examples, it might not have the same mix of positive and negative cases as your full dataset. Therefore, this post also shows you how to adjust your final evaluation scores to correct for this, giving you a truly accurate measure of your model's performance.
 
 In brief, the "recipe" for building a golden sample involves:
 - Categorizing the entire dataset based on agreement and disagreement between the ML model (\\(M\\)) and historical (\\(H\\)) labels.
@@ -18,6 +18,8 @@ In brief, the "recipe" for building a golden sample involves:
 
 This post provides a practical guide to *(i)* construct a golden sample given a historical data set and limited ability to compile high quality labeled data and *(ii)* compute unbiased model metrics when evaluating model predictions against the golden sample.
 
+**Note**: I wrote this post with the assistance of Gemini 2.5 Pro.
+{: .notice}
 
 ## Introduction
 
