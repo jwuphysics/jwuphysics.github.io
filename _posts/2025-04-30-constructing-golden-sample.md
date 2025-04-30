@@ -3,10 +3,9 @@ title: 'Constructing a golden sample for evaluations'
 date: 2025-04-30
 permalink: /blog/2025/04/constructing-golden-sample/
 tags:
+ - evaluation
  - llms
  - machine-learning
- - evaluation
- - blogging
 ---
 
 In order to evaluate a classification model, you'll need to construct an unbiased evaluation dataset. This post presents a method for creating a high-quality "golden sample" for evaluating a binary classifier model, particularly in scenarios with imbalanced datasets and potentially unreliable historical human labels. However, the golden sample may contain a disproportionate ratio of positive/negative classes; therefore, I also describe a method for computing *de-biased* evaluation metrics.
@@ -64,10 +63,8 @@ Meanwhile, we can actually write a confusion matrix using \\(G\\) that were sele
 
 | | |
 |---|---|
-| \\(M^+/G^+\\) | \\(M^-/G^+\\) |
-| ≠ TP! | ≠ FN! |
-| \\(M^+/G^-\\) | \\(M^-/G^-\\) |
-| ≠ FP! | ≠ TN! |
+| \\(M^+/G^+\\) **≠ TP**! | \\(M^-/G^+\\) **≠ FN**! |
+| \\(M^+/G^-\\) **≠ FP**! | \\(M^-/G^-\\) **≠ TN**! |
 
 So, how do we get the confusion matrix using *representative* proportions of \\(G\\)?
 
