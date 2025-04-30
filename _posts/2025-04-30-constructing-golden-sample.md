@@ -42,14 +42,14 @@ I now present a method for creating a golden sample \\(G\\) by using an initial 
 2. Categorize the *entire* dataset based on \\(M\\) vs. \\(H\\).[^1] Get the counts for each category.
 3. Determine our total review budget, \\(\mathcal{N}_{\text{reviewed}}\\), i.e. how many examples we can afford to have carefully reviewed via consensus.
 4. Design a *stratified sampling plan* to select \\(\mathcal{N}_{\text{reviewed}}\\) examples: Decide target review counts for each of the four \\(M\\) vs. \\(H\\) categories.
-  - Select a statistically meaningful number of examples (e.g., 30 examples) in each quadrant we sample from. *Randomly* sample the required number of examples from *within* each stratum.
-  - Note that we are selecting disagreements (\\(M^+/H^-\\), \\(M^-/H^+\\)) as well as agreements (\\(M^+/H^+\\), \\(M^-/H^-\\)) for review. Hopefully the agreements are faster to review.
-  - Perform the human *consensus* review on all \\(\mathcal{N}_{\text{reviewed}}\\) selected examples to determine their *true* classifications.
+    - Select a statistically meaningful number of examples (e.g., 30 examples) in each quadrant we sample from. *Randomly* sample the required number of examples from *within* each stratum.
+    - Note that we are selecting disagreements (\\(M^+/H^-\\), \\(M^-/H^+\\)) as well as agreements (\\(M^+/H^+\\), \\(M^-/H^-\\)) for review. Hopefully the agreements are faster to review.
+    - Perform the human *consensus* review on all \\(\mathcal{N}_{\text{reviewed}}\\) selected examples to determine their *true* classifications.
 5. Compile the golden sample \\(G\\). This set consists only of the \\(\mathcal{N}_{\text{reviewed}}\\) examples with their consensus labels.
 6. Evaluate \\(M\\) and \\(H\\) against \\(G\\). See the Section below for details on how to compute statistics (while correcting for our *stratified sampling plan*).
-  - Generate a confusion matrix between \\(M\\) and \\(G\\) by comparing the model predictions \\(M\\) for the subset in \\(G\\) against their consensus labels in \\(G\\).
-  - Generate a confusion matrix between \\(H\\) and \\(G\\) by comparing historical labels \\(H\\) for the subset in \\(G\\) against their consensus labels in \\(G\\).
-  - Compute evaluation metrics (precision, recall, F1, specificity, etc.) for both \\(M\\) and \\(H\\) based on these confusion matrices.
+    - Generate a confusion matrix between \\(M\\) and \\(G\\) by comparing the model predictions \\(M\\) for the subset in \\(G\\) against their consensus labels in \\(G\\).
+    - Generate a confusion matrix between \\(H\\) and \\(G\\) by comparing historical labels \\(H\\) for the subset in \\(G\\) against their consensus labels in \\(G\\).
+    - Compute evaluation metrics (precision, recall, F1, specificity, etc.) for both \\(M\\) and \\(H\\) based on these confusion matrices.
 
 ## Why can't we just report evaluation metrics from this golden sample?
 
@@ -91,29 +91,29 @@ I now explain how to compute a *corrected* confusion matrix that is anchored on 
 and together they should sum to the total number of items in the dataset.
 
 2. **Analyze Performance for each reviewed quadrant:** For the samples we *did* review in \\(G\\), determine the *true* outcome (\\(G^+\\) or \\(G^-\\)) for each item. Then, calculate the performance *within each reviewed quadrant*:
-  - Example: Consider the \\(n(M^+/H^-)\\) items we reviewed from the \\(M^+/H^-\\) quadrant. Compute how many were truly \\(G^+\\) and how many were truly \\(G^-\\) after review.
-    - \\(n_{\text{reviewed}}(M^+/H^- \rightarrow G^+)\\): Count of reviewed \\(M^+/H^-\\) items that are actually \\(G^+\\).
-    - \\(n_{\text{reviewed}}(M^+/H^- \rightarrow G^-)\\): Count of reviewed \\(M^+/H^-\\) items that are actually \\(G^-\).
-  - Calculate the *rate* \\(\mathcal{R}(G^{\pm} \mid \cdot)\\) of actual positives/negatives within this reviewed sample—i.e., conditioned on the original model and historical classifications. For example:
-    - \\(\mathcal{R}(G^+ \mid M^+/H^-) = n_{\text{reviewed}}(M^+/H^- \rightarrow G^+) / n(M^+/H^-)\\)
-    - \\(\mathcal{R}(G^- \mid M^+/H^-) = n_{\text{reviewed}}(M^+/H^- \rightarrow G^-) / n(M^+/H^-)\\)
-  - Repeat this process for all four quadrants sampled from (\\(M^+/H^+\\), \\(M^-/H^-\\), \\(M^+/H^-\\), \\(M^-/H^+\\)), calculating the rates \\(\mathcal{R}(G^+ \mid \text{quadrant})\\) and \\(\mathcal{R}(G^- \mid \text{quadrant})\\). These rates represent the *best estimates* of the *ground truth* probabilities for items that fall into each \\(M\\) vs. \\(H\\) quadrant.
+    - Example: Consider the \\(n(M^+/H^-)\\) items we reviewed from the \\(M^+/H^-\\) quadrant. Compute how many were truly \\(G^+\\) and how many were truly \\(G^-\\) after review.
+        - \\(n_{\text{reviewed}}(M^+/H^- \rightarrow G^+)\\): Count of reviewed \\(M^+/H^-\\) items that are actually \\(G^+\\).
+        - \\(n_{\text{reviewed}}(M^+/H^- \rightarrow G^-)\\): Count of reviewed \\(M^+/H^-\\) items that are actually \\(G^-\).
+    - Calculate the *rate* \\(\mathcal{R}(G^{\pm} \mid \cdot)\\) of actual positives/negatives within this reviewed sample—i.e., conditioned on the original model and historical classifications. For example:
+        - \\(\mathcal{R}(G^+ \mid M^+/H^-) = n_{\text{reviewed}}(M^+/H^- \rightarrow G^+) / n(M^+/H^-)\\)
+        - \\(\mathcal{R}(G^- \mid M^+/H^-) = n_{\text{reviewed}}(M^+/H^- \rightarrow G^-) / n(M^+/H^-)\\)
+    - Repeat this process for all four quadrants sampled from (\\(M^+/H^+\\), \\(M^-/H^-\\), \\(M^+/H^-\\), \\(M^-/H^+\\)), calculating the rates \\(\mathcal{R}(G^+ \mid \text{quadrant})\\) and \\(\mathcal{R}(G^- \mid \text{quadrant})\\). These rates represent the *best estimates* of the *ground truth* probabilities for items that fall into each \\(M\\) vs. \\(H\\) quadrant.
 
 3. **Estimate the confusion matrix for model classifications (\\(M\\) vs. \\(G\\)):** Combine the population sizes and the *within-quadrant rates* to estimate the counts for the overall confusion matrix. Specifically, we can compute:
   - **Estimated True Positives (\\(\text{TP}_{\text{est}}\\)):**
-  $$ \text{TP}_{\text{est}} = \mathcal{N}_{\text{total}}(M^+/H^+) \cdot \mathcal{R}(G^+ \mid M^+/H^+) + \mathcal{N}_{\text{total}}(M^+/H^-) \cdot \mathcal{R}(G^+ \mid M^+/H^-). $$
-  Take all items \\(M\\) classified as positive. For those also \\(H\\) positive, multiply by the rate they turned out to be truly \\(G^+\\). For those where \\(H\\) was negative, multiply by the rate they turned out to be truly \\(G^+\\).
-  - **Estimated False Negatives (\\(\text{FN}_{\text{est}}\\)):**
-  $$ \text{FN}_{\text{est}} = \mathcal{N}_{\text{total}}(M^-/H^+) \cdot \mathcal{R}(G^+ \mid M^-/H^+) + \mathcal{N}_{\text{total}}(M^-/H^-) \cdot \mathcal{R}(G^+ \mid M^-/H^-). $$
-  Take all items \\(M\\) classified as negative. For those \\(H\\) called positive, multiply by the rate they turned out to be truly \\(G^+\\). For those where \\(H\\) was also negative, multiply by the rate they turned out to be truly \\(G^+\\).
-  - **Estimated False Positives (\\(\text{FP}_{\text{est}}\\)):**
-  $$ \text{FP}_{\text{est}} = \mathcal{N}_{\text{total}}(M^+/H^+) \cdot \mathcal{R}(G^- \mid M^+/H^+) + \mathcal{N}_{\text{total}}(M^+/H^-) \cdot \mathcal{R}(G^- \mid M^+/H^-). $$
-  Take all items \\(M\\) classified as positive. Multiply by the rates they turned out to be truly \\(G^-\\) within their original \\(H\\) classifications.
-  - **Estimated True Negatives (\\(\text{TN}_{\text{est}}\\)):**
-  $$ \text{TN}_{\text{est}} = \mathcal{N}_{\text{total}}(M^-/H^+) \cdot \mathcal{R}(G^- \mid M^-/H^+) + \mathcal{N}_{\text{total}}(M^-/H^-) \cdot \mathcal{R}(G^- \mid M^-/H^-). $$
-  Take all items \\(M\\) classified as negative. Multiply by the rates they turned out to be truly \\(G^-\\) within their original \\(H\\) classifications.
+    $$ \text{TP}_{\text{est}} = \mathcal{N}_{\text{total}}(M^+/H^+) \cdot \mathcal{R}(G^+ \mid M^+/H^+) + \mathcal{N}_{\text{total}}(M^+/H^-) \cdot \mathcal{R}(G^+ \mid M^+/H^-). $$
+    Take all items \\(M\\) classified as positive. For those also \\(H\\) positive, multiply by the rate they turned out to be truly \\(G^+\\). For those where \\(H\\) was negative, multiply by the rate they turned out to be truly \\(G^+\\).
+    - **Estimated False Negatives (\\(\text{FN}_{\text{est}}\\)):**
+    $$ \text{FN}_{\text{est}} = \mathcal{N}_{\text{total}}(M^-/H^+) \cdot \mathcal{R}(G^+ \mid M^-/H^+) + \mathcal{N}_{\text{total}}(M^-/H^-) \cdot \mathcal{R}(G^+ \mid M^-/H^-). $$
+    Take all items \\(M\\) classified as negative. For those \\(H\\) called positive, multiply by the rate they turned out to be truly \\(G^+\\). For those where \\(H\\) was also negative, multiply by the rate they turned out to be truly \\(G^+\\).
+    - **Estimated False Positives (\\(\text{FP}_{\text{est}}\\)):**
+    $$ \text{FP}_{\text{est}} = \mathcal{N}_{\text{total}}(M^+/H^+) \cdot \mathcal{R}(G^- \mid M^+/H^+) + \mathcal{N}_{\text{total}}(M^+/H^-) \cdot \mathcal{R}(G^- \mid M^+/H^-). $$
+    Take all items \\(M\\) classified as positive. Multiply by the rates they turned out to be truly \\(G^-\\) within their original \\(H\\) classifications.
+    - **Estimated True Negatives (\\(\text{TN}_{\text{est}}\\)):**
+    $$ \text{TN}_{\text{est}} = \mathcal{N}_{\text{total}}(M^-/H^+) \cdot \mathcal{R}(G^- \mid M^-/H^+) + \mathcal{N}_{\text{total}}(M^-/H^-) \cdot \mathcal{R}(G^- \mid M^-/H^-). $$
+    Take all items \\(M\\) classified as negative. Multiply by the rates they turned out to be truly \\(G^-\\) within their original \\(H\\) classifications.
 
-4. **Calculate final corrected metrics:** Use these estimated counts (\\(\text{TP}_{\text{est}}, \text{FN}_{\text{est}}, \text{FP}_{\text{est}}, \text{TN}_{\text{est}}\\)) to build our *final estimated confusion matrix* for \\(M\\) vs. \\(G\\). Calculate precision, recall, F1, etc, from this matrix. These corrected metrics will now properly reflect the model's performance on the original, imbalanced data distribution, despite being originally sampled in a stratified manner.
+4. **Calculate final corrected metrics:** Use these estimated counts (\\( \text{TP}_{\text{est}} \\), \\( \text{FN}_{\text{est}} \\), \\( \text{FP}_{\text{est}} \\), and \\( \text{TN}_{\text{est}} \\)) to build our *final estimated confusion matrix* for \\(M\\) vs. \\(G\\). Calculate precision, recall, F1, etc, from this matrix. These corrected metrics will now properly reflect the model's performance on the original, imbalanced data distribution, despite being originally sampled in a stratified manner.
 
 This approach can also be applied to determine the corrected confusion matrix elements for *historical* classifications, \\(H\\) vs. \\(G\\).
 
@@ -122,17 +122,10 @@ This approach can also be applied to determine the corrected confusion matrix el
 I offer a practical framework for constructing a golden sample (\\(G\\)) and accurately evaluating classifier model predictions (\\(M\\)) in the common situation where a complete, perfectly labeled ground truth dataset is unavailable or prohibitively expensive to create, especially with class imbalance, but a noisier historical dataset exists (\\(H\\)). By employing stratified sampling based on model (\\(M\\)) and historical (\\(H\\)) classifications, followed by careful human review and an important statistical re-weighting step, this recipe allows us to generate statistically unbiased estimates for confusion matrix components (TP, FN, FP, TN) and derived metrics like precision and recall. These corrected metrics accurately reflect the classifier's expected performance on the full, original data distribution, overcoming the limitations imposed by the targeted sampling strategy. Furthermore, this approach can be equally applied to assess the quality of the historical labels (\\(H\\)) against the established golden standard (\\(G\\)). Ultimately, this recipe provides a valuable tool for reliable model monitoring, evaluation, and iterative improvement in real-world AI Operations.
 
 However, there are still some caveats. To name a few:
-  - Datasets can drift over time, which means that historical performance is not indicative of future performance. For example, the number of JWST science papers before the observatory launched (pre-2022) is essentially zero, and the occurence of *bona fide* JWST papers may continue to evolve over time.
-  - Within each \\(M\\) vs. \\(H\\) quadrant, examples may vary in difficulty or ambiguity. It's likely that there are other factors that influence this. In the example I gave, the length of the paper, or the intended journal for submission might covary with the model performance in a way that is not captured here.
-  - It is very difficult to achieve perfect human consensus on the golden sample labels! At STScI, we found that multiple rounds of review led to clearer guidelines and definitions, but ultimately there was still some scatter in human labels. This disagreement can be [quantified](https://en.wikipedia.org/wiki/Inter-rater_reliability) but there's no silver bullet to resolving disagreement.
+    - Datasets can drift over time, which means that historical performance is not indicative of future performance. For example, the number of JWST science papers before the observatory launched (pre-2022) is essentially zero, and the occurence of *bona fide* JWST papers may continue to evolve over time.
+    - Within each \\(M\\) vs. \\(H\\) quadrant, examples may vary in difficulty or ambiguity. It's likely that there are other factors that influence this. In the example I gave, the length of the paper, or the intended journal for submission might covary with the model performance in a way that is not captured here.
+    - It is very difficult to achieve perfect human consensus on the golden sample labels! At STScI, we found that multiple rounds of review led to clearer guidelines and definitions, but ultimately there was still some scatter in human labels. This disagreement can be [quantified](https://en.wikipedia.org/wiki/Inter-rater_reliability) but there's no silver bullet to resolving disagreement.
 
 ---
 
-[^1]: The \\(M\\) vs. \\(H\\) agreement/disagreement resembles a confusion matrix, but we should not think about it this way. This is because historical classifications \\(H\\) are *not* the ground truths!
-
-| | |
-|---|---|
-| \\(M^+/H^+\\) | \\(M^-/H^+\\) |
-| \\(M^+/H^-\\) | \\(M^-/H^-\\) |
-
-Instead, we can think of this as a way to stratify our historical data set into four quadrants for review.
+[^1]: The \\(M\\) vs. \\(H\\) agreement/disagreement resembles a confusion matrix, but we should not think about it this way. This is because historical classifications \\(H\\) are *not* the ground truths! Instead, we should think of this as a way to stratify our historical data set into four quadrants for review.
