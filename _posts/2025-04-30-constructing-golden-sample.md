@@ -8,7 +8,7 @@ tags:
  - machine-learning
 ---
 
-To know how well a classification model truly performs, you need a reliable, unbiased set of test data. This post explains a practical way to create such a high-quality test set, often called a "golden sample." This method is especially useful when dealing with situations where one class is much rarer than the other (imbalanced data) and your existing labels might not be entirely accurate. Since creating this golden sample involves carefully selecting examples, it might not have the same mix of positive and negative cases as your full dataset. Therefore, this post also shows you how to adjust your final evaluation scores to correct for this, giving you a truly accurate measure of your model's performance.
+To know how well a classification model truly performs, you need a reliable evaluation dataset. This post explains a practical way to create such a high-quality dataset, often called a "golden sample." This method is especially useful when dealing with situations where one class is much rarer than the other (imbalanced data) and your existing labels might not be entirely accurate. Since creating this golden sample involves carefully selecting examples, it might not have the same mix of positive and negative cases as your full dataset. Therefore, this post also describes how to adjust your final evaluation scores to correct for this, giving you an unbiased measure of your model's performance.
 
 In brief, the "recipe" for building a golden sample involves:
 - Categorizing the entire dataset based on agreement and disagreement between the ML model (\\(M\\)) and historical (\\(H\\)) labels.
@@ -63,17 +63,33 @@ The \\(M\\) vs. \\(H\\) sample that we reviewed can be split into four quadrants
 
 Meanwhile, we can actually write a confusion matrix using \\(G\\) that were selected for review via stratified sampling. But, these are not representative of the full data set, so we cannot estimate the calibrated error rates using \\(M\\) vs. \\(G\\).
 
-| | |
-|---|---|
-| \\(M^+/G^+\\) **≠ TP**! | \\(M^-/G^+\\) **≠ FN**! |
-| \\(M^+/G^-\\) **≠ FP**! | \\(M^-/G^-\\) **≠ TN**! |
+<table>
+  <tbody>
+    <tr>
+      <td>\\(M^+/G^+\\) <br> ≠ TP!</td>
+      <td>\\(M^-/G^+\\) <br> ≠ FN!</td>
+    </tr>
+    <tr>
+      <td>\\(M^+/G^-\\) <br> ≠ FP!</td>
+      <td>\\(M^-/G^-\\) <br> ≠ TN!</td>
+    </tr>
+  </tbody>
+</table>
 
 So, how do we get the confusion matrix using *representative* proportions of \\(G\\)?
 
-| | |
-|---|---|
-| \\(\text{TP}_{\text{est}}\\) | \\(\text{FN}_{\text{est}}\\) |
-| \\(\text{FP}_{\text{est}}\\) | \\(\text{TN}_{\text{est}}\\) |
+<table>
+  <tbody>
+    <tr>
+      <td>\\(\text{TP}_{\text{est}}\\)</td>
+      <td>\\(\text{FN}_{\text{est}}\\)</td>
+    </tr>
+    <tr>
+      <td>\\(\text{FP}_{\text{est}}\\)</td>
+      <td>\\(\text{TN}_{\text{est}}\\)</td>
+    </tr>
+  </tbody>
+</table>
 
 We can apply corrections based on our knowledge of the *total counts* and the rates of \\(G^+\\) or \\(G^-\\) conditioned on the model/historical classifications.
 
@@ -123,9 +139,17 @@ However, there are still some caveats. To name a few:
 
 [^1]: The \\(M\\) vs. \\(H\\) agreement/disagreement resembles a confusion matrix, but we should not think about it this way. This is because historical classifications \\(H\\) are *not* the ground truths!
 
-| | |
-|---|---|
-| \\(M^+/H^+\\) | \\(M^-/H^+\\) |
-| \\(M^+/H^-\\) | \\(M^-/H^-\\) |
-
+<table>
+  <tbody>
+    <tr>
+      <td>\\(M^+/H^+\\)</td>
+      <td>\\(M^-/H^+\\)</td>
+    </tr>
+    <tr>
+      <td>\\(M^+/H^-\\)</td>
+      <td>\\(M^-/H^-\\)</td>
+    </tr>
+  </tbody>
+</table>
+    
 Instead, we can think of this as a way to stratify our historical data set into four quadrants for review.
