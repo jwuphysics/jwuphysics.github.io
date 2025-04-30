@@ -11,21 +11,25 @@ tags:
 To know how well a classification model truly performs, you need a reliable evaluation dataset. This post explains a practical way to create such a high-quality dataset, often called a "golden sample." This method is especially useful when dealing with situations where one class is much rarer than the other (imbalanced data) and your existing labels might not be entirely accurate. Since creating this golden sample involves carefully selecting examples, it might not have the same mix of positive and negative cases as your full dataset. Therefore, this post also describes how to adjust your final evaluation scores to correct for this, giving you an unbiased measure of your model's performance.
 
 In brief, the "recipe" for building a golden sample involves:
-- Categorizing the entire dataset based on agreement and disagreement between the ML model (\\(M\\)) and historical (\\(H\\)) labels.
-- Performing stratified random sampling across these categories within a defined review budget (\\(\mathcal{N}_{\text{reviewed}}\\)).
+- Categorizing the entire dataset based on agreement and disagreement between the *ML model* (\\(M\\)) and *historical human* (\\(H\\)) labels.
+- Performing stratified random sampling across these categories within a predefined review budget (\\(\mathcal{N}_{\text{reviewed}}\\)).
 - Conducting careful human consensus review on the sampled items to establish their true labels, forming the golden sample \\(G\\).
 - Critically, it presents a correction mechanism to account for the stratified sampling bias. By calculating true outcome rates within each reviewed stratum and re-weighting these rates by the original population counts of each \\(M\\) vs. \\(H\\) category, the method allows for the estimation of accurate performance metrics (TP, FN, FP, TN, Precision, Recall, etc.) that reflect the model's performance across the *entire* original dataset.
 
-This post provides a practical guide to *(i)* construct a golden sample given a historical data set and limited ability to compile high quality labeled data and *(ii)* compute unbiased model metrics when evaluating model predictions against the golden sample.
+This post provides a practical guide to *(i)* construct a golden sample given a historical dataset and limited ability to compile high quality labeled data and *(ii)* compute unbiased model metrics when evaluating model predictions against the golden sample.
 
 **Note**: I wrote this post with the assistance of Gemini 2.5 Pro.
 {: .notice}
 
 ## Introduction
 
-Let's say that we want to build a golden sample of classifications, \\(G\\), for evaluating our classifier model, \\(M\\). We also have access to a historical sample \\(H\\), which has been labeled by humans but is likely not good enough for a rigorous evaluation. So we have binary classifications from \\(M\\) and from \\(H\\) over the entire data set, and we'd now like to construct some smaller sample \\(G\\) with careful human review and consensus; therefore, \\(G\\) becomes the ground truth.
+Let's say that we want to build a golden sample of classifications, \\(G\\), for evaluating our classifier model, \\(M\\). We also have access to a historical sample \\(H\\), which has been labeled by humans, but is likely not good enough for a rigorous evaluation. 
 
-We'll also assume that the number of positive classes is far smaller than the number of negative classes, so that we have a bit of an imbalanced data problem. A real example from my work is identifying [JWST](https://science.nasa.gov/mission/webb/) science papers from recent [arXiv](https://arxiv.org/) preprints. Most papers on the arXiv do not include JWST science, so it doesn't make sense (or is very expensive) to compile a golden sample with proportional numbers of positive classes (JWST papers) and negative classes (non-JWST papers).
+One scenario in which this might arise is when we have historically labeled data by hand, but we now want to operationalize a model to perform this work. We want to see how the ML model performs relative to the historical annotations. In that case, the historical dataset **cannot** be (immediately) treated as the "ground truth," as it would imply that the ML model can never do better than the historical human labels.
+
+So we have binary classifications from \\(M\\) and from \\(H\\) over the entire historical dataset, and we'd now like to construct some smaller sample \\(G\\) with careful human review and consensus; therefore, \\(G\\) will become the ground truth.
+
+We'll also assume that the number of positive classes could be smaller than the number of negative classes, leading to an imbalanced data problem. A real example from my work is identifying [JWST](https://science.nasa.gov/mission/webb/) science papers from recent [arXiv](https://arxiv.org/) preprints. Most papers on the arXiv are not about JWST science, so it doesn't make sense (or it'd be very expensive) to construct a golden sample with proportional numbers of positive classes (JWST papers) and negative classes (non-JWST papers).
 
 As you might have noticed, I'll be using the following shorthand for datasets:
 - \\(G\\): Labels from the high-quality **golden sample**
@@ -61,7 +65,7 @@ To say it another way: our full dataset has a certain distribution across the fo
 
 The \\(M\\) vs. \\(H\\) sample that we reviewed can be split into four quadrants, but recall that the human classifications \\(H\\) are *not* the ground truths.
 
-Meanwhile, we can actually write a confusion matrix using \\(G\\) that were selected for review via stratified sampling. But, these are not representative of the full data set, so we cannot estimate the calibrated error rates using \\(M\\) vs. \\(G\\):
+Meanwhile, we can actually write a confusion matrix using \\(G\\) that were selected for review via stratified sampling. But, these are not representative of the full dataset, so we cannot estimate the calibrated error rates using \\(M\\) vs. \\(G\\):
 
 | | |
 |---|---|
@@ -119,7 +123,7 @@ This approach can also be applied to determine the corrected confusion matrix el
 
 ## Summary
 
-I offer a practical framework for constructing a golden sample (\\(G\\)) and accurately evaluating classifier model predictions (\\(M\\)) in the common situation where a complete, perfectly labeled ground truth dataset is unavailable or prohibitively expensive to create, especially with class imbalance, but a noisier historical dataset exists (\\(H\\)). By employing stratified sampling based on model (\\(M\\)) and historical (\\(H\\)) classifications, followed by careful human review and an important statistical re-weighting step, this recipe allows us to generate statistically unbiased estimates for confusion matrix components (TP, FN, FP, TN) and derived metrics like precision and recall. The corrected metrics accurately reflect the classifier's expected performance on the full, original data distribution, overcoming the limitations imposed by the targeted sampling strategy. Furthermore, this approach can be equally applied to assess the quality of the historical labels (\\(H\\)) against the established golden standard (\\(G\\)). Ultimately, this recipe provides a valuable tool for reliable model monitoring, evaluation, and iterative improvement in real-world AI Operations.
+I offer a practical framework for constructing a golden sample (\\(G\\)) and accurately evaluating classifier model predictions (\\(M\\)) in the common situation where a complete, perfectly labeled ground truth dataset is unavailable or prohibitively expensive to create, especially with class imbalance, but a noisier historical dataset exists (\\(H\\)). By employing stratified sampling based on model (\\(M\\)) and historical (\\(H\\)) classifications, followed by careful human review and an important statistical re-weighting step, this recipe allows us to generate statistically unbiased estimates for confusion matrix components (TP, FN, FP, TN) and derived metrics like precision and recall. The corrected metrics accurately reflect the classifier's expected performance on the full, original data distribution, overcoming the limitations imposed by the targeted sampling strategy. This approach can be also applied to assess the quality of the historical labels against the established golden sample – providing a useful metric of *how good is good enough*. Ultimately, this recipe provides a valuable tool for reliable model monitoring, evaluation, and iterative improvement in real-world 0operations.
 
 However, there are still some caveats. To name a few:
 - Datasets can drift over time, which means that historical performance is not indicative of future performance. For example, the number of JWST science papers before the observatory launched (pre-2022) is essentially zero, and the occurence of *bona fide* JWST papers may continue to evolve over time.
@@ -128,4 +132,4 @@ However, there are still some caveats. To name a few:
 
 ---
 
-[^1]: The \\(M\\) vs. \\(H\\) agreement/disagreement resembles a confusion matrix, but we should not think about it this way. This is because historical classifications \\(H\\) are *not* the ground truths! Instead, we should think of this as a way to stratify our historical data set into four quadrants for review.
+[^1]: The \\(M\\) vs. \\(H\\) agreement/disagreement resembles a confusion matrix, but we should not think about it this way. This is because historical classifications \\(H\\) are *not* the ground truths! Instead, we should think of this as a way to stratify our historical dataset into four quadrants for review.
