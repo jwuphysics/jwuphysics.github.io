@@ -8,7 +8,7 @@ tags:
  - machine-learning
 ---
 
-To know how well a classification model truly performs, you need a reliable evaluation dataset. This post explains a practical way to create such a high-quality dataset, often called a *golden sample*, and use it to compute unbiased evaluation metrics. 
+To truly know how well a machine learning model performs, you need a reliable evaluation set. This post explains a practical way to create such a high-quality dataset, often called a *golden sample*, and use it to compute unbiased evaluation metrics. 
 
 In brief, the "recipe" for building a golden sample involves:
 - Categorizing the entire dataset based on agreement and disagreement between the *ML model* (\\(M\\)) and *historical human* (\\(H\\)) labels.
