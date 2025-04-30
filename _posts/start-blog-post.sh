@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 LLM_COMMAND="llm"
-MODEL_NAME="qwen3:8b"
+MODEL_NAME="gemma3:12b-it-qat"
 POSTS_DIR="."
 
 # handle arguments
