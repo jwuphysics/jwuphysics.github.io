@@ -87,12 +87,12 @@ I now explain how to compute a *corrected* confusion matrix that is anchored on 
 
 1. **Write down the total counts in each quadrant:** We need the total count of items in the *entire historical dataset* that fall into each of the four \\(M\\) vs. \\(H\\) categories. Let's designate the *sizes* of these four quadrants: 
 
-| | |
-|---|---|
-| \\( \mathcal{N}_{\text{total}} (M^+/H^+) \\) | \\( \mathcal{N}_{\text{total}} (M^-/H^+) \\) |
-| \\( \mathcal{N}_{\text{total}} (M^+/H^-) \\) | \\( \mathcal{N}_{\text{total}} (M^-/H^-) \\) |
+    | | |
+    |---|---|
+    | \\( \mathcal{N}_{\text{total}} (M^+/H^+) \\) | \\( \mathcal{N}_{\text{total}} (M^-/H^+) \\) |
+    | \\( \mathcal{N}_{\text{total}} (M^+/H^-) \\) | \\( \mathcal{N}_{\text{total}} (M^-/H^-) \\) |
 
-and together they should sum to the total number of items in the dataset.
+    and together they should sum to the total number of items in the dataset.
 
 2. **Analyze Performance for each reviewed quadrant:** For the samples we *did* review in \\(G\\), determine the *true* outcome (\\(G^+\\) or \\(G^-\\)) for each item. Then, calculate the performance *within each reviewed quadrant*:
     - Example: Consider the \\(n(M^+/H^-)\\) items we reviewed from the \\(M^+/H^-\\) quadrant. Compute how many were truly \\(G^+\\) and how many were truly \\(G^-\\) after review.
