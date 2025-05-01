@@ -12,11 +12,11 @@ To truly know how well a machine learning model performs, you need a reliable ev
 
 In brief, the "recipe" for building a golden sample involves:
 - Categorizing the entire dataset based on agreement and disagreement between the *ML model* (\\(M\\)) and *historical human* (\\(H\\)) labels.
-- Performing stratified random sampling across these categories within a predefined review budget (\\(\mathcal{N}_{\text{reviewed}}\\)).
-- Conducting careful human consensus review on the sampled items to establish their true labels, forming the golden sample \\(G\\).
-- Critically, it presents a correction mechanism to account for the stratified sampling bias. By calculating true outcome rates within each reviewed stratum and re-weighting these rates by the original population counts of each \\(M\\) vs. \\(H\\) category, the method allows for the estimation of accurate performance metrics (TP, FN, FP, TN, Precision, Recall, etc.) that reflect the model's performance across the *entire* original dataset.
+- Performing *stratified sampling* across these categories within a predefined review budget (\\(\mathcal{N}_{\text{reviewed}}\\)).
+- Conducting human consensus review on the sampled items to establish their true labels, forming the *golden sample*, \\(G\\).
+- Correcting downstream metrics to account for the stratified sampling bias. By calculating true outcome rates within each reviewed stratum and re-weighting these rates by the original population counts of each \\(M\\) vs. \\(H\\) category, the method allows us to evaluate unbiased metrics (TP, FN, FP, TN, Precision, Recall, etc.) that reflect the model's performance across the *entire* original dataset.
 
-This method is especially useful when dealing with situations where one class is much rarer than the other (imbalanced data) and your existing labels might not be entirely accurate. Since creating this golden sample involves carefully selecting examples, it might not have the same mix of positive and negative cases as your full dataset. Therefore, this post also describes how to adjust your final evaluation scores to correct for this, giving you an unbiased measure of your model's performance.
+This method is especially useful when dealing with situations where one class is much rarer than the other (imbalanced data) and your existing labels might not be entirely accurate. Since the golden sample is selected from non-random examples, it might not have the same mix of positive and negative cases as your full dataset. Therefore, this post also describes how to adjust your final evaluation scores to correct for this, giving you an unbiased measure of model performance.
 
 **Note**: I wrote this post with the assistance of Gemini 2.5 Pro.
 {: .notice}
