@@ -22,7 +22,8 @@ We also got to hear a special message from Pope Francis. Fun fact, did you know 
 > The Vatican Observatory School in Astrophysics is thus a place where young people the world over can engage in dialogue and collaboration, helping one another in the search for truth, which in this case is concretized in the study of galaxies. **This simple and practical initiative shows how the sciences can be a fitting and effective means for promoting peace and justice.**
 >
 > Pope Francis 
-> *[full transcript](https://www.vatican.va/content/francesco/en/speeches/2014/june/documents/papa-francesco_20140626_astronomi-specola-vaticana.html) (June 26, 2014)*
+>
+> (*[full transcript](https://www.vatican.va/content/francesco/en/speeches/2014/june/documents/papa-francesco_20140626_astronomi-specola-vaticana.html) June 26, 2014)*
 
 I still remember how his words on scientific collaboration rang true. Our cohort of 25 students – representing 22 different countries – truly felt as though scientific research could help unify the world. After all, we all look up at the same sky, right? 
 
