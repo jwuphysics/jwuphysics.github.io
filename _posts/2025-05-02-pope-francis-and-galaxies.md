@@ -17,7 +17,8 @@ Back in 2014, I was privileged to participate in the Vatican Observatory Summer 
 We also got to hear a special message from Pope Francis. Fun fact, did you know that he had a technical certificate in chemistry? Anyway, here are some select quotes (all emphasis mine): 
 
 > For nearly a month now, you have been engaged not only in the study of galaxies, under the direction of professors who are experts in this field, but also in sharing your own cultural and religious traditions. In this way, you have offered an impressive example of dialogue and fruitful cooperation. During these weeks of study you have also made lasting friendships and laid the groundwork for future forms of collaboration. Seeing all of you here today is like looking at a marvelous mosaic made up of people from throughout the world. **It is only right that men and women everywhere should have access to research and scientific training. The hope that one day all peoples will be able to enjoy the benefits of science is one which spurs all of us on, scientists in particular.**
-> [...]
+>
+>
 > The Vatican Observatory School in Astrophysics is thus a place where young people the world over can engage in dialogue and collaboration, helping one another in the search for truth, which in this case is concretized in the study of galaxies. **This simple and practical initiative shows how the sciences can be a fitting and effective means for promoting peace and justice.**
 >
 > Pope Francis 
