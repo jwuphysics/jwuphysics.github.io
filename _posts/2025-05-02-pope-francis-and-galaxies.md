@@ -12,7 +12,7 @@ tags:
 Back in 2014, I was privileged to participate in the Vatican Observatory Summer School (VOSS). Over those four weeks, I formed new friends, made new discoveries, and ate awesome food. But the most unforgettable moment of that trip was meeting Pope Francis.
 
 ![]({{ site.baseurl }}/images/blog/pope-francis.jpg)
-<center>Shaking hands with Pope Francis. Maybe I should have paid $20 for the unwatermarked version.</center>
+*Shaking hands with Pope Francis. Maybe I should have paid $20 for the unwatermarked version.*
 
 We also got to hear a special message from Pope Francis. Fun fact, did you know that he had a technical certificate in chemistry? Anyway, here are some select quotes (all emphasis mine): 
 
