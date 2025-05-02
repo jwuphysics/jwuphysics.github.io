@@ -27,7 +27,7 @@ I still remember how his words on scientific collaboration rang true. Our cohort
 
 ---
 
-Six days after Pope Francis was laid to rest, we now have the first report of of the [President's Budget Request](https://www.whitehouse.gov/wp-content/uploads/2025/05/Fiscal-Year-2026-Discretionary-Budget-Request.pdf).
+Six days after Pope Francis was laid to rest, we now have the first report of the [President's Budget Request](https://www.whitehouse.gov/wp-content/uploads/2025/05/Fiscal-Year-2026-Discretionary-Budget-Request.pdf).
 
 The proposed budget is difficult to read, both in terms of content and style. It sounds like a bunch of random tweets mashed together – lots of railing against the *leftist woke agenda*. Hmm. 
 
@@ -35,4 +35,4 @@ Funding for scientific research is slashed: NSF faces a 56% cut (-$4.9B), and NA
 
 ---
 
-It's hard the rewind the clock, but I think that history will not look kindly on the current era of USA politics. Meanwhile, Pope Francis's hope – *The hope that one day all peoples will be able to enjoy the benefits of science is one which spurs all of us on* is one that I believe will live on.
+It's hard to rewind the clock, but I think that history will not look kindly on the current era of USA politics. Meanwhile, Pope Francis's hope – *The hope that one day all peoples will be able to enjoy the benefits of science is one which spurs all of us on* is one that I believe will live on.
