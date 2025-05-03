@@ -11,7 +11,7 @@ locale                   : "en-US"
 title                    : "jwuphysics"
 title_separator          : "-"
 name                     : &name "John F. Wu"
-description              : &description "John F. Wu is a tenure-track Associate Astronomer at STScI."
+description              : &description "John Wu's personal website"
 url                      : https://jwuphysics.github.io # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
 repository               : "jwuphysics/jwuphysics.github.io"
@@ -86,7 +86,7 @@ analytics:
 author:
   name             : "John F. Wu"
   avatar           : "profile.jpg"
-  bio              : "Astronomer, AI for Science"
+  bio              : "Astronomer"
   location         : 
   employer         :
   pubmed           : 
