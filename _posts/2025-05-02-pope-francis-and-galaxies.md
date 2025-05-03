@@ -5,8 +5,8 @@ permalink: /blog/2025/05/pope-francis-and-galaxies/
 tags:
   - astronomy
   - galaxies
+  - personal
   - politics
-  - religion
 ---
 
 Back in 2014, I was privileged to participate in the Vatican Observatory Summer School (VOSS). Over those four weeks, I formed new friends, made new discoveries, and ate awesome food. But the most unforgettable moment of that trip was meeting Pope Francis.
@@ -39,7 +39,6 @@ Funding for scientific research is slashed: NSF faces a 56% cut (-$4.9B), and NA
 
 It's hard to rewind the clock, but I think that history will not look kindly on the current era of USA politics. Meanwhile, Pope Francis's hope – * that one day all peoples will be able to enjoy the benefits of science* – is one that I believe will live on.
 
----
 
 Please note that these opinions are mine alone, and do not reflect those of my employer.
-{: notice} 
+{: .notice} 
