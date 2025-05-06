@@ -33,7 +33,7 @@ Six days after Pope Francis was laid to rest, we now have the first report of th
 
 The proposed budget is difficult to read, both in terms of content and style. It sounds like a bunch of random tweets mashed together – lots of railing against the *leftist woke agenda*. Hmm. 
 
-Funding for scientific research is slashed: NSF faces a 56% cut (-$4.9B), and NASA is reduced by 24% (-$6.0B). Oh, but defense gets an increase of +$113B and homeland security increases by +$42B.
+Funding for scientific research is slashed: NSF faces a 56% cut (-$4.9B), and NASA Science is reduced by 47% (-$3.4B). Oh, but defense gets an increase of +$113B and homeland security increases by +$42B.[^1]
 
 ---
 
@@ -42,3 +42,6 @@ It's hard to rewind the clock, but I think that history will not look kindly on 
 
 Please note that these opinions are mine alone, and do not reflect those of my employer.
 {: .notice} 
+
+---
+[^1]: I updated these numbers to reflect cuts specific to NASA *Science*. For more information, see the [AAS blog post](https://aas.org/posts/news/2025/05/skinny-presidents-budget-request-fy2026).
