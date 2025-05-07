@@ -25,7 +25,7 @@ Armed with newfound resolve, I turned these requirements into a prompt and chuck
 
 Within five minutes, I had created and iterated on a basic script to help me annotate data. I paid zero attention to formatting, comments, code quality, etc. All I did was verify that the code could save a single row of labels and log outputs, and, *Bob's your uncle*[^2] — I was in business. In less than half an hour, I had finished labeling my data set!
 
-This brief story shows how LLMs can really be a *force multiplier*. I personally find repetitive tasks to not only feel like a waste of time, but also a mental block that I am sometimes unwilling to hurdle. AI tools help me (and sometimes even teach me) as I overcome these barriers and accelerate through the task. 
+This brief story shows how LLMs can really be a *force multiplier*. Personally, I find repetitive tasks to feel like not only a waste of time, but also a mental block that I'm unwilling to hurdle. AI tools help me (and sometimes even teach me) to overcome these barriers and accelerate through the task. 
 
 ---
 
