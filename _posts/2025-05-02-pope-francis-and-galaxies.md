@@ -37,7 +37,7 @@ Funding for scientific research is slashed: NSF faces a 56% cut (-$4.9B), and NA
 
 ---
 
-It's hard to rewind the clock, but I think that history will not look kindly on the current era of USA politics. Meanwhile, Pope Francis's hope – * that one day all peoples will be able to enjoy the benefits of science* – is one that I believe will live on.
+It's hard to rewind the clock and pretend that we live in the same world that existed ten years ago. I also don't know what the future brings, but I think that history will not look kindly on the current era of USA politics. Meanwhile, Pope Francis's hope – *that one day all peoples will be able to enjoy the benefits of science* – is one that I believe will live on.
 
 
 Please note that these opinions are mine alone, and do not reflect those of my employer.
