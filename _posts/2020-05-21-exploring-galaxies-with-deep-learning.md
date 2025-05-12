@@ -76,5 +76,5 @@ If you're interested in seeing some of the more technical details, then please s
 
 ---
 
-*This post was migrated to my new blog on 2025-04-23*
+*This post first appeared on my old blog, and then on [Substack](https://jwuphysics.substack.com/p/deep-learning-with-galaxy-images), before migrating here on 2025-04-23*
 {: .notice}
