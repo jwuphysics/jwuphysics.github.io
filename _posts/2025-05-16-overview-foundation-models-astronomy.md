@@ -1,7 +1,7 @@
 ---
-title: 'Lightning Overview of Foundation Models in Astronomy'
+title: 'Foundation Models in Astronomy'
 date: 2025-05-16
-permalink: /blog/2025/05/overview-foundation-models-astronomy/
+permalink: /blog/2025/05/foundation-models-in-astronomy/
 tags:
   - astronomy
   - computer-vision
