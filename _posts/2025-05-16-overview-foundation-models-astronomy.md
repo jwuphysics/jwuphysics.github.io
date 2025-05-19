@@ -45,7 +45,7 @@ As I mentioned at the top, the workshop organizers will be writing up another bl
 |-------------------------------------------------------------------|----------------------------------------------------------------------|----------------------------------------------------|
 | AstroCLIP ([Parker et al. 2023](https://arxiv.org/abs/2310.03024); [Github](https://github.com/PolymathicAI/AstroCLIP)) | DESI images and spectra                                | Contrastive                   |
 | Maven ([Zhang et al. 2024](https://arxiv.org/abs/2408.16829)) | Multi-modal time series (photometry and spectra)                | Contrastive                 |
-| AstroM$^3$ ([Rizhko & Bloom 2024](https://arxiv.org/abs/2411.08842))   | Multi-modal time series (photometry, spectra, and metadata)       | Contrastive              |
+| AstroM³ ([Rizhko & Bloom 2024](https://arxiv.org/abs/2411.08842))   | Multi-modal time series (photometry, spectra, and metadata)       | Contrastive              |
 | FALCO ([Zuo et al. 2025](https://arxiv.org/abs/2504.20290))        | Kepler time-series                                                   | Generative                         |
 | SpectraFM ([Koblischke & Bovy 2024](https://arxiv.org/abs/2411.04750)) | Stellar spectra (synthetic & real)                                 | Generative        |
 | SSL for DESI Legacy Survey ([Stein et al. 2021](https://arxiv.org/abs/2110.00023); [Github](https://github.com/georgestein/ssl-legacysurvey)) | DESI Legacy Survey galaxy images                                      | Contrastive                     |
