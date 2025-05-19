@@ -39,22 +39,23 @@ A critical question remains: Are people actually using foundation models to make
 
 As I mentioned at the top, the workshop organizers will be writing up another blog post focusing on our discussions and how we might guide our community of astronomical ML practitioners. Stay on the lookout for that!
 
-**Edit (2025-05-19)**: I'm including a list of foundation models in astronomy that I currently know about. There are arguably more, e.g. autoencoder variants such as [spender](https://arxiv.org/abs/2211.07890), but I'm trying to focus on large-scale foundation models that will (hopefully) be able generalize well to many tasks. Feel free to reach out if you're think I've made an egregious omission.
+**Edit (2025-05-19)**: I'm including a list of foundation models in astronomy that I currently know about. There are arguably more, e.g. autoencoder variants such as [spender](https://arxiv.org/abs/2211.07890), but I'm trying to focus on large-scale foundation models that will (hopefully) be able generalize well to many tasks. Feel free to reach out if you're think I've made an egregious omission.[^2]
 
 | Foundation Model                          | Domain                                                                 | Method                                             |
 |-------------------------------------------------------------------|----------------------------------------------------------------------|----------------------------------------------------|
-| AstroCLIP ([Parker et al. 2023](https://arxiv.org/abs/2310.03024); [Github](https://github.com/PolymathicAI/AstroCLIP)) | DESI images and spectra                                | Self-supervised (contrastive)                   |
-| Maven ([Zhang et al. 2024](https://arxiv.org/abs/2408.16829)) | Multi-modal time series (photometry and spectra)                | Self-supervised (time-series)                 |
-| AstroM$^3$ ([Rizhko & Bloom 2024](https://arxiv.org/abs/2411.08842))   | Multi-modal time series (photometry, spectra, and metadata)       | Self-supervised (contrastive)              |
-| FALCO ([Zuo et al. 2025](https://arxiv.org/abs/2504.20290))        | Kepler time-series                                                   | Self-supervised (generative)                         |
-| SpectraFM ([Koblischke & Bovy 2024](https://arxiv.org/abs/2411.04750)) | Stellar spectra (synthetic & real)                                 | Self-supervised (generative)        |
-| SSL for DESI Legacy Survey ([Stein et al. 2021](https://arxiv.org/abs/2110.00023); [Github](https://github.com/georgestein/ssl-legacysurvey)) | DESI Legacy Survey galaxy images                                      | Self-supervised (contrastive)                     |
-| GZ-Evo ([Walmsley et al. 2022](https://arxiv.org/abs/2206.11927); [Github](https://github.com/mwalmsley/galaxy-datasets)) | Galaxy images (multiple observatories)                                           | Self-supervised (contrastive)                        |
-| AstroPT ([Smith et al. 2024](https://arxiv.org/abs/2405.14930); [Github](https://github.com/Smith42/astroPT))     | DESI Legacy Survey Galaxy images                                      | Self-supervised (generative)                          |
-| Radio Galaxy Zoo ([Slijepcevic et al. 2022](https://arxiv.org/abs/2204.08816)) | Radio-wavelength galaxy images                           | Self-supervised (contrastive)                    |
-| SSL for Radio Interferometric Images ([Cecconello et al. 2024](https://arxiv.org/abs/2411.14078); [Github](https://github.com/dr4thmos/solo-learn-radio)) | Radio interferometric images                                        | Self-supervised (contrastive)                   |
-| SSL for LOFAR ([Baron Perez et al. 2025](https://arxiv.org/abs/2503.19111)) | Radio galaxy images (LoTSS-DR2)                                  | Self-supervised (contrastive)         |
+| AstroCLIP ([Parker et al. 2023](https://arxiv.org/abs/2310.03024); [Github](https://github.com/PolymathicAI/AstroCLIP)) | DESI images and spectra                                | Contrastive                   |
+| Maven ([Zhang et al. 2024](https://arxiv.org/abs/2408.16829)) | Multi-modal time series (photometry and spectra)                | Contrastive                 |
+| AstroM$^3$ ([Rizhko & Bloom 2024](https://arxiv.org/abs/2411.08842))   | Multi-modal time series (photometry, spectra, and metadata)       | Contrastive              |
+| FALCO ([Zuo et al. 2025](https://arxiv.org/abs/2504.20290))        | Kepler time-series                                                   | Generative                         |
+| SpectraFM ([Koblischke & Bovy 2024](https://arxiv.org/abs/2411.04750)) | Stellar spectra (synthetic & real)                                 | Generative        |
+| SSL for DESI Legacy Survey ([Stein et al. 2021](https://arxiv.org/abs/2110.00023); [Github](https://github.com/georgestein/ssl-legacysurvey)) | DESI Legacy Survey galaxy images                                      | Contrastive                     |
+| GZ-Evo ([Walmsley et al. 2022](https://arxiv.org/abs/2206.11927); [Github](https://github.com/mwalmsley/galaxy-datasets)) | Galaxy images (multiple observatories)                                           | Constrastive                        |
+| AstroPT ([Smith et al. 2024](https://arxiv.org/abs/2405.14930); [Github](https://github.com/Smith42/astroPT))     | DESI Legacy Survey Galaxy images                                      | Generative                          |
+| Radio Galaxy Zoo ([Slijepcevic et al. 2022](https://arxiv.org/abs/2204.08816)) | Radio-wavelength galaxy images                           | Constrastive                    |
+| SSL for Radio Interferometric Images ([Cecconello et al. 2024](https://arxiv.org/abs/2411.14078); [Github](https://github.com/dr4thmos/solo-learn-radio)) | Radio interferometric images                                        | Constrastive                   |
+| SSL for LOFAR ([Baron Perez et al. 2025](https://arxiv.org/abs/2503.19111)) | Radio galaxy images (LoTSS-DR2)                                  | Constrastive         |
 
 ---
 
 [^1]: Arguably, this is expanding the definition of a foundation model because it is being trained via *supervised* learning. Zoobot learns to predict vote fractions of citizen scientists' morphological classifications.
+[^2]: But if you send me your paper/method and I add it to this post, then I'll add an asterisk so everybody will know ;) 
