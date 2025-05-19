@@ -35,9 +35,25 @@ Building up this semantically rich representation of your dataset also provides 
 
 Foundation models are also becoming common across astronomy! In the past few years, we've seen foundation models trained on galaxy image cutouts (e.g., by [Hayat et al. 2020](https://arxiv.org/abs/2012.13083), [Stein et al. 2021](https://arxiv.org/abs/2110.00023), and [Smith et al. 2024](https://arxiv.org/abs/2405.14930)), stellar spectra ([Koblischke & Bovy 2024](https://arxiv.org/abs/2411.04750)), and even multiple modalities like images and spectra ([Parker & Lanusse et al. 2024](https://arxiv.org/abs/2310.03024)) or photometric and spectroscopic time series ([Zhang et al. 2024](https://arxiv.org/abs/2408.16829)). And there are many more coming soon!
 
-One of the critical questions remains: Are people actually using foundation models to make new discoveries? In general, the answer is no. Most citations are simply from other papers that are also releasing their own ML models. A notable exception is from Galaxy Zoo,[^1] whose Zoobot model by [Walmsley et al. 2021](https://arxiv.org/abs/2102.08414) has amassed ~200 citations leading to actual science! It remains to be seen whether current and next-generation foundation models will deliver real scientific value.
+A critical question remains: Are people actually using foundation models to make new discoveries? In general, the answer is no. Most citations are simply from other papers that are also releasing their own ML models. A notable exception is from Galaxy Zoo,[^1] whose Zoobot model by [Walmsley et al. 2021](https://arxiv.org/abs/2102.08414) has amassed ~200 citations leading to actual science! It remains to be seen whether current and next-generation foundation models will deliver real scientific value.
 
 As I mentioned at the top, the workshop organizers will be writing up another blog post focusing on our discussions and how we might guide our community of astronomical ML practitioners. Stay on the lookout for that!
+
+**Edit (2025-05-19)**: I'm including a list of foundation models in astronomy that I currently know about. There are arguably more, e.g. autoencoder variants such as [spender](https://arxiv.org/abs/2211.07890), but I'm trying to focus on large-scale foundation models that will (hopefully) be able generalize well to many tasks. Feel free to reach out if you're think I've made an egregious omission.
+
+| Foundation Model                          | Domain                                                                 | Method                                             |
+|-------------------------------------------------------------------|----------------------------------------------------------------------|----------------------------------------------------|
+| AstroCLIP ([Parker et al. 2023](https://arxiv.org/abs/2310.03024); [Github](https://github.com/PolymathicAI/AstroCLIP)) | DESI images and spectra                                | Self-supervised (contrastive)                   |
+| Maven ([Zhang et al. 2024](https://arxiv.org/abs/2408.16829)) | Multi-modal time series (photometry and spectra)                | Self-supervised (time-series)                 |
+| AstroM$^3$ ([Rizhko & Bloom 2024](https://arxiv.org/abs/2411.08842))   | Multi-modal time series (photometry, spectra, and metadata)       | Self-supervised (contrastive)              |
+| FALCO ([Zuo et al. 2025](https://arxiv.org/abs/2504.20290))        | Kepler time-series                                                   | Self-supervised (generative)                         |
+| SpectraFM ([Koblischke & Bovy 2024](https://arxiv.org/abs/2411.04750)) | Stellar spectra (synthetic & real)                                 | Self-supervised (generative)        |
+| SSL for DESI Legacy Survey ([Stein et al. 2021](https://arxiv.org/abs/2110.00023); [Github](https://github.com/georgestein/ssl-legacysurvey)) | DESI Legacy Survey galaxy images                                      | Self-supervised (contrastive)                     |
+| GZ-Evo ([Walmsley et al. 2022](https://arxiv.org/abs/2206.11927); [Github](https://github.com/mwalmsley/galaxy-datasets)) | Galaxy images (multiple observatories)                                           | Self-supervised (contrastive)                        |
+| AstroPT ([Smith et al. 2024](https://arxiv.org/abs/2405.14930); [Github](https://github.com/Smith42/astroPT))     | DESI Legacy Survey Galaxy images                                      | Self-supervised (generative)                          |
+| Radio Galaxy Zoo ([Slijepcevic et al. 2022](https://arxiv.org/abs/2204.08816)) | Radio-wavelength galaxy images                           | Self-supervised (contrastive)                    |
+| SSL for Radio Interferometric Images ([Cecconello et al. 2024](https://arxiv.org/abs/2411.14078); [Github](https://github.com/dr4thmos/solo-learn-radio)) | Radio interferometric images                                        | Self-supervised (contrastive)                   |
+| SSL for LOFAR ([Baron Perez et al. 2025](https://arxiv.org/abs/2503.19111)) | Radio galaxy images (LoTSS-DR2)                                  | Self-supervised (contrastive)         |
 
 ---
 
