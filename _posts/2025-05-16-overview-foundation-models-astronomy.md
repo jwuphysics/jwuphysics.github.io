@@ -15,7 +15,7 @@ Here's a casual introduction to foundation models and how they might impact astr
 
 [Foundation models](https://crfm.stanford.edu/report.html) are the base pre-trained neural networks for large language models (LLMs) like ChatGPT or Claude, vision models like DALLE, and even automated speech recognition (ASR) models like the ones that automatically caption your Youtube videos. 
 
-These models learn representations of data that can distinguish between examples in the training dataset. However, they're not really? trained in the usual supervised fashion; instead, foundation models undergo *self-supervised* learning by optimizing a contrastive or generative objective. You shouldn't be surprised to learn that Lilian Weng has incredibly comprehensive blog posts on [self-supervised learning](https://lilianweng.github.io/posts/2019-11-10-self-supervised/) and specifically [contrastive learning](https://lilianweng.github.io/posts/2021-05-31-contrastive/).
+These models learn representations of data that can distinguish between examples in the training dataset. However, they're not really trained in the usual supervised fashion; instead, foundation models undergo *self-supervised* learning by optimizing a contrastive or generative objective.[^1]
 
 Foundation models seek to learn *how* your data can be represented or generated. By minimizing a contrastive loss, you task your model to create similar representations for the same example "viewed" differently (or transformed differently under a data augmentation procedure), and different representations for different data examples. If instead, you minimize a generative loss, then you task your model with figuring out whatever representations are useful for generating another patch of the image or the next word in a text corpus. I'd wager that contrastive losses lead to stronger discriminatory power, and that generative losses lead to better generative power, but don't actually have any data to support this intuition. Oh well. 
 
@@ -35,19 +35,21 @@ Building up this semantically rich representation of your dataset also provides 
 
 Foundation models are also becoming common across astronomy! In the past few years, we've seen foundation models trained on galaxy image cutouts (e.g., by [Hayat et al. 2020](https://arxiv.org/abs/2012.13083), [Stein et al. 2021](https://arxiv.org/abs/2110.00023), and [Smith et al. 2024](https://arxiv.org/abs/2405.14930)), stellar spectra ([Koblischke & Bovy 2024](https://arxiv.org/abs/2411.04750)), and even multiple modalities like images and spectra ([Parker & Lanusse et al. 2024](https://arxiv.org/abs/2310.03024)) or photometric and spectroscopic time series ([Zhang et al. 2024](https://arxiv.org/abs/2408.16829)). And there are many more coming soon!
 
-A critical question remains: Are people actually using foundation models to make new discoveries? In general, the answer is no. Most citations are simply from other papers that are also releasing their own ML models. A notable exception is from Galaxy Zoo,[^1] whose Zoobot model by [Walmsley et al. 2021](https://arxiv.org/abs/2102.08414) has amassed ~200 citations leading to actual science! It remains to be seen whether current and next-generation foundation models will deliver real scientific value.
+A critical question remains: Are people actually using foundation models to make new discoveries? In general, the answer is no. Most citations are simply from other papers that are also releasing their own ML models. A notable exception is from Galaxy Zoo,[^2] whose Zoobot model by [Walmsley et al. 2021](https://arxiv.org/abs/2102.08414) has amassed ~200 citations leading to actual science! It remains to be seen whether current and next-generation foundation models will deliver real scientific value.
 
 As I mentioned at the top, the workshop organizers will be writing up another blog post focusing on our discussions and how we might guide our community of astronomical ML practitioners. Stay on the lookout for that!
 
-**Edit (2025-05-19)**: I'm including a list of foundation models in astronomy that I currently know about. There are arguably more, e.g. autoencoder variants such as [spender](https://arxiv.org/abs/2211.07890), but I'm trying to focus on large-scale foundation models that will (hopefully) be able generalize well to many tasks. Feel free to reach out if you're think I've made an egregious omission.[^2]
+**Edit (2025-05-19)**: I'm including a list of foundation models in astronomy that I currently know about. There are arguably more, e.g. autoencoder variants such as [spender](https://arxiv.org/abs/2211.07890), but I'm trying to focus on large-scale foundation models that will (hopefully) be able generalize well to many tasks. Feel free to reach out if you're think I've made an egregious omission.[^3]
 
 | Foundation Model                          | Domain                                                                 | Method                                             |
 |-------------------------------------------------------------------|----------------------------------------------------------------------|----------------------------------------------------|
-| AstroCLIP ([Parker et al. 2023](https://arxiv.org/abs/2310.03024); [Github](https://github.com/PolymathicAI/AstroCLIP)) | DESI images and spectra                                | Contrastive                   |
+| AstroCLIP ([Parker et al. 2023](https://arxiv.org/abs/2310.03024); [Github](https://github.com/PolymathicAI/AstroCLIP)) | Multi-modal (images and spectra)                                | Contrastive                   |
 | Maven ([Zhang et al. 2024](https://arxiv.org/abs/2408.16829)) | Multi-modal time series (photometry and spectra)                | Contrastive                 |
 | AstroM³ ([Rizhko & Bloom 2024](https://arxiv.org/abs/2411.08842))   | Multi-modal time series (photometry, spectra, and metadata)       | Contrastive              |
+| *AstroPT-Euclid ([Siudek et al. 2025](https://arxiv.org/abs/2503.15312)) | Multi-modal (images and photometry)                          | Generative                        | 
 | FALCO ([Zuo et al. 2025](https://arxiv.org/abs/2504.20290))        | Kepler time-series                                                   | Generative                         |
 | SpectraFM ([Koblischke & Bovy 2024](https://arxiv.org/abs/2411.04750)) | Stellar spectra (synthetic & real)                                 | Generative        |
+| *Gaia spectra ([Buck & Schwarz 2024](https://arxiv.org/abs/2410.16081)) | Stellar spectra (Gaia XP and RVS)                                 | Contrastive        |
 | SSL for DESI Legacy Survey ([Stein et al. 2021](https://arxiv.org/abs/2110.00023); [Github](https://github.com/georgestein/ssl-legacysurvey)) | DESI Legacy Survey galaxy images                                      | Contrastive                     |
 | GZ-Evo ([Walmsley et al. 2022](https://arxiv.org/abs/2206.11927); [Github](https://github.com/mwalmsley/galaxy-datasets)) | Galaxy images (multiple observatories)                                           | Constrastive                        |
 | AstroPT ([Smith et al. 2024](https://arxiv.org/abs/2405.14930); [Github](https://github.com/Smith42/astroPT))     | DESI Legacy Survey Galaxy images                                      | Generative                          |
@@ -57,5 +59,6 @@ As I mentioned at the top, the workshop organizers will be writing up another bl
 
 ---
 
-[^1]: Arguably, this is expanding the definition of a foundation model because it is being trained via *supervised* learning. Zoobot learns to predict vote fractions of citizen scientists' morphological classifications.
-[^2]: But if you send me your paper/method and I add it to this post, then I'll add an asterisk so everybody will know ;) 
+[^1]: You shouldn't be surprised to find that Lilian Weng has incredibly comprehensive blog posts on [self-supervised learning](https://lilianweng.github.io/posts/2019-11-10-self-supervised/) and specifically [contrastive learning](https://lilianweng.github.io/posts/2021-05-31-contrastive/).
+[^2]: Arguably, this is expanding the definition of a foundation model because it is being trained via *supervised* learning. Zoobot learns to predict vote fractions of citizen scientists' morphological classifications.
+[^3]: But if you send me your paper/method and I add it to this post, then I'll add an asterisk so everybody will know ;) 
