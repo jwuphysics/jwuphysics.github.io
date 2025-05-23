@@ -2,7 +2,7 @@
 title: 'Astronomical Super-resolution, Part II: GANs
 '
 date: 2021-12-02
-permalink: /blog/2021/01/galaxy-gans/
+permalink: /blog/2021/12/galaxy-gans/
 tags:
   - galaxies
   - tutorial
