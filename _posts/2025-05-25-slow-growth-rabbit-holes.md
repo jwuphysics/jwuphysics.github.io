@@ -10,7 +10,7 @@ tags:
 
 I am a self-confessed *productivity junkie*. I hate wasting time. And if you scroll through social media, or even my blog posts, you might think that the typical research or learning process is just a happy, monotonic hill climb, capped off with regular announcements of new discoveries or gained expertise. But what if the most important lessons emerge not from unencumbered progress, but rather from seemingly aimless pursuits and the frustration of doing things badly? This post is a tribute to all those times we got stuck and emerged with nothing to show for it, because those "unproductive" moments lead to some of the most important lessons we can ever learn.
 
-Here are a few blog posts that have impacted my thinking:
+A lot of this post stems from my own experience, and I hope that they're useful for you too. (But one of the takeaways here is that *sometimes you have to make your own mistakes* in order to learn.) Here are a few other blog posts that have impacted my thinking on productivity:
 * [Impact, agency, and taste](https://www.benkuhn.net/impact/) by Ben Kuhn
 * [How I think about my research process](https://www.alignmentforum.org/s/5GT3yoYM9gRmMEKqL/p/hjMy4ZxS5ogA9cTYK) by Neel Nanda (note that there are three parts)
 * [Some reasons to work on productivity and velocity](https://danluu.com/productivity-velocity/) by Dan Luu
@@ -18,7 +18,7 @@ Here are a few blog posts that have impacted my thinking:
 * [Every productivity thought I've ever had, as concisely as possible](https://guzey.com/productivity/) by Alexey Guzey
 * [The top idea in your mind](https://www.paulgraham.com/top.html) by Paul Graham
 
-I'm sure there are more that I've internalized, but can't quite remember right now; feel free to reach out to me if you have others in mind.
+I'm sure there are more that I've internalized, but can't quite remember right now; feel free to reach out to me if you other interesting ones.
 
 
 ## The exploratory phase
