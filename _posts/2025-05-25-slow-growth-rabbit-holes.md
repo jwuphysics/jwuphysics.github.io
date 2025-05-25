@@ -8,8 +8,6 @@ tags:
   - productivity
 ---
 
-# The benefits of slow growth, misguided rabbit holes, and painful mistakes
-
 I am a self-confessed *productivity junkie*. I hate wasting time. And if you scroll through social media, or even my blog posts, you might think that the typical research or learning process is just a happy, monotonic hill climb, capped off with regular announcements of new discoveries or gained expertise. But what if the most important lessons emerge not from unencumbered progress, but rather from seemingly aimless pursuits and the frustration of doing things badly? This post is a tribute to all those times we got stuck and emerged with nothing to show for it, because those "unproductive" moments lead to some of the most important lessons we can ever learn.
 
 Here are a few blog posts that have impacted my thinking:
