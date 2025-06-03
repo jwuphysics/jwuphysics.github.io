@@ -18,7 +18,7 @@ A lot of this post stems from my own experience, and I hope that they're useful 
 * [Every productivity thought I've ever had, as concisely as possible](https://guzey.com/productivity/) by Alexey Guzey
 * [The top idea in your mind](https://www.paulgraham.com/top.html) by Paul Graham
 
-I'm sure there are more that I've internalized, but can't quite remember right now; feel free to reach out to me if you other interesting ones.
+I'm sure there are more that I've internalized, but can't quite remember right now; feel free to reach out to me if you know of other interesting ones.
 
 
 ## The exploratory phase
