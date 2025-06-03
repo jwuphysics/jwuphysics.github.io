@@ -23,8 +23,6 @@ When I examined the referral data after excluding direct links and other sources
 - **Bluesky: 26.0%**  
 - **Twitter/X: 22.7%**
 
-These results were somehwat surprising, given that LinkedIn is the platform where I spend the least time crafting posts. The data suggests that more than half of my social media-driven traffic originates from a platform that many academics and researchers might consider secondary for content promotion.
-
 ## Twitter/X: When reach doesn't translate to readership
 
 Twitter's poor performance in driving actual blog readership is particularly pathetic when you consider the platform's apparent reach. I've had several tweets gain (fairly?) significant traction, e.g. my [blog migration tweet](https://x.com/simonw/status/1915423828987228385) was noticed by [Simon Willison](https://simonwillison.net/), and subsequently got 36,000 views. Yet despite his generous attention, the actual number of actual blog visits was comically low.
