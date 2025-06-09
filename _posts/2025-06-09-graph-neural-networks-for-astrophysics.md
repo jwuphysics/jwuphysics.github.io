@@ -11,7 +11,7 @@ tags:
 
 Many physical phenomena exhibit relational inductive biases and can be represented as mathematical graphs. In recent years, graph neural networks (GNNs) have been successfully used to model and learn from astronomical data. This post provides an introductory review to GNNs for astrophysics. This blog post is adapted from the introduction of an invited review article that I did not have the opportunity to complete.
 
-This is the beginning of an invited review article that I'll never finish. Apparently 
+This is the first few sections of an invited review article that's way past due... (If you're the editor reading this, then I'm really sorry!)
 {: .notice}
 
 
