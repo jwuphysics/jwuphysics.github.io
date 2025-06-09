@@ -42,6 +42,7 @@ The choice of graph construction method imposes a strong prior on the model, and
 ## A primer on mathematical graphs
 
 A graph with \\(N\\) nodes can be fully described by its adjacency matrix, \\(\mathbf{A}\\), a square \\(N \times N\\) matrix that describes how nodes are connected. If an edge connects node \\(i\\) to node \\(j\\), then element \\(A_{ij}\\) has a value of 1; otherwise it is 0. Physical systems are often approximately described by sparse graphs, where the number of edges \\(M \ll N(N-1)/2\\). This approximation holds if, for example, interactions or correlations between nodes fall off rapidly with distance. A sparse adjacency matrix can also be efficiently represented using a \\(2 \times M\\) matrix of edge indices. The graph \\(\mathcal{G}\\) may contain node features \\(\mathbf{X}\\) and edge features \\(\mathbf{E}\\), where
+
 $$
 \mathbf{X} = \begin{pmatrix}
     x_1^\top \\
@@ -57,13 +58,17 @@ $$
 $$
 
 Graphs have several characteristics that make them attractive for representing astrophysical concepts. Graph nodes have no preferred ordering, so the operation of a permutation matrix \\(\mathbf{P}\\) should yield the same graph as before. Critically, models that act on graphs (or sets; [Zaheer et al. 2017](https://arxiv.org/abs/1703.06114)) can also be made invariant or equivariant to permutations. A permutation-invariant function \\(f\\) must obey
+
 $$
 f(\mathbf{X}, \mathbf{A}) = f(\mathbf{PX}, \mathbf{PAP^\top}),
 $$
+
 while a permutation-equivariant function \\(F\\) must obey
+
 $$
 \mathbf{P} F(\mathbf{X}, \mathbf{A}) = F(\mathbf{PX}, \mathbf{PAP^\top}).
 $$
+
 Note that the indices of the edge features are implicitly re-ordered if the permutation operation acts on the adjacency matrix.
 
 ## Invariant and equivariant models
@@ -80,9 +85,11 @@ Other popular models in ML are already exploiting many of these symmetries. Inde
 Caption: Example of a simple GNN layer that makes node-level predictions. Node features \\(x_i\\), neighboring node features \\(x_j\\), and edge features \\(e_{ij}\\) are fed into a learnable function, \\(\phi\\), which outputs a hidden edge state \\(\varepsilon_{ij}\\). All edge states \\(\varepsilon_{ij}\\) that connect to node \\(i\\) are aggregated through \\(\oplus_j\\), a permutation-invariant aggregation function, and the concatenation of its output and the original node features are fed into another learnable function, \\(\psi\\), which finally outputs predictions at each node \\(i\\).
 
 Here, we'll briefly describe the simple GNN illustrated in the above figure. This general structure is often referred to as a **message-passing** framework. Let's focus on predictions that will be made on node \\(i\\). For each neighboring index \\(j\\), we feed neighboring node features \\(x_j\\), edge features \\(e_{ij}\\), and the input node features \\(x_i\\) into a function \\(\phi\\) that produces a "message" or edge hidden state \\(\varepsilon_{ij}\\):
+
 $$
 \varepsilon_{ij} = \phi(x_i, x_j, e_{ij}).
 $$
+
 \\(\phi\\) is a function with shared weights across all \\(ij\\), and it is parameterized by learnable weights and biases. In practice, \\(\phi\\) usually takes the form of a MLP with non-linear activations and normalization layers.
 
 An aggregation function \\(\oplus_j\\) operates on all edge hidden states \\(\varepsilon_{ij}\\) that connect to node \\(i\\), i.e., it pools over all neighbors \\(j\\). Common examples of the aggregation function include sum pooling, mean pooling, max pooling, or even a concatenated list of the above pooling functions. Crucially, the aggregation function must be permutation invariant in order for the GNN to remain permutation invariant.
@@ -102,15 +109,19 @@ GNNs are versatile and can be adapted for various prediction tasks depending on 
 - Graph-level tasks: These tasks involve making a single prediction for the entire graph. For instance, predicting the total mass (e.g., \\(M_{200}\\)) of a galaxy cluster (the graph) based on the properties and arrangement of its member galaxies. This usually involves an additional "readout" or "pooling" step that aggregates information from all nodes and edges into a single feature vector before making the final prediction.
 
 Our one-layer GNN described in this section can be extended in two different ways: (\textit{i}) multiple versions of the learnable functions with unshared weights can be learned in parallel, and (\textit{ii}) multiple GNN layers can be stacked on top of each other in order to make a deeper network. We now consider \\(u = \{1, 2, \cdots, U\}\\) unshared layers, and \\(\ell = \{1, 2, \cdots, L\}\\) stacked layers. For convenience, we also rewrite \\(x_i\\) as \\(\xi_i^{(0, \ell)}\\), \\(x_j\\) as \\(\xi_j^{(0, \ell)}\\), and \\(e_{ij}\\) as \\(\varepsilon_{ij}^{(0, \ell)}\\), where the same input features are used for all \\(\ell\\). (Note that the node and edge input features may have different dimensions than the node and edge hidden states.) With this updated nomenclature, each unshared layer produces a different set of edge states:
+
 $$
 \varepsilon^{(u,\ell)}_{ij} = \phi^{(u,\ell)}\left (\xi_i^{(u-1,\ell)},\xi_j^{(u-1,\ell)},\varepsilon_{ij}^{(u-1,\ell)}\right ),
 $$
+
 which are aggregated and fed into \\(\psi^{(u,\ell)}\\) to produce multiple node-level outputs:
+
 $$
 \xi_i^{(u,\ell)} = \psi^{(u,\ell)}\left (\xi_i^{(u, \ell)}, \oplus_j^{(u,\ell)}\bigg(\varepsilon^{(u-1,\ell)}_{ij}\bigg )\right ).
 $$
 
 The extended GNN can have a final learnable function \\(\rho\\) that makes node-level predictions from the concatenated hidden states:
+
 $$
 y_i = \rho\left (\xi_i^{(1,L)}, \xi_i^{(2,L)}, \cdots, \xi_i^{(U,L)}\right).
 $$
