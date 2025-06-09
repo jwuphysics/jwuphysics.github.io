@@ -117,7 +117,7 @@ $$
 which are aggregated and fed into \\(\psi^{(u,\ell)}\\) to produce multiple node-level outputs:
 
 $$
-\xi_i^{(u,\ell)} = \psi^{(u,\ell)}\left (\xi_i^{(u, \ell-1)}, \oplus_j^{(u,\ell-1)}\bigg(\varepsilon^{(u,\ell-1)}_{ij}\bigg )\right ).
+\xi_i^{(u,\ell)} = \psi^{(u,\ell)}\left (\xi_i^{(u, \ell-1)}, \oplus_j^{(u,\ell-1)}\left(\varepsilon^{(u,\ell-1)}_{ij}\right )\right ).
 $$
 
 The extended GNN can have a final learnable function \\(\rho\\) that makes node-level predictions from the concatenated hidden states:
@@ -127,20 +127,20 @@ y_i = \rho\left (\xi_i^{(1,L)}, \xi_i^{(2,L)}, \cdots, \xi_i^{(U,L)}\right).
 $$
 
 
-## A connection to attention
+## A connection to multi-headed attention
 
-Another way to say this is by representing \\(h_i^{(\ell)}\\) as the feature vector of node \\(i\\) at layer \\(\ell\\). The input is \\(h_i^{(0)} = x_i\\). A stack of \\(L\\) layers is then:
+Another way to say this is by representing \\(h_i^{(\ell)}\\) as the feature vector of node \\(i\\) at layer \\(\ell\\). Assuming that we aggregate all of the unshared layers at each $\\(\ell\\), then \\( h_i^{(\ell)} = \oplus_u(\phi^{u,\ell}) \\). In that case, the input is \\(h_i^{(0)} = x_i\\) and a stack of \\(L\\) layers is then:
 
 $$
-\mathbf{h}_i^{(\ell+1)} = \text{GNN-Layer}^{(\ell)} \left(\mathbf{h}_i^{(\ell)}, \left\{ \mathbf{h}_j^{(\ell)}, \mathbf{e}_{ij} \mid j \in \mathcal{N}(i) \right\} \right)
+\mathbf{h}_i^{(\ell+1)} = \text{GNN-Layer}^{(\ell)} \left(\mathbf{h}_i^{(\ell)}, \left\{ \mathbf{h}_j^{(\ell)}, \mathbf{e}_{ij} \mid j \in \mathcal{N}(i) \right\} \right).
 $$
 
-Within any single GNN layer, we can learn \\(U\\) different message functions in parallel — this is just like **multi-headed attention** (see [Veličković et al. 2017](https://arxiv.org/abs/1710.10903))! The outputs of these multiple heads \\(\phi^{(1)}, \phi^{(2)}, \cdots, \phi^{(U)}\\) can be concatenated or aggregated before the final node update:
+Within any single GNN layer, we can learn \\(U\\) different message functions in parallel — this is just like **multi-headed attention** (see [Veličković et al. 2017](https://arxiv.org/abs/1710.10903))! The outputs of these multiple heads \\(\phi^{(1)}, \phi^{(2)}, \cdots, \phi^{(U)}\\) can be concatenated (or aggregated) before the final node update:
 $$
-\text{aggregated\_message}_i = \text{CONCAT}\left[ \bigoplus_j \phi^{(1)}(...), \bigoplus_j \phi^{(2)}(...), \dots \right].
+\text{final_features}_i = \text{CONCAT}\left[ \bigoplus_j \phi^{(1)}(...), \bigoplus_j \phi^{(2)}(...), \dots \right].
 $$
 
-Once we've extracted this final aggregated set of features, we can then pass it through a final learnable function in order to make predictions.
+Once we've extracted this final set of features, we can then pass it through a final learnable function \\(\rho\\) in order to make predictions.
 
 ## Summary
 
