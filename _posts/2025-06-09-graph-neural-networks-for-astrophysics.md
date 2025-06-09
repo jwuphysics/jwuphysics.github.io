@@ -129,7 +129,7 @@ $$
 
 ## A connection to multi-headed attention
 
-Another way to say this is by representing \\(h_i^{(\ell)}\\) as the feature vector of node \\(i\\) at layer \\(\ell\\). Assuming that we aggregate all of the unshared layers at each $\\(\ell\\), then \\( h_i^{(\ell)} = \oplus_u(\phi^{u,\ell}) \\). In that case, the input is \\(h_i^{(0)} = x_i\\) and a stack of \\(L\\) layers is then:
+Another way to say this is by representing \\(h_i^{(\ell)}\\) as the feature vector of node \\(i\\) at layer \\(\ell\\). Assuming that we aggregate all of the unshared layers at each \\(\ell\\), then \\( h_i^{(\ell)} = \oplus_u(\phi^{u,\ell}) \\). In that case, the input is \\(h_i^{(0)} = x_i\\) and a stack of \\(L\\) layers is then:
 
 $$
 \mathbf{h}_i^{(\ell+1)} = \text{GNN-Layer}^{(\ell)} \left(\mathbf{h}_i^{(\ell)}, \left\{ \mathbf{h}_j^{(\ell)}, \mathbf{e}_{ij} \mid j \in \mathcal{N}(i) \right\} \right).
