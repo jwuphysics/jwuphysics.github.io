@@ -73,9 +73,9 @@ Note that the indices of the edge features are implicitly re-ordered if the perm
 
 ## Invariant and equivariant models
 
-As discussed above, GNNs are permutation-invariant to the re-ordering of nodes (Villar+2023). This invariance reveals a symmetry in the system, as the permutation operator leaves the graph unchanged. Additional symmetries can be imposed on graphs and GNNs, for example, recent works have developed graph models that are invariant or equivariant to rotations and translations in \\(3\\) or \\(N\\) dimensions, e.g., ([Cohen & Welling 2016](https://arxiv.org/abs/1612.08498), [Thomas et al. 2018](https://arxiv.org/abs/1802.08219), [Fuchs et al. 2020](https://arxiv.org/abs/2006.10503), [Satorras et al. 2021](https://arxiv.org/abs/2102.09844)). The subfield of symmetries and representations in machine learning is sometimes called geometric deep learning, and there are far more detailed reviews offered by [Bronstein et al. (2021)](https://arxiv.org/abs/2104.13478) or [Gerkin et al. (2021)](https://arxiv.org/abs/2105.13926).
+As discussed above, GNNs are permutation-invariant to the re-ordering of nodes. This invariance reveals a symmetry in the system, as the permutation operator leaves the graph unchanged. Additional symmetries can be imposed on graphs and GNNs, for example, recent works have developed graph models that are invariant or equivariant to rotations and translations in \\(3\\) or \\(N\\) dimensions, e.g., ([Cohen & Welling 2016](https://arxiv.org/abs/1612.08498), [Thomas et al. 2018](https://arxiv.org/abs/1802.08219), [Fuchs et al. 2020](https://arxiv.org/abs/2006.10503), [Satorras et al. 2021](https://arxiv.org/abs/2102.09844)). The subfield of symmetries and representations in machine learning is sometimes called geometric deep learning, and there are far more detailed reviews offered by [Bronstein et al. (2021)](https://arxiv.org/abs/2104.13478) or [Gerkin et al. (2021)](https://arxiv.org/abs/2105.13926).
 
-Notwithstanding the far superior review articles mentioned above, I still want to briefly discuss the benefits of leveraging symmetries in astrophysics. While modern ML has demonstrated that effective features and interactions can be learned directly from data, imposing physical symmetries as constraints can vastly reduce the "search space" for this learning task. Perhaps the simplest symmetry is by only using scalar representations. [Villar et al. (2021)](https://arxiv.org/abs/2106.06610) show that physical symmetry group-equivariant functions can be learned via contraction of vector and tensor inputs into scalars. Nonetheless, models that allow higher-order internal representations can efficiently learn using fewer data examples ([Geiger & Smidt 2022](https://arxiv.org/abs/2207.09453)).
+Notwithstanding the far superior review articles mentioned above, I still want to briefly discuss the benefits of leveraging symmetries in astrophysics. While modern ML has demonstrated that effective features and interactions can be learned directly from data, imposing physical symmetries as constraints can vastly reduce the "search space" for this learning task. Perhaps the simplest symmetry is by only using scalar representations. While models that preserve higher-order representations can be more data-efficient ([Geiger & Smidt 2022](https://arxiv.org/abs/2207.09453)), a simple and powerful way to build invariant models is by contracting all vector or tensor features into scalars (e.g., dot products) at the input layer, as discussed in [Villar et al. (2021)](https://arxiv.org/abs/2106.06610). Nonetheless, models that allow higher-order internal representations can efficiently learn using fewer data examples.
 
 Other popular models in ML are already exploiting many of these symmetries. Indeed, CNNs, which are commonly used for image data, and transformers, commonly used for text data, can both be considered special cases of GNNs. For example, a convolution layer operates on a graph that is represented on a grid; node features are the pixel values for each color channel, while linear functions over a constant (square) neighborhood represent the convolution operator. CNNs can learn (locally) translation-invariant features, although this invariance is broken if the CNN unravels its feature maps and passes them to a final MLP.
 
@@ -111,13 +111,13 @@ GNNs are versatile and can be adapted for various prediction tasks depending on 
 Our one-layer GNN described in this section can be extended in two different ways: (\textit{i}) multiple versions of the learnable functions with unshared weights can be learned in parallel, and (\textit{ii}) multiple GNN layers can be stacked on top of each other in order to make a deeper network. We now consider \\(u = \{1, 2, \cdots, U\}\\) unshared layers, and \\(\ell = \{1, 2, \cdots, L\}\\) stacked layers. For convenience, we also rewrite \\(x_i\\) as \\(\xi_i^{(0, \ell)}\\), \\(x_j\\) as \\(\xi_j^{(0, \ell)}\\), and \\(e_{ij}\\) as \\(\varepsilon_{ij}^{(0, \ell)}\\), where the same input features are used for all \\(\ell\\). (Note that the node and edge input features may have different dimensions than the node and edge hidden states.) With this updated nomenclature, each unshared layer produces a different set of edge states:
 
 $$
-\varepsilon^{(u,\ell)}_{ij} = \phi^{(u,\ell)}\left (\xi_i^{(u-1,\ell)},\xi_j^{(u-1,\ell)},\varepsilon_{ij}^{(u-1,\ell)}\right ),
+\varepsilon^{(u,\ell)}_{ij} = \phi^{(u,\ell)}\left (\xi_i^{(u,\ell-1)},\xi_j^{(u-1,\ell-1)},\varepsilon_{ij}^{(u,\ell-1)}\right ),
 $$
 
 which are aggregated and fed into \\(\psi^{(u,\ell)}\\) to produce multiple node-level outputs:
 
 $$
-\xi_i^{(u,\ell)} = \psi^{(u,\ell)}\left (\xi_i^{(u, \ell)}, \oplus_j^{(u,\ell)}\bigg(\varepsilon^{(u-1,\ell)}_{ij}\bigg )\right ).
+\xi_i^{(u,\ell)} = \psi^{(u,\ell)}\left (\xi_i^{(u, \ell-1)}, \oplus_j^{(u,\ell-1)}\bigg(\varepsilon^{(u,\ell-1)}_{ij}\bigg )\right ).
 $$
 
 The extended GNN can have a final learnable function \\(\rho\\) that makes node-level predictions from the concatenated hidden states:
@@ -125,6 +125,22 @@ The extended GNN can have a final learnable function \\(\rho\\) that makes node-
 $$
 y_i = \rho\left (\xi_i^{(1,L)}, \xi_i^{(2,L)}, \cdots, \xi_i^{(U,L)}\right).
 $$
+
+
+## A connection to attention
+
+Another way to say this is by representing \\(h_i^{(\ell)}\\) as the feature vector of node \\(i\\) at layer \\(\ell\\). The input is \\(h_i^{(0)} = x_i\\). A stack of \\(L\\) layers is then:
+
+$$
+\mathbf{h}_i^{(\ell+1)} = \text{GNN-Layer}^{(\ell)} \left(\mathbf{h}_i^{(\ell)}, \left\{ \mathbf{h}_j^{(\ell)}, \mathbf{e}_{ij} \mid j \in \mathcal{N}(i) \right\} \right)
+$$
+
+Within any single GNN layer, we can learn \\(U\\) different message functions in parallel — this is just like **multi-headed attention** (see [Veličković et al. 2017](https://arxiv.org/abs/1710.10903))! The outputs of these multiple heads \\(\phi^{(1)}, \phi^{(2)}, \cdots, \phi^{(U)}\\) can be concatenated or aggregated before the final node update:
+$$
+\text{aggregated\_message}_i = \text{CONCAT}\left[ \bigoplus_j \phi^{(1)}(...), \bigoplus_j \phi^{(2)}(...), \dots \right].
+$$
+
+Once we've extracted this final aggregated set of features, we can then pass it through a final learnable function in order to make predictions.
 
 ## Summary
 
