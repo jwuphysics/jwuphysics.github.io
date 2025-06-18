@@ -9,7 +9,7 @@ tags:
   - philosophical
 ---
 
-In the book **Impro**, Keith Johnstone recounts a moment between a teacher and a special needs student. The teacher holds up a flower and says, "Look at the pretty flower." The girl responds, "All of the flowers are beautiful." Then the teacher insists, "but this flower is especially beautiful." The girl proceeds to scream and thrash about violently.
+In the book [**Impro: Improvisation and the Theatre**](https://en.wikipedia.org/wiki/Impro:_Improvisation_and_the_Theatre), Keith Johnstone recounts a moment between a teacher and a special needs student. The teacher holds up a flower and says, "Look at the pretty flower." The girl responds, "All of the flowers are beautiful." Then the teacher insists, "but this flower is especially beautiful." The girl proceeds to scream and thrash about violently.
 
 Johnstone saw violence in this exchange, but not because of the student' actions:
 
@@ -17,7 +17,7 @@ Johnstone saw violence in this exchange, but not because of the student' actions
 
 The rejection of a another's world. Gentle, violent, imposition.
 
-As a father of two, I often have to resist this urge. My child sees something worth sharing, and I instinctively want to shape their perspective. Or convert their offerings into some teaching moment, to impart on them a fragment of my reality. But such a response to their [bid for attention](https://www.gottman.com/blog/want-to-improve-your-relationship-start-paying-more-attention-to-bids/) is what Keith calls "blocking" and discusses it throughout the book, mostly in the context of improvisation and theatre.
+As a father of two, I often have to resist this urge. My child sees something worth sharing, and I instinctively want to shape their perspective. Or convert their offerings into some teaching moment, to impart on them a fragment of my reality. But such a response to their [bid for attention](https://www.gottman.com/blog/want-to-improve-your-relationship-start-paying-more-attention-to-bids/) is what Keith calls "blocking", and discusses it at length throughout the book.
 
 This has been on my mind because I practice it daily now. If you (adroitly) use AI, then you probably do as well. 
 
