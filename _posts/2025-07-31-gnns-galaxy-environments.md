@@ -14,7 +14,7 @@ Note: this post is a continuation of a previous [introduction to GNNs in astroph
 
 ## The galaxy–halo connection
 
-In the $\Lambda$CDM cosmology, galaxies live in dark matter subhalos[^2] (see, e.g., the review by [Wechsler & Tinker](https://www.annualreviews.org/content/journals/10.1146/annurev-astro-081817-051756)). While dark matter dominates the mass content of the Universe, we can only directly observe the luminous signatures from galaxies that reside within. Our goal is to determine whether galaxy properties, such as its total stellar mass, can be predicted purely from dark matter simulations.
+In the ΛCDM cosmology, galaxies live in dark matter subhalos[^2] (see, e.g., the review by [Wechsler & Tinker](https://www.annualreviews.org/content/journals/10.1146/annurev-astro-081817-051756)). While dark matter dominates the mass content of the Universe, we can only directly observe the luminous signatures from galaxies that reside within. Our goal is to determine whether galaxy properties, such as its total stellar mass, can be predicted purely from dark matter simulations.
 
 To solve this problem 20 years ago, a technique called "subhalo abundance matching" was proposed. The goal is to connect simulated dark matter subhalos to galaxy populations based on the latter's [stellar masses](https://ui.adsabs.harvard.edu/abs/2004ApJ...609...35K/abstract) (or [luminosities](https://ui.adsabs.harvard.edu/abs/2004MNRAS.353..189V/abstract)). By rank-ordering the subhalo masses and assigning them to rank-ordered galaxy stellar masses, abundance matching imposes a monotonic relationship between the two populations.
 
@@ -43,7 +43,7 @@ Christian and I recognized that the entire simulated volume of galaxies could be
 
 We used matched runs of the Illustris TNG 300 dark matter only (DMO) + hydrodynamic simulations, i.e., the DMO simulation can only form dark matter (sub)halos, whereas the hydrodynamic run begins with the same initial conditions and forms similar (sub)halos as its DMO counterpart, but also includes messy baryonic physics. This means that we can map hydrodynamic galaxy predictions using a cosmic graph constructed from DMO simulations!
 
-We treat each subhalo as a node in this cosmic graph, and specify two DMO node features: the total subhalo mass ($M_{\rm subhalo}$) and the maximum circular velocity ($V_{\rm max}$).
+We treat each subhalo as a node in this cosmic graph, and specify two DMO node features: the total subhalo mass (M<sub>subhalo</sub>) and the maximum circular velocity (V<sub>max</sub>).
 
 To determine the graph connectivity, we imposed a constant *linking length*. Pairs of galaxies "know" about each other if they have smaller separations than the linking length, so we connect those pairs of nodes with graph edges. We also compute six edge features using the nodes' 3D positions and 3D velocities; these edge features record the geometry of the system in a E(3) group-invariant way.
 
@@ -53,11 +53,11 @@ As for the GNN model architecture, we use a graph network analogous to those des
 
 To cut to the chase: **GNNs dominate the competition when it comes to predicting galaxy stellar masses from DMO simulations.** 
 
-The figure below shows how different environmental indicators, quantified over various distance scales, affect the prediction error on $M_\star$. Lower error is better, and you can clearly see how GNNs (purple) surpass all other methods once they're given information on > 1 Mpc length scales.
+The figure below shows how different environmental indicators, quantified over various distance scales, affect the prediction error on M<sub>star</sub>. Lower error is better, and you can clearly see how GNNs (purple) surpass all other methods once they're given information on > 1 Mpc length scales.
 
 ![Figure 2 from Wu et al. 2024, showing how different ML models achieve different prediction errors for estimating galaxy stellar mass; the GNN in purple is the best.]({{ site.baseurl }}/images/blog/gnn-environment-performance.png)
 
-Specifically, we compare machine learning models where no environmental data is provided (yellow), the DisPerSE cosmic web features (green), simple overdensity averaged over a given length scale (blue), and GNNs with graph connectivity on the given length scale (purple). The non-GNN models employed here are [*explainable boosting machines* (EBMs)](https://interpret.ml/docs/ebm.html)—decision tree models that are both performant and interpretable. EBMs can receive environmental features on top of the $M_{\rm subhalo}$ and $V_{\rm max}$: think of them as additional columns in a tabular dataset. We can provide EBMs with the collection of DisPerSE features, specify the overdensity on scales ranging from hundreds of kpc to 10 Mpc, or leave out environmental summary statistics altogether.
+Specifically, we compare machine learning models where no environmental data is provided (yellow), the DisPerSE cosmic web features (green), simple overdensity averaged over a given length scale (blue), and GNNs with graph connectivity on the given length scale (purple). The non-GNN models employed here are [*explainable boosting machines* (EBMs)](https://interpret.ml/docs/ebm.html)—decision tree models that are both performant and interpretable. EBMs can receive environmental features on top of the M<sub>subhalo</sub> and V<sub>max</sub>: think of them as additional columns in a tabular dataset. We can provide EBMs with the collection of DisPerSE features, specify the overdensity on scales ranging from hundreds of kpc to 10 Mpc, or leave out environmental summary statistics altogether.
 
 I want to highlight two main takeaways:
 1. **Overdensity on 3 Mpc scales is the best simple environmental parameter**. Excluding the GNN model, we find that an EBM with spherically averaged overdensity achieves the lowest error for stellar mass predictions. It even outperforms the DisPerSE cosmic web features!
