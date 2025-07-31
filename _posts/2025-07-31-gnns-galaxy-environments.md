@@ -1,5 +1,5 @@
 ---
-title: 'GNNs and galaxy environments'
+title: 'Galaxy environments and graph neural networks'
 date: 2025-07-31
 permalink: /blog/2025/07/gnns-galaxy-environments/
 tags:
@@ -53,7 +53,7 @@ As for the GNN model architecture, we use a graph network analogous to those des
 
 To cut to the chase: **GNNs dominate the competition when it comes to predicting galaxy stellar masses from DMO simulations.** 
 
-The figure below shows how different environmental indicators, quantified over various distance scales, affect the prediction error on M<sub>star</sub>. Lower error is better, and you can clearly see how GNNs (purple) surpass all other methods once they're given information on > 1 Mpc length scales.
+The figure below shows how different environmental indicators, quantified over various distance scales, affect the prediction error on M<sub>star</sub>. Lower error is better, and you can clearly see how GNNs (purple) surpass all other methods once they're given information on > 1 Mpc length scales. (Figure adapted from [Wu, Jespersen, & Wechsler 2024](https://ui.adsabs.harvard.edu/abs/2024ApJ...976...37W/abstract).)
 
 ![Figure 2 from Wu et al. 2024, showing how different ML models achieve different prediction errors for estimating galaxy stellar mass; the GNN in purple is the best.]({{ site.baseurl }}/images/blog/gnn-environment-performance.png)
 
