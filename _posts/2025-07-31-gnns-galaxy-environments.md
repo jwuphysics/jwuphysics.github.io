@@ -5,7 +5,6 @@ permalink: /blog/2025/07/gnns-galaxy-environments/
 tags:
   - galaxies
   - graphs
-  - research
 ---
 
 This post discusses how graph neural networks (GNNs) can model the galaxy–halo connection within its large-scale surroundings. Dark matter structures, which seem to account for most of the mass in the Universe, can be represented as nodes in a cosmic graph. But dark matter—which solely interacts via gravitation—is also much easier to simulate than the messy baryons, whose magnetohydrodynamics are computationally expensive. By exploiting the representational power of GNNs, can we predict galaxies' *baryonic* properties purely using simple dark matter-only simulations? Yes we can!
