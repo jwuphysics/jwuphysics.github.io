@@ -25,4 +25,4 @@ I presented a [two-part course](https://github.com/AstroHackWeek/AstroHackWeek20
 In order to predict galaxy spectra from images, I created a CNN with hybrid normalization layers. In the NeurIPS workshop paper, we found that a combination of deconvolution layers and batch normalization can greatly improve results for CNNs trained on astronomical images. Pytorch code for this hybrid CNN can be found on [my Github page](https://github.com/jwuphysics/predicting-spectra-from-images).
 
 ## Blog
-I sporadically post in my [research blog](https://jwuphysics.substack.com/), which showcases some machine learning applications in astronomy. 
+I sometimes post in my [research blog](https://jwuphysics.github.io/blog/), which used to focus on machine learning applications in astronomy, but now spans a broader range of topics. 

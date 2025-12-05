@@ -67,7 +67,7 @@ In other words, junior researchers can sometimes believe that they have crystall
 
 LLMs are truly a double-edged sword for learning. 
 
-On one hand, they can be helpful by testing your knowledge in new ways (e.g. the Socratic approach I mentioned above; I also have a "devise questions for a PhD qualifying exam on topic X"). LLMs can help you get unstuck when your canonical text doesn't explain something in a manner intelligible to you. They can get rid of irrelevant roadblocks (e.g., you're learning about neural network optimization, but stuck in CUDA dependencies hell). LLMs can spin up highly individualized games that help you learn concepts in a way that's much more fun than doing practice problems.[^3] 
+On one hand, they can be helpful by testing your knowledge in new ways (e.g. the Socratic approach I mentioned above; I also have another prompt that quizzes me with PhD qualifying exam-like questions). LLMs can help you get unstuck when your canonical text doesn't explain something in a manner intelligible to you. They can get rid of irrelevant roadblocks (e.g., you're learning about neural network optimization, but stuck in CUDA dependencies hell). LLMs can spin up highly individualized games that help you learn concepts in a way that's much more fun than doing practice problems.[^3] 
 
 On the other hand, LLMs can leave you with a completely shallow understanding of a topic — while you feel like you totally understand it all! This is compounded by the fact that LLMs will tend toward positivity. Do not let your confidence be bolstered by hollow AI validation. Be vigilant and skeptical, because uncritical use of AI tools will absolutely inhibit your learning. 
 
