@@ -1,5 +1,5 @@
 ---
-title: 'Learning with LLMs: Pitfalls and Recommendations'
+title: 'Learning with LLMs'
 date: 2025-12-05
 permalink: /blog/2025/12/learning-with-llms/
 tags:
@@ -8,7 +8,7 @@ tags:
   - personal
 ---
 
-AI is here, and its impacts on education cannot be overstated. Let's put aside the issues of cheating; I assume that you *want* to learn, perhaps with the assistance of LLMs *if* they are actually helpful. But how can you be sure that you're not using AI as a crutch (e.g., outsourcing your thinking), versus using it to augment learning (e.g., revealing gaps in understanding, bypassing blockers that prevent learning, or tailoring education to your style)? 
+AI is here, and its impacts on education cannot be overstated. Let's put aside the issues of cheating; I assume that you *want* to learn, perhaps with the assistance of LLMs *if* they are actually helpful. But how can you be sure that you're not using AI as a crutch (e.g., outsourcing your thinking), versus using it to augment learning (e.g., revealing gaps in understanding, bypassing blockers that prevent learning, or tailoring education to your style)? In this post, I provide an analogy between learning and phase transitions in statistical mechanics, and describe recommendations and warnings on using LLMs in different learning scenarios.
 
 ## Introduction
 
