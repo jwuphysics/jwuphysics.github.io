@@ -8,7 +8,7 @@ tags:
   - personal
 ---
 
-AI is here, and its impacts on education cannot be overstated. Let's put aside the issues of cheating; I assume that you *want* to learn, perhaps with the assistance of LLMs *if* they are actually helpful. But how can you be sure that you're not using AI as a crutch (e.g., outsourcing your thinking), versus using it to augment learning (e.g., revealing gaps in understanding, bypassing blockers that prevent learning, or tailoring education to your style)? In this post, I provide an analogy between learning and phase transitions in statistical mechanics, and describe recommendations and warnings on using LLMs in different learning scenarios.
+AI is here, and its impacts on education cannot be overstated. Let's put aside the issues of cheating; I assume that you *want* to learn, perhaps with the assistance of LLMs *if* they are actually helpful. But how do you know you're not using AI as a crutch, versus using it to augment learning? The former setting outsources your thinking to AI, whereas the latter can help you reveal gaps in your understanding, bypass blockers that prevent learning, and/or tailor education to your style. In this post, I provide an analogy between learning and phase transitions in statistical mechanics, and describe recommendations and warnings on using LLMs in different learning scenarios.
 
 ## Introduction
 
@@ -52,7 +52,7 @@ In this phase, learning *should* feel easy and fun. There are likely still gaps 
 My late father had a PhD in chemistry. He loved to personify everything and attach *feelings* to them: oxygen *wants* to gain two electrons, the molybdenum *likes* to react when this catalyst is present, etc. We develop a similar feel for concepts when our understanding passes the critical point. And this intuition is vital for pursuing novel research ideas and making scientific discoveries.
 
 Or, you can plausibly extend your knowledge to other domains because you have crystallized the relevant intuitions. For example, in the excellent pedagogical text [*Data analysis recipes: Fitting a model to data*](https://arxiv.org/pdf/1008.4686), David Hogg et al. write:
-> The inverse covariance matrix appears in the construction of the \(\chi^2\) objective function like a linear "metric" for the data space: It is used to turn a N-dimensional vector displacement into a scalar squared distance between the observed values and the values predicted by the model. This distance can then be minimized. This idea—that the covariance matrix is a metric—is sometimes useful for thinking about statistics as a physicist.
+> The inverse covariance matrix appears in the construction of the \( \chi^2 \) objective function like a linear "metric" for the data space: It is used to turn a N-dimensional vector displacement into a scalar squared distance between the observed values and the values predicted by the model. This distance can then be minimized. This idea—that the covariance matrix is a metric—is sometimes useful for thinking about statistics as a physicist.
 
 While physicists can be guilty of thinking that they can leap into other fields ([relevant XKCD](https://xkcd.com/793/)), they often *do* have a strong grasp of mathematics and physical intuition. This combination is invaluable at the supercritical stage: the language of mathematics often translates well to other disciplines, while the intuition from physics can be helpful for predicting dynamics or phenomena given those mathematical laws. 
 
