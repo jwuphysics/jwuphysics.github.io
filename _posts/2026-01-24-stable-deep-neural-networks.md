@@ -1,5 +1,5 @@
 ---
-title: "Stabilizing Deep Neural Networks"
+title: "Stabilizing Deep Neural Networks by Staying Close to the Identity"
 permalink: /posts/2026/01/stabilizing-deep-neural-networks/
 date: 2026-01-24
 tags:
@@ -7,7 +7,7 @@ tags:
   - tutorial
 ---
 
-Deep neural networks can be thought of as compositions of many simple transformations, each represented by a layer with trainable parameters. When the number of layers is large, the effect of multiplying many random matrices becomes exponentially unstable — they can grow or shrink exponentially. This is the primary reason that naive initialization leads to exploding or vanishing signals for both forward (activations) and backward (gradients). Nonetheless, stability is possible when each layer is close to the identity operation. With the right scaling of weights at initialization, a deep network acts like a time-discretized flow, and the total transformation resembles a matrix exponential of small perturbations. 
+Deep neural networks can be thought of as compositions of many simple transformations, each represented by a layer with trainable parameters. When the number of layers is large, the effect of multiplying many random matrices becomes exponentially unstable, i.e. they can grow or shrink exponentially. This is the primary reason that naive initialization leads to exploding or vanishing signals for both forward (activations) and backward (gradients). Nonetheless, stability is possible when each layer is close to the identity operation. With the right scaling of weights at initialization, a deep network acts like a time-discretized flow, and the total transformation resembles a matrix exponential of small perturbations. 
 
 Earlier this month I gave a [talk](https://science.nasa.gov/astrophysics/programs/cosmic-origins/community/ai-ml-stig-lecture-series-12-jan-2026/) and tutorial on Inductive Biases to the [NASA AI/ML Science & Technology Interest Group](https://science.nasa.gov/astrophysics/programs/cosmic-origins/community/artificial-intelligence-machine-learning-science-technology-interest-group-ai-ml-stig/). Some audience members asked questions and pursued follow-up discussion about initialization, residual layers, and connections to differential equations. This post attempts to summarize the most important points and connect the dots. 
 
@@ -44,9 +44,7 @@ $$ M_L = \prod_{\ell=1}^{L} \left( I + \varepsilon A_\ell \right), $$
 where the product is ordered so that \\( \ell=1 \\) acts first on the input. We can look at two regimes in more detail to gain intuition:
 
 1. If we choose \\( \varepsilon = L^{-1} \\) and we let \\( L\to\infty \\), then—even with noncommuting operators, we can use the [Trotter product formula](https://en.wikipedia.org/wiki/Lie_product_formula) to find
-
 $$ M_L \to \exp\!\left( \frac{1}{L}\sum_{\ell=1}^{L} A_\ell \right) \quad \text{as } L\to\infty, $$
-
 for random \\( A_\ell \\). The average of the \\( A_\ell \\) should be finite, and thus the limit is a well-defined matrix exponential. Intuitively, we expect that many small, nearly commuting perturbations behave as a smooth exponential flow.
 
 2. If the perturbations are larger, say \\( \varepsilon = L^{-1/2} \\), then the product converges in distribution to the [stochastic or time-ordered exponential of a matrix-valued Brownian motion](https://lpetrov.cc/rmt25/rmt25-notes/rmt2025-l10.pdf). This is a random element of the [general linear group](https://en.wikipedia.org/wiki/General_linear_group), but still avoids the exponential blow-up that we'd worry about from unscaled random products.
@@ -79,11 +77,11 @@ and, under independence and small-perturbation assumptions, the variance of \\( 
 
 ## Why does this still work with nonlinear activations?
 
-Common activation functions behave approximately linearly around the origin. At initialization, pre-activations are centered and have controlled variance, so the network operates near this linear regime. As a result, the variance-propagation calculations, which are exact for linear activations, remain accurate approximations. For ReLU, we can account for the gating effect by adjusting the weight variance by a factor of two. For smooth activations like tanh or GELU, we can similarly compute the derivative near zero to set the appropriate scaling. In each case, the upshot is that each layer maps inputs to outputs without gross expansion or contraction, and therefore remains in the near-identity regime.
+Common activation functions behave approximately linearly around the origin. At initialization, pre-activations are centered and have controlled variance, so the network operates near this linear regime. As a result, the variance-propagation calculations, which are exact for linear activations, remain accurate approximations. For ReLU, we can account for the gating effect by adjusting the weight variance by a factor of two. For smooth activations like tanh or GELU, we can similarly compute the derivative near zero to set the appropriate scaling. In each case, the upshot is that—because we've kept initialization near the identity—each layer maps inputs to outputs without exponential instability.
 
 ## Why do resnets work so well?
 
-The incredible success of [residual neural networks](https://arxiv.org/abs/1512.03385) (resnets) shows that our arguments about staying close to the identity works in practice. A residual block updates via
+The incredible success of [residual neural networks](https://arxiv.org/abs/1512.03385) (resnets) shows the practicality of staying close to the identity. A residual block updates via
 
 $$ x_{\ell+1} = x_\ell + f_\ell(x_\ell), $$
 
@@ -102,7 +100,7 @@ $$ \left(I + J(t_L)\,dt\right)\cdots \left(I + J(t_1)\,dt\right). $$
 As the step size goes to zero, this product converges to the time-ordered (\\( \mathcal{T} \\)) exponential
 
 $$ \mathcal{T}\exp\!\left( \int_0^1 J(t)\,dt \right). $$
-The overall transformation is then a time-ordered exponential of the accumulated Jacobians, which mirrors the earlier product-of-near-identity-matrices viewpoint.
+The overall transformation is then a time-ordered exponential of the accumulated Jacobians, analogous to the earlier argument about taking a product of small perturbations from the identity.
 
 ## Summary
 
