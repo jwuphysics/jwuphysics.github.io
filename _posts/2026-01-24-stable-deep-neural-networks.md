@@ -9,7 +9,7 @@ tags:
 
 Deep neural networks can be thought of as compositions of many simple transformations, each represented by a layer with trainable parameters. When the number of layers is large, the effect of multiplying many random matrices becomes exponentially unstable, i.e. they can grow or shrink exponentially. This is the primary reason that naive initialization leads to exploding or vanishing signals for both forward (activations) and backward (gradients). Nonetheless, stability is possible when each layer is close to the identity operation. With the right scaling of weights at initialization, a deep network acts like a time-discretized flow, and the total transformation resembles a matrix exponential of small perturbations. 
 
-Earlier this month I gave a [talk](https://science.nasa.gov/astrophysics/programs/cosmic-origins/community/ai-ml-stig-lecture-series-12-jan-2026/) and tutorial on Inductive Biases to the [NASA AI/ML Science & Technology Interest Group](https://science.nasa.gov/astrophysics/programs/cosmic-origins/community/artificial-intelligence-machine-learning-science-technology-interest-group-ai-ml-stig/). Some audience members asked questions and pursued follow-up discussion about initialization, residual layers, and connections to differential equations. This post attempts to summarize the most important points and connect the dots. 
+Earlier this month I gave a [talk](https://science.nasa.gov/astrophysics/programs/cosmic-origins/community/ai-ml-stig-lecture-series-12-jan-2026/) and [tutorial on Inductive Biases](https://github.com/tingyuansen/NASA_AI_ML_STIG/tree/main/Resources/Lecture8_John_Wu) to the [NASA AI/ML Science & Technology Interest Group](https://science.nasa.gov/astrophysics/programs/cosmic-origins/community/artificial-intelligence-machine-learning-science-technology-interest-group-ai-ml-stig/). Some audience members asked questions and pursued follow-up discussion about initialization, residual layers, and connections to differential equations. This post attempts to summarize the most important points and connect the dots. 
 
 *Thanks to Gemini 3 for help with copyediting review and blog post formatting.*
 
@@ -44,8 +44,7 @@ $$ M_L = \prod_{\ell=1}^{L} \left( I + \varepsilon A_\ell \right), $$
 where the product is ordered so that \\( \ell=1 \\) acts first on the input. We can look at two regimes in more detail to gain intuition:
 
 1. If we choose \\( \varepsilon = L^{-1} \\) and we let \\( L\to\infty \\), then—even with noncommuting operators, we can use the [Trotter product formula](https://en.wikipedia.org/wiki/Lie_product_formula) to find
-$$ M_L \to \exp\!\left( \frac{1}{L}\sum_{\ell=1}^{L} A_\ell \right) \quad \text{as } L\to\infty, $$
-for random \\( A_\ell \\). The average of the \\( A_\ell \\) should be finite, and thus the limit is a well-defined matrix exponential. Intuitively, we expect that many small, nearly commuting perturbations behave as a smooth exponential flow.
+$$ M_L \to \exp\!\left( \frac{1}{L}\sum_{\ell=1}^{L} A_\ell \right) $$as $$ L\to\infty, $$ for random \\( A_\ell \\). The average of the \\( A_\ell \\) should be finite, and thus the limit is a well-defined matrix exponential. Intuitively, we expect that many small, nearly commuting perturbations behave as a smooth exponential flow.
 
 2. If the perturbations are larger, say \\( \varepsilon = L^{-1/2} \\), then the product converges in distribution to the [stochastic or time-ordered exponential of a matrix-valued Brownian motion](https://lpetrov.cc/rmt25/rmt25-notes/rmt2025-l10.pdf). This is a random element of the [general linear group](https://en.wikipedia.org/wiki/General_linear_group), but still avoids the exponential blow-up that we'd worry about from unscaled random products.
 
@@ -100,6 +99,7 @@ $$ \left(I + J(t_L)\,dt\right)\cdots \left(I + J(t_1)\,dt\right). $$
 As the step size goes to zero, this product converges to the time-ordered (\\( \mathcal{T} \\)) exponential
 
 $$ \mathcal{T}\exp\!\left( \int_0^1 J(t)\,dt \right). $$
+
 The overall transformation is then a time-ordered exponential of the accumulated Jacobians, analogous to the earlier argument about taking a product of small perturbations from the identity.
 
 ## Summary
