@@ -12,10 +12,16 @@ I am a tenure-track *Associate Astronomer* at STScI, and hold the title of Data 
 
 My research focuses on studying galaxies with multi-wavelength observations, machine learning, and interpretable artificial intelligence (AI) for scientific discovery. I am particularly interested in using **graph neural networks** (GNNs) to represent galaxies and their large-scale surroundings, and using interpretable **convolutional neural networks** (CNNs) to encode the connection between galaxy appearances and their physical properties. I co-lead the [Chesapeake ML-Astro](https://chesapeakemlastro.github.io/) research group and am a member of the [ISM*@ST](https://sites.google.com/view/ism-stsci/home) group. 
 
-I maintain a [blog](https://jwuphysics.github.io/blog/) where I post on topics like:
+I regularly give talks and colloquia on topics like:
+- **Astronomy Re-envisioned**, MIT Kavli Institute Astronomy Colloquium ([video](https://www.youtube.com/watch?v=UtZKWqzD9S0))
+- **Connecting galaxy morphology and astrophysics using interpretable AI**, NASA Galaxies SIG ([video](https://www.youtube.com/watch?v=imj-CGE1EOU))
+- **Evaluating LLMs in Astronomy Research**, JSALT 2024 Final Presentation ([video](https://www.youtube.com/live/CCL3WSBZyPI?si=szlbr_Y29OddGD_u&t=18663))
+- **Distilling physics from astronomical imaging**, KITP Galevo23 Conference ([video](https://www.youtube.com/watch?v=CCzDXTW00S0))
+
+I also maintain a [blog](https://jwuphysics.github.io/blog/) where I post on topics like:
+- [Learning with LLMs](https://jwuphysics.github.io/blog/2025/12/learning-with-llms/)
 - [GNNs in astrophysics](https://jwuphysics.github.io/blog/2025/06/graph-neural-networks-in-astrophysics/)
 - [Foundation models in astronomy](https://jwuphysics.github.io/blog/2025/05/foundation-models-in-astronomy/)
-- [Some ways I use LLMs](https://jwuphysics.github.io/blog/2025/04/four-ways-i-use-llms/)
 - [Two years in the tenure track](https://jwuphysics.github.io/blog/2024/01/two-years-in-the-tenure-track/)
 
 
