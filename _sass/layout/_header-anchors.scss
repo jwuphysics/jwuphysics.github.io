@@ -1,0 +1,21 @@
+/* Header anchor links (permalinks) */
+
+.page__content {
+  h2, h3, h4 {
+    position: relative;
+
+    .header-anchor {
+      visibility: hidden;
+      margin-left: 0.4rem;
+      text-decoration: none;
+      opacity: 0.6;
+      font-weight: normal;
+    }
+
+    &:hover .header-anchor,
+    .header-anchor:focus {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+}
