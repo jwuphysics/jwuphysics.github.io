@@ -199,7 +199,7 @@ ax.spines['top'].set_visible(False)
 
 It's nice to see that the metallicity varies quite smoothly in this space! However, it's hard to see any details with all these galaxies piled up on top of each other.
 
-The Nike swoosh curve in the scatter plot is interesting from an astrophysics standpoint. The metallicity appears to be double-valued for PCA \\(\hat{x}_2\\), not dissimilar to the degenerate metallicity solutions from the \\(R_{23}\\) indicator ([Pagel et al. 1979](https://scixplorer.org/abs/1979MNRAS.189...95P/abstract)). However, this is *not* the cause of the shape here, as \\(R_{23}\\) becomes double-valued at a metallicity of about 8.0, whereas the turnover here is observed at 8.8.
+The Nike swoosh curve in the scatter plot is interesting from an astrophysics standpoint. The metallicity appears to be double-valued for PCA \\(\hat{x}_2\\), not dissimilar to the degenerate metallicity solutions from the \\(R_{23}\\) indicator ([Pagel et al. 1979](https://ui.adsabs.harvard.edu/abs/1979MNRAS.189...95P/abstract)). However, this is *not* the cause of the shape here, as \\(R_{23}\\) becomes double-valued at a metallicity of about 8.0, whereas the turnover here is observed at 8.8.
 {: .notice}
 
 We can also plot the galaxy points using PCA dimension \\(\hat{x}_3\\):

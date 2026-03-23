@@ -73,6 +73,6 @@ I've found enormous value chatting with this LLM at the beginning of each work d
 ---
 
 [^1]: Fun fact: although I majored in Physics at Carnegie Mellon University, my first internship was in ML/Robotics/ECE at the [CMU CyLab](https://www.cylab.cmu.edu/).
-[^2]: Indeed, we developed a LLM-based tool called [Pathfinder](https://huggingface.co/spaces/kiyer/pathfinder) that helps with astronomical literature review! See the [paper](https://scixplorer.org/abs/2024ApJS..275...38I/abstract) for more details. Kartheik Iyer led this work, but credit really goes to our entire [2024 JSALT team](https://www.clsp.jhu.edu/evaluating-llm-performance-in-research-astronomy/), who worked on the problem of *Evaluating LLM Performance in Research Astronomy*.
+[^2]: Indeed, we developed a LLM-based tool called [Pathfinder](https://huggingface.co/spaces/kiyer/pathfinder) that helps with astronomical literature review! See the [paper](https://ui.adsabs.harvard.edu/abs/2024ApJS..275...38I/abstract) for more details. Kartheik Iyer led this work, but credit really goes to our entire [2024 JSALT team](https://www.clsp.jhu.edu/evaluating-llm-performance-in-research-astronomy/), who worked on the problem of *Evaluating LLM Performance in Research Astronomy*.
 [^3]: Seriously, why is the argument `unit` and not `units`? 
 [^4]: RIP my front-end/full-stack career.

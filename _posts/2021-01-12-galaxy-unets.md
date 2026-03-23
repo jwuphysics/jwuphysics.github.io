@@ -65,7 +65,7 @@ In particular, the fine details have not been recovered. Spiral arms that have b
 
 ## Super-resolution as a *realistic* astronomical problem
 
-We’ve found that our toy problem didn’t work so well. The final results appear to be limited by Nyquist sampling, and by our rather small data set. Our toy problem is still too hard: a factor of two reduction in image resolution destroys too much information. [Perhaps a deep neural network ](*[can](https://scixplorer.org/abs/2017MNRAS.467L.110S/abstract)*[ learn how to paint in information below the sampling or deconvolution limit](https://scixplorer.org/abs/2017MNRAS.467L.110S/abstract). But we don’t have enough data to train a U-Net generator to figure out what kinds of image patterns should appear below the resolution limit.
+We’ve found that our toy problem didn’t work so well. The final results appear to be limited by Nyquist sampling, and by our rather small data set. Our toy problem is still too hard: a factor of two reduction in image resolution destroys too much information. [Perhaps a deep neural network ](*[can](https://ui.adsabs.harvard.edu/abs/2017MNRAS.467L.110S/abstract)*[ learn how to paint in information below the sampling or deconvolution limit](https://ui.adsabs.harvard.edu/abs/2017MNRAS.467L.110S/abstract). But we don’t have enough data to train a U-Net generator to figure out what kinds of image patterns should appear below the resolution limit.
 
 Let’s now consider another  problem. Suppose we have a shallower, lower-resolution set of images from the [Sloan Digital Sky Survey](https://www.sdss.org/) (SDSS), but we wish we had deeper, higher resolution images from the [Dark Energy Camera Legacy Survey](https://www.legacysurvey.org/decamls/) (DECaLS). In fact, this is exactly the use case that we presented at the top of this post!
 
@@ -77,7 +77,7 @@ Our model should only be used for typical SDSS galaxies. As we have discussed ab
 
 ## The magic of U-Nets
 
-We can set up our problem as before, now with minimal pre-processing. All we have to do is to obtain galaxy images from both SDSS and DECaLS and ensure that they have the same angular sizes. I’ve elected to use a large sample of 142,000 galaxies studied in [one of my previous papers](https://scixplorer.org/abs/2019MNRAS.484.4683W/abstract) so that we can train our U-Net from scratch (and for longer). This time, the U-Net seems to perform quite well!
+We can set up our problem as before, now with minimal pre-processing. All we have to do is to obtain galaxy images from both SDSS and DECaLS and ensure that they have the same angular sizes. I’ve elected to use a large sample of 142,000 galaxies studied in [one of my previous papers](https://ui.adsabs.harvard.edu/abs/2019MNRAS.484.4683W/abstract) so that we can train our U-Net from scratch (and for longer). This time, the U-Net seems to perform quite well!
 
 ![Example 1 of the SDSS image (left), our U-Net reconstructed image (center), and the higher-fidelity DECaLS image (right).]({{ site.baseurl }}/images/blog/unet-sdss-decals-1.png)
 

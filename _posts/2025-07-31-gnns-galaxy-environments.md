@@ -9,26 +9,26 @@ tags:
 
 This post discusses how graph neural networks (GNNs) can model the galaxy–halo connection within its large-scale surroundings. Dark matter structures, which seem to account for most of the mass in the Universe, can be represented as nodes in a cosmic graph. But dark matter—which solely interacts via gravitation—is also much easier to simulate than the messy baryons, whose magnetohydrodynamics are computationally expensive. By exploiting the representational power of GNNs, can we predict galaxies' *baryonic* properties purely using simple dark matter-only simulations? Yes we can!
 
-Note: this post is a continuation of a previous [introduction to GNNs in astrophysics](https://jwuphysics.github.io/blog/2025/06/graph-neural-networks-in-astrophysics/). Special thanks to [Christian Kragh Jespersen](https://astrockragh.github.io/),[^1] who opened my eyes to the incredible power of GNNs for astrophysics! He also has several papers showing that graphs provide strong representations for *galaxy merger trees* (see [here](https://scixplorer.org/abs/2022ApJ...941....7J/abstract) and follow-up [here](https://scixplorer.org/abs/2024ApJ...965..101C/abstract)).
+Note: this post is a continuation of a previous [introduction to GNNs in astrophysics](https://jwuphysics.github.io/blog/2025/06/graph-neural-networks-in-astrophysics/). Special thanks to [Christian Kragh Jespersen](https://astrockragh.github.io/),[^1] who opened my eyes to the incredible power of GNNs for astrophysics! He also has several papers showing that graphs provide strong representations for *galaxy merger trees* (see [here](https://ui.adsabs.harvard.edu/abs/2022ApJ...941....7J/abstract) and follow-up [here](https://ui.adsabs.harvard.edu/abs/2024ApJ...965..101C/abstract)).
 
 ## The galaxy–halo connection
 
 In the ΛCDM cosmology, galaxies live in dark matter subhalos[^2] (see, e.g., the review by [Wechsler & Tinker](https://www.annualreviews.org/content/journals/10.1146/annurev-astro-081817-051756)). While dark matter dominates the mass content of the Universe, we can only directly observe the luminous signatures from galaxies that reside within. Our goal is to determine whether galaxy properties, such as its total stellar mass, can be predicted purely from dark matter simulations.
 
-To solve this problem 20 years ago, a technique called "subhalo abundance matching" was proposed. The goal is to connect simulated dark matter subhalos to galaxy populations based on the latter's [stellar masses](https://scixplorer.org/abs/2004ApJ...609...35K/abstract) (or [luminosities](https://scixplorer.org/abs/2004MNRAS.353..189V/abstract)). By rank-ordering the subhalo masses and assigning them to rank-ordered galaxy stellar masses, abundance matching imposes a monotonic relationship between the two populations.
+To solve this problem 20 years ago, a technique called "subhalo abundance matching" was proposed. The goal is to connect simulated dark matter subhalos to galaxy populations based on the latter's [stellar masses](https://ui.adsabs.harvard.edu/abs/2004ApJ...609...35K/abstract) (or [luminosities](https://ui.adsabs.harvard.edu/abs/2004MNRAS.353..189V/abstract)). By rank-ordering the subhalo masses and assigning them to rank-ordered galaxy stellar masses, abundance matching imposes a monotonic relationship between the two populations.
 
 This simple technique is capable of connecting galaxies to their host halos. However, it also assumes that galaxy evolution is not dictated by anything *but* the dark matter halo properties. Therefore, abundance matching fails to account for each galaxy's large-scale environment!
 
 ## To the cosmic web and beyond
 
-We've known for a long time that galaxy properties depend on their surroundings (see, e.g., [Dressler's famous 1980 paper](https://scixplorer.org/abs/1980ApJ...236..351D/abstract)). The exact nature of how this plays out is uncertain; does galaxy environment induce different mass accretion or merger rate? Do overdense environments superheat or exhaust cool gas needed to fuel star formation? Or do large-scale tidal torques alter galaxy properties over cosmic timescales? We don't really know the answer![^3] But empirically, we do know that the galaxy–halo connection also varies with environment.
+We've known for a long time that galaxy properties depend on their surroundings (see, e.g., [Dressler's famous 1980 paper](https://ui.adsabs.harvard.edu/abs/1980ApJ...236..351D/abstract)). The exact nature of how this plays out is uncertain; does galaxy environment induce different mass accretion or merger rate? Do overdense environments superheat or exhaust cool gas needed to fuel star formation? Or do large-scale tidal torques alter galaxy properties over cosmic timescales? We don't really know the answer![^3] But empirically, we do know that the galaxy–halo connection also varies with environment.
 
 ![Illustris TNG simulation of galaxies amidst the cosmic web. Red to white colors indicate ionized hot gas, while the blue-purple colors indicate dark matter density.]({{ site.baseurl }}/images/blog/illustris-cosmic-web.jpg)
 
 
 ### Overdensity 
 
-Some attempts have been made to account for galaxy environment. For example, "overdensity" is a common parameterization of the mass density on large scales (see, e.g., [Blanton et al. 2006](https://scixplorer.org/abs/2006ApJ...645..977B/abstract)). Whereas a typical galaxy's gravitational influence extends to a few hundred kpc, the overdensity can quantify the average density out to many Mpc. However, by taking a simple average over all mass in this spherical volume, the overdensity parameter is not sensitive to local variations in mass.
+Some attempts have been made to account for galaxy environment. For example, "overdensity" is a common parameterization of the mass density on large scales (see, e.g., [Blanton et al. 2006](https://ui.adsabs.harvard.edu/abs/2006ApJ...645..977B/abstract)). Whereas a typical galaxy's gravitational influence extends to a few hundred kpc, the overdensity can quantify the average density out to many Mpc. However, by taking a simple average over all mass in this spherical volume, the overdensity parameter is not sensitive to local variations in mass.
 
 ### DisPerSE
 
@@ -52,7 +52,7 @@ As for the GNN model architecture, we use a graph network analogous to those des
 
 To cut to the chase: **GNNs dominate the competition when it comes to predicting galaxy stellar masses from DMO simulations.** 
 
-The figure below shows how different environmental indicators, quantified over various distance scales, affect the prediction error on M<sub>star</sub>. Lower error is better, and you can clearly see how GNNs (purple) surpass all other methods once they're given information on > 1 Mpc length scales. (Figure adapted from [Wu, Jespersen, & Wechsler 2024](https://scixplorer.org/abs/2024ApJ...976...37W/abstract).)
+The figure below shows how different environmental indicators, quantified over various distance scales, affect the prediction error on M<sub>star</sub>. Lower error is better, and you can clearly see how GNNs (purple) surpass all other methods once they're given information on > 1 Mpc length scales. (Figure adapted from [Wu, Jespersen, & Wechsler 2024](https://ui.adsabs.harvard.edu/abs/2024ApJ...976...37W/abstract).)
 
 ![Figure 2 from Wu et al. 2024, showing how different ML models achieve different prediction errors for estimating galaxy stellar mass; the GNN in purple is the best.]({{ site.baseurl }}/images/blog/gnn-environment-performance.png)
 

@@ -24,7 +24,7 @@ The first step, of course, is to actually get the data. Galaxy images can be fet
 
 Galaxy metallicities can be obtained from the SDSS SkyServer using a [SQL query](http://skyserver.sdss.org/dr16/en/help/docs/sql_help.aspx) and a bit of `JOIN` magic. All in all, we use 130,000 galaxies with metallicity measurements as our training + validation data set.
 
-The code for the original published work ([Wu & Boada 2019](https://scixplorer.org/abs/2019MNRAS.484.4683W/abstract)) can be found in my [Github repo](https://github.com/jwuphysics/galaxy-cnns). However, this code (from 2018) used `fastai` *version 0.7*, and I want to show an updated version using the new and improved `fastai` *version 2* codebase. Also, some of the "best practices" for deep learning and computer vision have evolved since then, so I'd like to highlight those updates as well!
+The code for the original published work ([Wu & Boada 2019](https://ui.adsabs.harvard.edu/abs/2019MNRAS.484.4683W/abstract)) can be found in my [Github repo](https://github.com/jwuphysics/galaxy-cnns). However, this code (from 2018) used `fastai` *version 0.7*, and I want to show an updated version using the new and improved `fastai` *version 2* codebase. Also, some of the "best practices" for deep learning and computer vision have evolved since then, so I'd like to highlight those updates as well!
 
 ```python
 # imports
