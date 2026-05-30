@@ -6,12 +6,25 @@ author_profile: true
 ---
 
 {% include base_path %}
-{% include group-by-array collection=site.posts field="tags" %}
 
-{% for tag in group_names %}
-  {% assign posts = group_items[forloop.index0] %}
-  <h2 id="{{ tag | slugify }}" class="archive__subtitle">{{ tag }}</h2>
-  {% for post in posts %}
+{% assign tags_sorted = site.tags | sort %}
+
+<p class="page__taxonomy">
+  {% for tag in tags_sorted %}
+    {% assign tag_name = tag[0] %}
+    {% assign tag_posts = tag[1] %}
+    <a href="#{{ tag_name | slugify }}">{{ tag_name }}</a> <span class="page__taxonomy-item-count">({{ tag_posts | size }})</span>{% unless forloop.last %} · {% endunless %}
+  {% endfor %}
+</p>
+
+{% for tag in tags_sorted %}
+  {% assign tag_name = tag[0] %}
+  {% assign tag_posts = tag[1] %}
+
+  <h2 id="{{ tag_name | slugify }}" class="archive__subtitle">{{ tag_name }}</h2>
+
+  {% assign tag_posts_sorted = tag_posts | sort: "date" | reverse %}
+  {% for post in tag_posts_sorted %}
     {% include archive-single.html %}
   {% endfor %}
 {% endfor %}

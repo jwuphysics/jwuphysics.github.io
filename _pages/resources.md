@@ -24,5 +24,10 @@ I presented a [two-part course](https://github.com/AstroHackWeek/AstroHackWeek20
 ## Hybrid CNNs with deconvolution layers
 In order to predict galaxy spectra from images, I created a CNN with hybrid normalization layers. In the NeurIPS workshop paper, we found that a combination of deconvolution layers and batch normalization can greatly improve results for CNNs trained on astronomical images. Pytorch code for this hybrid CNN can be found on [my Github page](https://github.com/jwuphysics/predicting-spectra-from-images).
 
+## Panel Discussion on Institutional Support and Funding
+At NeurIPS 2023, as part of the [Machine Learning and the Physical Sciences (ML4PS) workshop](https://ml4physicalsciences.github.io/2025/), I moderated a panel discussion on institutional support and funding featuring Max Welling, Sara Hooker, and Jesse Thaler. The panel is available on the [official NeurIPS virtual site here](https://neurips.cc/virtual/2023/82191).
+
+![Panel Discussion on Institutional Support and Funding (NeurIPS 2023, Machine Learning and the Physical Sciences workshop).](/images/neurips2023-mlps-panel.jpg){:width="100%" .align-center}
+
 ## Blog
 I sometimes post in my [research blog](https://jwuphysics.github.io/blog/), which used to focus on machine learning applications in astronomy, but now spans a broader range of topics. 
