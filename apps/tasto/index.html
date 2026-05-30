@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tasto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#fdf6e3;        /* base3  */
+    --panel:#f1ead4;        /* a touch darker than paper */
+    --ink:#586e75;          /* base01 */
+    --ink-2:#657b83;        /* base00 */
+    --faint:#93a1a1;        /* base1  */
+    --rule:#ccc4ab;
+    --rule-faint:#ddd6c0;
+    --nut:#b3a98c;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%; margin:0;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:'Libre Baskerville',Baskerville,Georgia,serif;
+    display:flex; flex-direction:column; align-items:center;
+    min-height:100dvh; overflow:hidden; user-select:none;
+  }
+  header{
+    width:100%; max-width:420px; padding:20px 26px 4px;
+    display:flex; align-items:baseline; justify-content:space-between;
+  }
+  .wordmark{font-style:italic; font-size:18px; color:var(--ink-2); letter-spacing:.01em;}
+  .strings{display:flex; gap:18px;}
+  .strings button{
+    background:none; border:none; cursor:pointer; padding:2px 0 4px;
+    font-family:inherit; font-size:17px; color:var(--faint);
+    border-bottom:1px solid transparent; transition:color .15s, border-color .15s;
+  }
+  .strings button:hover{color:var(--ink-2);}
+  .strings button.on{color:var(--ink); border-bottom-color:var(--ink);}
+
+  .stage{position:relative; flex:1; width:100%; display:flex; justify-content:center; min-height:0;}
+  svg{height:100%; max-height:80dvh; width:auto; display:block;}
+
+  .veil{
+    position:absolute; inset:0; z-index:10; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:22px; text-align:center; padding:30px;
+    background:rgba(253,246,227,.95); transition:opacity .5s ease;
+  }
+  .veil h1{font-style:italic; font-weight:400; font-size:clamp(30px,7vw,44px); margin:0; color:var(--ink);}
+  .veil .line{font-style:italic; font-size:13px; color:var(--faint); margin:-8px 0 0;}
+  .begin{
+    cursor:pointer; font-family:inherit; font-size:15px; color:var(--ink);
+    background:none; border:1px solid var(--ink); border-radius:2px; padding:9px 26px;
+    transition:background .15s, color .15s;
+  }
+  .begin:hover{background:var(--ink); color:var(--paper);}
+  .hidden{opacity:0; pointer-events:none;}
+  .err{color:#b34b3a;}
+</style>
+</head>
+<body>
+  <header>
+    <div class="wordmark">Tasto</div>
+    <nav class="strings" id="strings"></nav>
+  </header>
+
+  <div class="stage">
+    <svg id="board" viewBox="0 0 360 720" preserveAspectRatio="xMidYMid meet" aria-label="fingerboard"></svg>
+    <div class="veil" id="veil">
+      <h1>Tasto</h1>
+      <p class="line" id="line">play a note</p>
+      <button class="begin" id="begin">begin</button>
+    </div>
+  </div>
+
+<script>
+//// ── Music model ──
+const A4 = 440;
+const midiToFreq = m => A4 * Math.pow(2, (m - 69) / 12);
+const NAMES = ['C','C\u266F','D','D\u266F','E','F','F\u266F','G','G\u266F','A','A\u266F','B'];
+const noteName = m => NAMES[((m % 12) + 12) % 12] + (Math.floor(m / 12) - 1);
+const isSharp  = m => NAMES[((m % 12) + 12) % 12].includes('\u266F');
+
+const STRINGS = [{id:'C',midi:36},{id:'G',midi:43},{id:'D',midi:50},{id:'A',midi:57}]
+  .map(s => ({...s, freq: midiToFreq(s.midi)}));
+let current = STRINGS[2]; // D
+
+//// ── Geometry: d/L = 1 - f_open/f ──
+const dOfN  = n => 1 - Math.pow(2, -n / 12);
+const D_MAX = 0.64, REF_RANGE = 16;
+const TOP = 64, BOTTOM = 672, SPAN = BOTTOM - TOP, CX = 180;
+const PANEL_HW = 42, TICK_HW = 50, LABEL_X = CX + TICK_HW + 12, MK_X = CX - TICK_HW - 8;
+const posY = d => TOP + Math.min(d, D_MAX) / D_MAX * SPAN;
+
+const SVGNS = 'http://www.w3.org/2000/svg';
+const el = (tag, a={}, text=null) => { const e = document.createElementNS(SVGNS, tag);
+  for (const k in a) e.setAttribute(k, a[k]);
+  if (text != null) e.appendChild(document.createTextNode(text)); return e; };
+const board = document.getElementById('board');
+
+function drawStatic(){
+  board.innerHTML = '';
+  // implied fingerboard: a faint panel
+  board.appendChild(el('rect',{x:CX-PANEL_HW, y:TOP, width:2*PANEL_HW, height:SPAN,
+    fill:'var(--panel)', rx:1}));
+  // nut
+  board.appendChild(el('line',{x1:CX-PANEL_HW-2, y1:TOP, x2:CX+PANEL_HW+2, y2:TOP,
+    stroke:'var(--nut)', 'stroke-width':1.6}));
+  board.appendChild(el('g',{id:'refs'}));
+  // string
+  board.appendChild(el('line',{x1:CX, y1:TOP-12, x2:CX, y2:BOTTOM+14,
+    stroke:'var(--ink)', 'stroke-width':1.3}));
+  // live marker
+  const m = el('g',{id:'marker', opacity:0});
+  m.appendChild(el('line',{id:'mline', x1:CX-TICK_HW, x2:CX+TICK_HW, y1:0, y2:0, 'stroke-width':1.6}));
+  m.appendChild(el('circle',{id:'mdot', cx:CX, cy:0, r:4}));
+  m.appendChild(el('text',{id:'mname', x:MK_X, y:0, 'text-anchor':'end', 'font-size':22}));
+  m.appendChild(el('text',{id:'mcents', x:MK_X, y:0, 'text-anchor':'end',
+    'font-style':'italic', 'font-size':12}));
+  board.appendChild(m);
+  drawRefs();
+}
+
+function drawRefs(){
+  const g = document.getElementById('refs'); g.innerHTML = '';
+  for (let n = 0; n <= REF_RANGE; n++){
+    const y = posY(dOfN(n)), m = current.midi + n;
+    const sharp = isSharp(m), octave = (n > 0 && n % 12 === 0);
+    const hw = octave ? TICK_HW + 7 : TICK_HW;
+    g.appendChild(el('line',{x1:CX-hw, x2:CX+hw, y1:y, y2:y,
+      stroke: octave ? 'var(--ink-2)' : (sharp ? 'var(--rule-faint)' : 'var(--rule)'),
+      'stroke-width': octave ? 1 : (sharp ? .6 : .8),
+      'stroke-dasharray': sharp ? '1.5 4' : 'none'}));
+    g.appendChild(el('text',{x:LABEL_X, y:y+4, 'font-size': sharp ? 11 : 12,
+      'font-style': sharp ? 'italic' : 'normal',
+      fill: sharp ? 'var(--faint)' : 'var(--ink)'}, noteName(m)));
+  }
+  // open string, named above the nut
+  g.appendChild(el('text',{x:CX, y:TOP-13, 'text-anchor':'middle',
+    'font-style':'italic', 'font-size':12, fill:'var(--ink-2)'}, noteName(current.midi)));
+}
+
+//// ── String selector ──
+const nav = document.getElementById('strings');
+STRINGS.forEach(s => {
+  const b = document.createElement('button');
+  b.textContent = s.id;
+  if (s === current) b.classList.add('on');
+  b.onclick = () => { current = s;
+    [...nav.children].forEach(c => c.classList.remove('on')); b.classList.add('on'); drawRefs(); };
+  nav.appendChild(b);
+});
+
+//// ── Intonation colour: muted sage-green → muted red ──
+function centColor(cents){
+  const c = Math.min(Math.abs(cents), 50);
+  return `hsl(${110 - c/50*102} ${40 + c/50*16}% 44%)`;
+}
+
+//// ── Pitch detection (McLeod / NSDF) ──
+function detectPitch(buf, sr, fmin, fmax){
+  const n = buf.length;
+  let mean = 0; for (let i=0;i<n;i++) mean += buf[i]; mean /= n;
+  let rms = 0; for (let i=0;i<n;i++){ const v = buf[i]-mean; rms += v*v; } rms = Math.sqrt(rms/n);
+  if (rms < 0.006) return null;
+  const maxTau = Math.min(Math.floor(sr/fmin), n>>1);
+  const minTau = Math.max(2, Math.floor(sr/fmax));
+  const nsdf = new Float32Array(maxTau+1);
+  for (let tau=minTau; tau<=maxTau; tau++){
+    let acf=0, m=0;
+    for (let i=0;i<n-tau;i++){ const a=buf[i]-mean, b=buf[i+tau]-mean; acf+=a*b; m+=a*a+b*b; }
+    nsdf[tau] = m>0 ? 2*acf/m : 0;
+  }
+  const peaks=[]; let pos=false, bestV=-1, bestT=-1;
+  for (let tau=minTau; tau<=maxTau; tau++){
+    const v=nsdf[tau];
+    if (v>0){ if (v>bestV){bestV=v;bestT=tau;} pos=true; }
+    else if (pos){ peaks.push([bestT,bestV]); pos=false; bestV=-1; bestT=-1; }
+  }
+  if (pos && bestT>0) peaks.push([bestT,bestV]);
+  if (!peaks.length) return null;
+  const maxPeak = peaks.reduce((a,p)=>Math.max(a,p[1]),0);
+  const chosen = peaks.find(p=>p[1] >= 0.9*maxPeak) || peaks[0];
+  const tau = chosen[0];
+  const x0=nsdf[Math.max(minTau,tau-1)], x1=nsdf[tau], x2=nsdf[Math.min(maxTau,tau+1)];
+  const den = x0 - 2*x1 + x2, shift = den!==0 ? 0.5*(x0-x2)/den : 0;
+  return { freq: sr/(tau+shift), clarity: x1 };
+}
+
+//// ── Audio + render loop ──
+let ctx, analyser, buf, lastValid = 0, nSmooth = null;
+const M = id => document.getElementById(id);
+
+async function begin(){
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ audio:{
+      echoCancellation:false, noiseSuppression:false, autoGainControl:false }});
+    ctx = new (window.AudioContext||window.webkitAudioContext)();
+    await ctx.resume();
+    analyser = ctx.createAnalyser(); analyser.fftSize = 4096;
+    ctx.createMediaStreamSource(stream).connect(analyser);
+    buf = new Float32Array(analyser.fftSize);
+    M('veil').classList.add('hidden');
+    loop();
+  }catch(e){
+    M('begin').textContent = 'try again';
+    const l = M('line'); l.classList.add('err');
+    l.textContent = 'microphone unavailable — open this file directly in a browser';
+  }
+}
+
+function setMarker(nVal, cents, name){
+  const y = posY(1 - Math.pow(2, -nVal/12)), col = centColor(cents);
+  M('mline').setAttribute('y1', y); M('mline').setAttribute('y2', y); M('mline').setAttribute('stroke', col);
+  M('mdot').setAttribute('cy', y); M('mdot').setAttribute('fill', col);
+  const nm = M('mname'); nm.setAttribute('y', y-5); nm.setAttribute('fill', col); nm.textContent = name;
+  const cs = M('mcents'); cs.setAttribute('y', y+13); cs.setAttribute('fill', col);
+  cs.textContent = (cents>=0?'+':'\u2212') + Math.abs(Math.round(cents)) + '\u00A2';
+  M('marker').setAttribute('opacity', 1);
+}
+
+function loop(){
+  requestAnimationFrame(loop);
+  analyser.getFloatTimeDomainData(buf);
+  const fmin = current.freq*0.94, fmax = current.freq*Math.pow(2,28/12);
+  const r = detectPitch(buf, ctx.sampleRate, fmin, fmax);
+  const now = performance.now();
+  if (r && r.clarity > 0.9 && r.freq > fmin && r.freq < fmax){
+    const nMeas = 12*Math.log2(r.freq/current.freq);
+    nSmooth = (nSmooth==null) ? nMeas : nSmooth + 0.2*(nMeas - nSmooth);
+    const nearest = Math.round(nSmooth), cents = (nSmooth-nearest)*100;
+    setMarker(nSmooth, cents, noteName(current.midi + nearest));
+    lastValid = now;
+  } else if (now - lastValid > 220){ M('marker').setAttribute('opacity', 0); nSmooth = null; }
+}
+
+drawStatic();
+M('begin').addEventListener('click', begin);
+</script>
+</body>
+</html>
