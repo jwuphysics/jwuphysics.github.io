@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#050218">
+<title>TERRA DEFENSE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050218;
+  --bg-deep: #02000a;
+  --grid: #0a0530;
+  --cyan: #5cf;
+  --cyan-dim: #2a7a9c;
+  --magenta: #f5c;
+  --yellow: #fd5;
+  --red: #f55;
+  --green: #5f9;
+  --white: #fff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-deep);
+  color: var(--cyan);
+  font-family: 'VT323', monospace;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background:
+    radial-gradient(ellipse at center, #0a0530 0%, #02000a 80%);
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 600px;
+}
+
+#hud-top, #hud-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  gap: 6px;
+}
+
+.hud-cell {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid var(--cyan-dim);
+  background: rgba(10, 5, 48, 0.7);
+  text-align: center;
+  text-shadow: 0 0 6px rgba(85, 204, 255, 0.5);
+  min-height: 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hud-cell .label {
+  color: var(--cyan-dim);
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  line-height: 1;
+}
+
+.hud-cell .value {
+  color: var(--yellow);
+  font-size: 22px;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.hud-cell .value .small {
+  color: var(--cyan-dim);
+  font-size: 18px;
+}
+
+/* Field */
+.field-wrap {
+  width: min(96vw, calc(100vh - 180px), 600px);
+  aspect-ratio: 1 / 1;
+  position: relative;
+}
+
+.field {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at center, #100838 0%, #050218 70%, #02000a 100%);
+  border: 2px solid var(--cyan);
+  box-shadow:
+    0 0 24px rgba(85, 204, 255, 0.4),
+    0 0 80px rgba(245, 92, 204, 0.18),
+    inset 0 0 40px rgba(2, 0, 10, 0.85);
+  cursor: crosshair;
+}
+
+/* Starfield: many tiny stars via stacked radial gradients */
+.field::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 13% 17%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 27% 41%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 43% 8%,  #fcf 50%, transparent 51%),
+    radial-gradient(1px 1px at 61% 73%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 81% 31%, #cff 50%, transparent 51%),
+    radial-gradient(1px 1px at 92% 88%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 7% 91%,  #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 53% 53%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 73% 19%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 19% 67%, #fcf 50%, transparent 51%),
+    radial-gradient(1px 1px at 37% 87%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 87% 47%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 23% 27%, #ccf 50%, transparent 51%),
+    radial-gradient(1px 1px at 67% 47%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 47% 33%, #fd5 50%, transparent 51%),
+    radial-gradient(1px 1px at 11% 53%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 33% 71%, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 79% 63%, #fcf 50%, transparent 51%);
+  opacity: 0.78;
+  animation: twinkle 4.2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.78; }
+  50% { opacity: 0.5; }
+}
+
+/* CRT scanlines */
+.field::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0) 0,
+    rgba(0,0,0,0) 2px,
+    rgba(85, 204, 255, 0.045) 2px,
+    rgba(85, 204, 255, 0.045) 3px
+  );
+  pointer-events: none;
+  z-index: 50;
+  mix-blend-mode: screen;
+}
+
+.no-place-zone {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* diameter = 2 * 30 = 60, of 256 = 23.4375% */
+  width: 23.4375%;
+  height: 23.4375%;
+  transform: translate(-50%, -50%);
+  border: 1px dashed rgba(245, 92, 204, 0.22);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.planet {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* visual width 28, of 256 = 10.9375% */
+  width: 10.9375%;
+  height: 10.9375%;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 8px var(--green));
+  animation: planet-pulse 3s ease-in-out infinite;
+  z-index: 5;
+  pointer-events: none;
+}
+.planet svg { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+@keyframes planet-pulse {
+  0%, 100% { filter: drop-shadow(0 0 6px var(--green)); }
+  50% { filter: drop-shadow(0 0 14px var(--cyan)); }
+}
+
+.creep {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  z-index: 10;
+  will-change: transform;
+}
+.creep svg { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+
+.bomb {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  border: 2px solid var(--cyan);
+  background: radial-gradient(circle,
+    rgba(245, 92, 204, 0.55) 0%,
+    rgba(245, 92, 204, 0.28) 40%,
+    rgba(85, 204, 255, 0.18) 70%,
+    transparent 100%);
+  box-shadow:
+    0 0 12px var(--magenta),
+    inset 0 0 16px rgba(245, 92, 204, 0.6);
+  pointer-events: none;
+  z-index: 20;
+  will-change: transform, width, height;
+  transition: opacity 0.3s, box-shadow 0.3s;
+}
+.bomb.done {
+  opacity: 0;
+  border-color: var(--white);
+  box-shadow: 0 0 30px var(--white);
+}
+
+.creep.dying {
+  animation: creep-die 0.32s ease-out forwards;
+}
+@keyframes creep-die {
+  0%   { filter: brightness(1); opacity: 1; }
+  35%  { filter: brightness(4) saturate(2); opacity: 1; }
+  100% { filter: brightness(0); opacity: 0; }
+}
+
+/* Super bomb full-field flash */
+.flash {
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: 0.9;
+  pointer-events: none;
+  z-index: 60;
+  animation: flash-anim 0.55s ease-out forwards;
+}
+@keyframes flash-anim {
+  0%   { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+/* Buttons */
+button {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  background: rgba(10, 5, 48, 0.85);
+  color: var(--cyan);
+  border: 2px solid var(--cyan);
+  padding: 8px 16px;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 0.1s, color 0.1s, box-shadow 0.1s, transform 0.05s;
+  min-height: 44px;
+}
+button:hover:not(:disabled) {
+  background: var(--cyan);
+  color: var(--bg);
+  box-shadow: 0 0 16px var(--cyan);
+}
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: #333;
+  color: #666;
+}
+
+#super-btn {
+  border-color: var(--magenta);
+  color: var(--magenta);
+  background: rgba(48, 5, 30, 0.85);
+  flex: 1;
+}
+#super-btn:hover:not(:disabled) {
+  background: var(--magenta);
+  color: var(--bg);
+  box-shadow: 0 0 16px var(--magenta);
+}
+
+/* Overlays */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 0, 10, 0.95);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  animation: overlay-in 0.3s ease-out;
+}
+@keyframes overlay-in {
+  from { opacity: 0; transform: scale(0.98); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.overlay.hidden { display: none; }
+
+.overlay h1 {
+  font-size: clamp(40px, 12vw, 80px);
+  color: var(--magenta);
+  text-shadow:
+    3px 3px 0 var(--cyan),
+    6px 6px 0 rgba(85, 204, 255, 0.25);
+  text-align: center;
+  letter-spacing: 0.1em;
+  line-height: 0.95;
+}
+
+.overlay h2 {
+  font-size: clamp(28px, 8vw, 44px);
+  color: var(--yellow);
+  text-shadow: 2px 2px 0 var(--red);
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.overlay p {
+  font-size: 22px;
+  text-align: center;
+  color: var(--cyan);
+  line-height: 1.3;
+  max-width: 320px;
+}
+
+.shop-cash {
+  font-size: 28px;
+  color: var(--yellow);
+  text-shadow: 0 0 10px rgba(253, 213, 85, 0.6);
+  letter-spacing: 0.05em;
+}
+
+.shop-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.shop-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 18px;
+}
+.shop-icon {
+  font-size: 30px;
+  width: 36px;
+  text-align: center;
+  color: var(--magenta);
+  text-shadow: 0 0 6px rgba(245, 92, 204, 0.5);
+}
+.shop-text { flex: 1; }
+.shop-title { font-size: 20px; color: var(--cyan); line-height: 1; }
+.shop-desc { font-size: 16px; color: var(--cyan-dim); line-height: 1.1; margin-top: 2px; }
+.shop-cost {
+  font-size: 24px;
+  color: var(--yellow);
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+.shop-item:disabled .shop-cost { color: var(--red); }
+
+#launch-btn, #begin-btn, #restart-btn {
+  font-size: 26px;
+  padding: 14px 28px;
+  margin-top: 6px;
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+#launch-btn:hover:not(:disabled),
+#begin-btn:hover:not(:disabled),
+#restart-btn:hover:not(:disabled) {
+  background: var(--yellow);
+  color: var(--bg);
+  box-shadow: 0 0 16px var(--yellow);
+}
+
+.title-art {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 8px var(--cyan));
+}
+.title-art > div {
+  width: 48px;
+  height: 48px;
+}
+.title-art svg {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+.title-art > div:nth-child(1) { animation: float 2.5s ease-in-out infinite; }
+.title-art > div:nth-child(2) { animation: float 2.5s ease-in-out infinite 0.4s; transform: scale(1.2); }
+.title-art > div:nth-child(3) { animation: float 2.5s ease-in-out infinite 0.8s; }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* Small screens */
+@media (max-width: 380px) {
+  .hud-cell .value { font-size: 18px; }
+  .hud-cell .label { font-size: 11px; }
+  button { font-size: 18px; }
+  .shop-title { font-size: 17px; }
+  .shop-desc  { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="hud-top">
+    <div class="hud-cell">
+      <span class="label">WAVE</span>
+      <span class="value"><span id="wave">1</span><span class="small">/25</span></span>
+    </div>
+    <div class="hud-cell">
+      <span class="label">CASH</span>
+      <span class="value">¢<span id="cash">5</span></span>
+    </div>
+    <div class="hud-cell">
+      <span class="label">BOMBS</span>
+      <span class="value"><span id="bombs-avail">2</span><span class="small">/<span id="bombs-max">2</span></span></span>
+    </div>
+  </div>
+
+  <div class="field-wrap">
+    <div class="field" id="field">
+      <div class="no-place-zone"></div>
+      <div class="planet" id="planet"></div>
+    </div>
+  </div>
+
+  <div id="hud-bottom">
+    <button id="super-btn" disabled>★ SUPER&nbsp;<span id="super-count">0</span></button>
+    <div class="hud-cell" style="flex: 0 0 auto; min-width: 90px;">
+      <span class="label">SPEED</span>
+      <span class="value">×<span id="spd-mult">1.00</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- Title overlay -->
+<div id="start" class="overlay">
+  <div class="title-art">
+    <div id="ta-1"></div>
+    <div id="ta-2"></div>
+    <div id="ta-3"></div>
+  </div>
+  <h1>TERRA<br>DEFENSE</h1>
+  <p>Tap the field to drop bombs.<br>Defend Earth across 25 waves.</p>
+  <button id="begin-btn">▶ BEGIN</button>
+</div>
+
+<!-- Shop overlay -->
+<div id="shop" class="overlay hidden">
+  <h2>WAVE <span id="shop-wave-clear">0</span> CLEARED</h2>
+  <div class="shop-cash">CASH: ¢<span id="shop-cash">0</span></div>
+  <div class="shop-grid">
+    <button class="shop-item" data-buy="bombs" data-cost="20">
+      <div class="shop-icon">✦</div>
+      <div class="shop-text">
+        <div class="shop-title">+1 MAX BOMB</div>
+        <div class="shop-desc">More slots, more boom</div>
+      </div>
+      <div class="shop-cost">¢20</div>
+    </button>
+    <button class="shop-item" data-buy="speed" data-cost="15">
+      <div class="shop-icon">⇶</div>
+      <div class="shop-text">
+        <div class="shop-title">+25% EXPANSION</div>
+        <div class="shop-desc">Bombs grow faster</div>
+      </div>
+      <div class="shop-cost">¢15</div>
+    </button>
+    <button class="shop-item" data-buy="super" data-cost="10">
+      <div class="shop-icon">★</div>
+      <div class="shop-text">
+        <div class="shop-title">SUPER BOMB ×1</div>
+        <div class="shop-desc">Wipe all on screen</div>
+      </div>
+      <div class="shop-cost">¢10</div>
+    </button>
+  </div>
+  <button id="launch-btn">LAUNCH WAVE&nbsp;<span id="next-wave">2</span> ▶</button>
+</div>
+
+<!-- Game-over / victory overlay -->
+<div id="gameover" class="overlay hidden">
+  <h1 id="end-title">GAME OVER</h1>
+  <p id="end-stats"></p>
+  <button id="restart-btn">↻ RESTART</button>
+</div>
+
+<script>
+// ===== Constants =====
+const FIELD = 256;                  // logical field size (units)
+const HOME_R = 14;                  // home-planet collision radius
+const NO_PLACE_R = 30;              // closest a bomb can be placed to center (fixed)
+const MAX_BOMB_R = 30;              // BASE max expansion radius (scales up with speed upgrades)
+const BASE_BOMB_DURATION = 2.0;     // expansion duration in seconds (constant — speed upgrades grow radius, not pace)
+const TOTAL_WAVES = 25;
+
+// ===== Pixel-art SVG sprites =====
+const SPRITES = {
+  alien: `<svg viewBox="0 0 8 8" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="0" width="2" height="1" fill="#f5c"/>
+    <rect x="2" y="1" width="4" height="1" fill="#f5c"/>
+    <rect x="3" y="2" width="2" height="1" fill="#fff"/>
+    <rect x="1" y="3" width="6" height="1" fill="#5cf"/>
+    <rect x="0" y="4" width="8" height="1" fill="#5cf"/>
+    <rect x="1" y="5" width="6" height="1" fill="#28a"/>
+    <rect x="2" y="6" width="1" height="1" fill="#fd5"/>
+    <rect x="5" y="6" width="1" height="1" fill="#fd5"/>
+  </svg>`,
+  ship: `<svg viewBox="0 0 10 10" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="1" width="4" height="1" fill="#fa3"/>
+    <rect x="2" y="2" width="6" height="1" fill="#fd5"/>
+    <rect x="1" y="3" width="8" height="1" fill="#fd5"/>
+    <rect x="2" y="3" width="2" height="1" fill="#5ff"/>
+    <rect x="6" y="3" width="2" height="1" fill="#5ff"/>
+    <rect x="0" y="4" width="10" height="1" fill="#fa3"/>
+    <rect x="1" y="5" width="8" height="1" fill="#fa3"/>
+    <rect x="2" y="6" width="6" height="1" fill="#f73"/>
+    <rect x="3" y="7" width="4" height="1" fill="#f73"/>
+    <rect x="4" y="8" width="2" height="1" fill="#f55"/>
+  </svg>`,
+  asteroid: `<svg viewBox="0 0 12 12" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+    <rect x="3" y="1" width="6" height="1" fill="#aaa"/>
+    <rect x="2" y="2" width="8" height="1" fill="#aaa"/>
+    <rect x="1" y="3" width="10" height="1" fill="#999"/>
+    <rect x="1" y="4" width="10" height="1" fill="#888"/>
+    <rect x="0" y="5" width="12" height="2" fill="#888"/>
+    <rect x="1" y="7" width="10" height="1" fill="#777"/>
+    <rect x="1" y="8" width="10" height="1" fill="#666"/>
+    <rect x="2" y="9" width="8" height="1" fill="#555"/>
+    <rect x="3" y="10" width="6" height="1" fill="#444"/>
+    <rect x="3" y="3" width="2" height="2" fill="#555"/>
+    <rect x="7" y="6" width="2" height="2" fill="#555"/>
+    <rect x="5" y="8" width="1" height="1" fill="#444"/>
+  </svg>`,
+};
+
+const PLANET_SPRITE = `<svg viewBox="0 0 16 16" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+  <rect x="5" y="1"  width="6"  height="1" fill="#28c"/>
+  <rect x="3" y="2"  width="10" height="1" fill="#28c"/>
+  <rect x="2" y="3"  width="12" height="1" fill="#28c"/>
+  <rect x="6" y="3"  width="3"  height="1" fill="#3a4"/>
+  <rect x="1" y="4"  width="14" height="1" fill="#28c"/>
+  <rect x="3" y="4"  width="2"  height="1" fill="#3a4"/>
+  <rect x="8" y="4"  width="4"  height="1" fill="#3a4"/>
+  <rect x="1" y="5"  width="14" height="1" fill="#28c"/>
+  <rect x="2" y="5"  width="3"  height="1" fill="#3a4"/>
+  <rect x="9" y="5"  width="2"  height="1" fill="#3a4"/>
+  <rect x="0" y="6"  width="16" height="1" fill="#28c"/>
+  <rect x="4" y="6"  width="2"  height="1" fill="#3a4"/>
+  <rect x="10" y="6" width="3"  height="1" fill="#3a4"/>
+  <rect x="0" y="7"  width="16" height="1" fill="#28c"/>
+  <rect x="2" y="7"  width="2"  height="1" fill="#3a4"/>
+  <rect x="9" y="7"  width="2"  height="1" fill="#3a4"/>
+  <rect x="0" y="8"  width="16" height="1" fill="#26a"/>
+  <rect x="3" y="8"  width="3"  height="1" fill="#3a4"/>
+  <rect x="11" y="8" width="3"  height="1" fill="#3a4"/>
+  <rect x="0" y="9"  width="16" height="1" fill="#26a"/>
+  <rect x="5" y="9"  width="2"  height="1" fill="#3a4"/>
+  <rect x="1" y="10" width="14" height="1" fill="#249"/>
+  <rect x="2" y="10" width="2"  height="1" fill="#3a4"/>
+  <rect x="8" y="10" width="2"  height="1" fill="#3a4"/>
+  <rect x="1" y="11" width="14" height="1" fill="#249"/>
+  <rect x="2" y="12" width="12" height="1" fill="#249"/>
+  <rect x="3" y="13" width="10" height="1" fill="#137"/>
+  <rect x="5" y="14" width="6"  height="1" fill="#137"/>
+</svg>`;
+
+const CREEP_DEFS = {
+  alien:    { speed: 24.5, size: 8,  hpFn: w => 1 },
+  ship:     { speed: 17.5, size: 12, hpFn: w => w > 10 ? 2 : 1 },
+  asteroid: { speed: 10.5, size: 18, hpFn: w => w > 15 ? 3 : 2 },
+};
+
+// ===== DOM helpers =====
+const $  = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const fieldEl = $('#field');
+
+// Inject planet & title sprites
+$('#planet').innerHTML  = PLANET_SPRITE;
+$('#ta-1').innerHTML    = SPRITES.alien;
+$('#ta-2').innerHTML    = PLANET_SPRITE;
+$('#ta-3').innerHTML    = SPRITES.asteroid;
+
+// ===== State =====
+const state = {
+  phase: 'start',     // 'start' | 'wave' | 'shop' | 'gameover' | 'win'
+  wave: 0,
+  cash: 5,
+  maxBombs: 2,
+  spdMult: 1.0,
+  superCount: 0,
+  bombs: [],
+  creeps: [],
+  toSpawn: [],        // [{type, t}]  with t in seconds (perf clock)
+};
+
+// Cached field pixel size for fast transform-based placement
+let fieldPx = 0;
+function measureField() { fieldPx = fieldEl.getBoundingClientRect().width; }
+window.addEventListener('resize', measureField);
+window.addEventListener('orientationchange', measureField);
+
+// ===== Utilities =====
+function show(sel) { $(sel).classList.remove('hidden'); }
+function hide(sel) { $(sel).classList.add('hidden'); }
+function rand(a, b) { return a + Math.random() * (b - a); }
+
+function expansionSpeed() {
+  return (MAX_BOMB_R / BASE_BOMB_DURATION) * state.spdMult;
+}
+
+// ===== Wave generation =====
+function buildWave(n) {
+  const baseCount = 4 + Math.floor(n * 1.3);
+  let aliens = baseCount, ships = 0, asteroids = 0;
+
+  if (n >= 3)  { ships = Math.floor(baseCount * 0.35); aliens -= ships; }
+  if (n >= 8)  { asteroids = Math.floor(baseCount * 0.20); aliens -= asteroids; }
+  if (n >= 15) {
+    asteroids = Math.floor(baseCount * 0.35);
+    ships     = Math.floor(baseCount * 0.40);
+    aliens    = Math.max(0, baseCount - ships - asteroids);
+  }
+  if (n % 5 === 0) asteroids += Math.ceil(n / 5); // boss-feel surge
+
+  const all = [];
+  for (let i = 0; i < aliens; i++)    all.push('alien');
+  for (let i = 0; i < ships; i++)     all.push('ship');
+  for (let i = 0; i < asteroids; i++) all.push('asteroid');
+
+  // Fisher-Yates shuffle
+  for (let i = all.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [all[i], all[j]] = [all[j], all[i]];
+  }
+
+  const interval = Math.max(0.35, 1.2 - n * 0.035);
+  const list = [];
+  let t = 0.5;
+  for (const type of all) {
+    list.push({ type, t });
+    t += interval * rand(0.55, 1.4);
+  }
+  return list;
+}
+
+// ===== Spawn / kill =====
+function spawnCreep(type) {
+  const def = CREEP_DEFS[type];
+  const edge = Math.floor(Math.random() * 4);
+  const margin = def.size; // start fully off-screen
+  let x, y;
+  switch (edge) {
+    case 0: x = rand(0, FIELD);    y = -margin;       break; // top
+    case 1: x = FIELD + margin;    y = rand(0, FIELD); break; // right
+    case 2: x = rand(0, FIELD);    y = FIELD + margin; break; // bottom
+    case 3: x = -margin;           y = rand(0, FIELD); break; // left
+  }
+  const dx = FIELD/2 - x, dy = FIELD/2 - y;
+  const d  = Math.hypot(dx, dy);
+  const sf = 1 + state.wave * 0.018;
+
+  const c = {
+    type, x, y,
+    vx: dx/d * def.speed * sf,
+    vy: dy/d * def.speed * sf,
+    hp: def.hpFn(state.wave),
+    size: def.size,
+    el: null,
+    dying: false,
+  };
+
+  const el = document.createElement('div');
+  el.className = 'creep';
+  const sizePct = def.size / FIELD * 100;
+  el.style.width  = sizePct + '%';
+  el.style.height = sizePct + '%';
+  el.innerHTML = SPRITES[type];
+  fieldEl.appendChild(el);
+  c.el = el;
+  state.creeps.push(c);
+  positionCreep(c);
+}
+
+function positionCreep(c) {
+  // transform-based positioning so bombs/creeps composite on GPU
+  const px = c.x / FIELD * fieldPx;
+  const py = c.y / FIELD * fieldPx;
+  c.el.style.transform = `translate(${px}px, ${py}px) translate(-50%, -50%)`;
+}
+
+function killCreep(c) {
+  if (c.dying) return;
+  c.dying = true;
+  c.el.classList.add('dying');
+  state.cash += 1;
+  const el = c.el;
+  setTimeout(() => el.remove(), 320);
+}
+
+// ===== Bombs =====
+function placeBomb(x, y) {
+  if (state.phase !== 'wave') return;
+  if (state.bombs.length >= state.maxBombs) return;
+  const d = Math.hypot(x - FIELD/2, y - FIELD/2);
+  if (d < NO_PLACE_R) return;
+  if (x < 0 || x > FIELD || y < 0 || y > FIELD) return;
+
+  const b = {
+    x, y,
+    r: 0,
+    startTime: performance.now() / 1000,
+    hitCreeps: new Set(),
+    el: null,
+    expired: false,
+  };
+  const el = document.createElement('div');
+  el.className = 'bomb';
+  el.style.width  = '0px';
+  el.style.height = '0px';
+  fieldEl.appendChild(el);
+  b.el = el;
+  state.bombs.push(b);
+  positionBomb(b);
+}
+
+function positionBomb(b) {
+  const px = b.x / FIELD * fieldPx;
+  const py = b.y / FIELD * fieldPx;
+  b.el.style.transform = `translate(${px}px, ${py}px) translate(-50%, -50%)`;
+}
+
+fieldEl.addEventListener('click', (e) => {
+  if (state.phase !== 'wave') return;
+  const rect = fieldEl.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width  * FIELD;
+  const y = (e.clientY - rect.top)  / rect.height * FIELD;
+  placeBomb(x, y);
+});
+
+// ===== Game-state transitions =====
+function startWave(n) {
+  state.wave = n;
+  state.phase = 'wave';
+  hide('#shop'); hide('#start'); hide('#gameover');
+  measureField();
+  const wave = buildWave(n);
+  const now  = performance.now() / 1000;
+  state.toSpawn = wave.map(s => ({ type: s.type, t: now + s.t }));
+  updateHUD();
+}
+
+function endWave() {
+  if (state.wave >= TOTAL_WAVES) { winGame(); return; }
+  state.phase = 'shop';
+  $('#shop-wave-clear').textContent = state.wave;
+  $('#shop-cash').textContent       = state.cash;
+  $('#next-wave').textContent       = state.wave + 1;
+  updateShopUI();
+  show('#shop');
+}
+
+function gameOver() {
+  state.phase = 'gameover';
+  $('#end-title').textContent = 'GAME OVER';
+  $('#end-stats').textContent = `Reached wave ${state.wave} of ${TOTAL_WAVES}.`;
+  show('#gameover');
+}
+
+function winGame() {
+  state.phase = 'win';
+  $('#end-title').textContent = 'VICTORY';
+  $('#end-stats').textContent = 'Earth is safe — for now.';
+  show('#gameover');
+}
+
+// ===== Shop =====
+function buy(item) {
+  const costs = { bombs: 20, speed: 15, super: 10 };
+  if (state.cash < costs[item]) return;
+  state.cash -= costs[item];
+  if      (item === 'bombs') state.maxBombs += 1;
+  else if (item === 'speed') state.spdMult  *= 1.25;
+  else if (item === 'super') state.superCount += 1;
+  $('#shop-cash').textContent = state.cash;
+  updateShopUI();
+  updateHUD();
+}
+
+function updateShopUI() {
+  $$('.shop-item').forEach(b => {
+    const cost = parseInt(b.dataset.cost, 10);
+    b.disabled = state.cash < cost;
+  });
+}
+
+// ===== HUD =====
+function updateHUD() {
+  $('#cash').textContent        = state.cash;
+  $('#wave').textContent        = state.wave || 1;
+  $('#bombs-max').textContent   = state.maxBombs;
+  $('#bombs-avail').textContent = Math.max(0, state.maxBombs - state.bombs.length);
+  $('#spd-mult').textContent    = state.spdMult.toFixed(2);
+  $('#super-count').textContent = state.superCount;
+  $('#super-btn').disabled      = !(state.superCount > 0 && state.phase === 'wave');
+}
+
+// ===== Buttons =====
+$('#begin-btn').addEventListener('click', () => startWave(1));
+$('#launch-btn').addEventListener('click', () => startWave(state.wave + 1));
+$('#restart-btn').addEventListener('click', () => location.reload());
+$$('.shop-item').forEach(b => b.addEventListener('click', () => buy(b.dataset.buy)));
+$('#super-btn').addEventListener('click', () => {
+  if (state.superCount === 0 || state.phase !== 'wave') return;
+  state.superCount--;
+  for (const c of state.creeps) if (!c.dying) killCreep(c);
+  const flash = document.createElement('div');
+  flash.className = 'flash';
+  fieldEl.appendChild(flash);
+  setTimeout(() => flash.remove(), 600);
+  updateHUD();
+});
+
+// ===== Main loop =====
+let lastT = 0;
+function loop(now) {
+  const t  = now / 1000;
+  const dt = lastT ? Math.min(0.05, t - lastT) : 0;
+  lastT = t;
+
+  if (state.phase === 'wave') {
+    // Spawn pending creeps
+    while (state.toSpawn.length && state.toSpawn[0].t <= t) {
+      spawnCreep(state.toSpawn.shift().type);
+    }
+
+    // Move creeps
+    for (const c of state.creeps) {
+      if (c.dying) continue;
+      c.x += c.vx * dt;
+      c.y += c.vy * dt;
+      positionCreep(c);
+    }
+
+    // Update bombs + check collisions
+    const speed = expansionSpeed();
+    for (const b of state.bombs) {
+      const elapsed = t - b.startTime;
+      const r = elapsed * speed;   // no radius cap — duration is fixed, max radius scales with speed
+      b.r = r;
+      const sizePx = (r * 2 / FIELD) * fieldPx;
+      b.el.style.width  = sizePx + 'px';
+      b.el.style.height = sizePx + 'px';
+
+      for (const c of state.creeps) {
+        if (c.dying) continue;
+        if (b.hitCreeps.has(c)) continue;
+        const cd = Math.hypot(c.x - b.x, c.y - b.y);
+        if (cd < r + c.size / 2) {
+          b.hitCreeps.add(c);
+          c.hp--;
+          if (c.hp <= 0) killCreep(c);
+        }
+      }
+
+      if (elapsed >= BASE_BOMB_DURATION) {
+        b.expired = true;
+        b.el.classList.add('done');
+        const el = b.el;
+        setTimeout(() => el.remove(), 320);
+      }
+    }
+    state.bombs  = state.bombs.filter(b => !b.expired);
+    state.creeps = state.creeps.filter(c => !c.dying);
+
+    // Check planet hits
+    for (const c of state.creeps) {
+      const d = Math.hypot(c.x - FIELD/2, c.y - FIELD/2);
+      if (d < HOME_R + c.size / 2) {
+        gameOver();
+        break;
+      }
+    }
+
+    // Check wave end (no pending spawns, no living creeps, no in-flight bombs)
+    if (state.phase === 'wave' &&
+        state.toSpawn.length === 0 &&
+        state.creeps.length  === 0 &&
+        state.bombs.length   === 0) {
+      endWave();
+    }
+
+    updateHUD();
+  }
+
+  requestAnimationFrame(loop);
+}
+
+// Init
+measureField();
+updateHUD();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
