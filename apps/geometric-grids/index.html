@@ -107,7 +107,6 @@
   // ---- constants -----------------------------------------------------
   const COLS = 24, ROWS = 32, CELL = 32;          // world units
   const GRID_W = COLS * CELL, GRID_H = ROWS * CELL;
-  const HOLD_MS = 380;                            // pause that locks in early
   const LIFT_GRACE_MS = 90;                       // endpoint changes this close
                                                   // to lift-off are finger roll
   const PALETTE = [                               // Montessori-ish, low sat
@@ -232,7 +231,7 @@
           c0: cell.c, r0: cell.r, c1: cell.c, r1: cell.r,
           pc: cell.c, pr: cell.r,   // endpoint before the latest change
           px: e.offsetX, py: e.offsetY,
-          t0: performance.now(), lastMove: performance.now(), done: false,
+          lastMove: performance.now(),
         };
       }
     } else if (pointers.size === 2) {
@@ -261,7 +260,7 @@
       ox = mx - (gesture.mx - gesture.ox0) * (s / gesture.s0);  // pan + zoom about midpoint
       oy = my - (gesture.my - gesture.oy0) * (s / gesture.s0);
       clampView();
-    } else if (draw && !draw.done && pointers.size === 1) {
+    } else if (draw && pointers.size === 1) {
       draw.px = e.offsetX; draw.py = e.offsetY;
       // hysteresis: the endpoint only switches cells once the finger is
       // clearly past the boundary, so it doesn't flicker along cell edges
@@ -289,16 +288,14 @@
     if (gesture && pointers.size < 2) gesture = null;
 
     if (draw && pointers.size === 0) {
-      if (!draw.done) {
-        // lifting commits; if the endpoint jumped cells in the final
-        // instant it was finger roll on lift-off, so keep the cell the
-        // user was actually resting on
-        let c1 = draw.c1, r1 = draw.r1;
-        if (performance.now() - draw.lastMove < LIFT_GRACE_MS) {
-          c1 = draw.pc; r1 = draw.pr;
-        }
-        commit(rectOf({ c0: draw.c0, r0: draw.r0, c1, r1 }));
+      // lifting commits; if the endpoint jumped cells in the final
+      // instant it was finger roll on lift-off, so keep the cell the
+      // user was actually resting on
+      let c1 = draw.c1, r1 = draw.r1;
+      if (performance.now() - draw.lastMove < LIFT_GRACE_MS) {
+        c1 = draw.pc; r1 = draw.pr;
       }
+      commit(rectOf({ c0: draw.c0, r0: draw.r0, c1, r1 }));
       draw = null;
     }
   }
@@ -331,14 +328,6 @@
 
   // ---- render loop ---------------------------------------------------
   function frame(now) {
-    // lock in a rectangle after the finger pauses on a cell
-    if (draw && !draw.done && pointers.size === 1
-        && (draw.c1 !== draw.c0 || draw.r1 !== draw.r0)
-        && now - draw.lastMove >= HOLD_MS) {
-      commit(rectOf(draw));
-      draw.done = true;
-    }
-
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, vw, vh);
     ctx.setTransform(dpr * s, 0, 0, dpr * s, dpr * ox, dpr * oy);
@@ -355,7 +344,7 @@
     }
 
     // live preview
-    if (draw && !draw.done) {
+    if (draw) {
       const p = rectOf(draw);
       const x = p.c0 * CELL, y = p.r0 * CELL;
       const w = (p.c1 - p.c0 + 1) * CELL, h = (p.r1 - p.r0 + 1) * CELL;
@@ -392,21 +381,6 @@
         ctx.fillRect(op.c0 * CELL, op.r0 * CELL,
                      (op.c1 - op.c0 + 1) * CELL, (op.r1 - op.r0 + 1) * CELL);
         ctx.globalAlpha = 1;
-      }
-    }
-
-    // hold-to-lock progress ring (screen space, at the fingertip)
-    if (draw && !draw.done && pointers.size === 1
-        && (draw.c1 !== draw.c0 || draw.r1 !== draw.r0)) {
-      const p = Math.min((now - draw.lastMove) / HOLD_MS, 1);
-      if (p > 0.15) {
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.beginPath();
-        ctx.arc(draw.px, draw.py - 44, 15, -Math.PI / 2, -Math.PI / 2 + p * 2 * Math.PI);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 4;
-        ctx.lineCap = 'round';
-        ctx.stroke();
       }
     }
 
