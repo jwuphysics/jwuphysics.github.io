@@ -41,6 +41,8 @@
   .tagline{ margin:0 0 7vh; color:var(--muted); font-size:15px; }
 
   .chips{ display:grid; grid-template-columns:repeat(4,1fr); gap:22px 14px; width:min(88vw,360px); }
+  .chips.combo{ grid-template-columns:repeat(3,1fr); width:min(78vw,320px); }
+  .section-label{ margin:26px 0 -8px; color:var(--muted); font-size:12px; letter-spacing:.04em; }
   .chip{ display:flex; flex-direction:column; align-items:center; gap:8px; }
   .chip .disc{
     width:62px; height:62px; border-radius:50%;
@@ -50,13 +52,12 @@
     transition:transform .15s ease;
   }
   .chip .word{ font-size:12px; color:var(--muted); letter-spacing:.04em; }
-  .chip:not(:disabled):hover .disc,
-  .chip:not(:disabled):focus-visible .disc{ transform:scale(1.07); }
-  .chip:not(:disabled):active .disc{ transform:scale(.94); }
+  .chip:focus-visible .disc{ transform:scale(1.07); }
+  .chip:active .disc{ transform:scale(.94); }
   .chip.done .disc{ background:var(--c); color:#fff; }
   .chip.perfect .disc{ box-shadow:0 0 0 3.5px var(--paper), 0 0 0 6px var(--c); }
-  .chip:disabled .disc{ border:2.5px dashed var(--line); color:#C9C8C1; background:none; }
-  .chip:disabled .word{ color:#C9C8C1; }
+  .chip .disc.small{ font-size:15px; letter-spacing:-.02em; }
+  @media (hover:hover){ .chip:hover .disc{ transform:scale(1.07); } }
 
   .reset{ margin-top:auto; padding-top:6vh; color:#C4C3BC; font-size:12.5px;
           text-decoration:underline; text-underline-offset:3px; }
@@ -128,8 +129,10 @@
     font-size:clamp(23px,6vw,27px); font-weight:700;
     transition:transform .12s ease, border-color .15s ease;
   }
-  .answers button:not(:disabled):hover,
   .answers button:not(:disabled):focus-visible{ border-color:var(--c); transform:translateY(-2px); }
+  @media (hover:hover){
+    .answers button:not(:disabled):hover{ border-color:var(--c); transform:translateY(-2px); }
+  }
   .answers button:not(:disabled):active{ transform:scale(.93); }
   .answers button.hit{ background:var(--c); border-color:var(--c); color:#fff; }
   .answers button.miss{ animation:shake .4s ease; opacity:.3; }
@@ -189,6 +192,8 @@
   <h1 class="wordmark">Dot <span class="x">×</span> Dot</h1>
   <p class="tagline">multiplication, one rectangle at a time</p>
   <div class="chips" id="chips"></div>
+  <p class="section-label">or mix it up</p>
+  <div class="chips combo" id="comboChips"></div>
   <button class="reset" id="reset">start fresh</button>
 </main>
 
@@ -222,9 +227,17 @@
 (() => {
   const TABLES = [1,2,3,4,5,6,7,8,9,10];
   const COLORS = { 1:'#D96A62', 2:'#4FA36F', 3:'#E0718F', 4:'#DFAE2B', 5:'#5A97CE',
-                   6:'#977BC6', 7:'#43ADA0', 8:'#B0794E', 9:'#47619E', 10:'#C6892F', all:'#2E3238' };
+                   6:'#977BC6', 7:'#43ADA0', 8:'#B0794E', 9:'#47619E', 10:'#C6892F',
+                   easy1:'#6FB88A', easy2:'#E0A23B', all:'#2E3238' };
   const NAMES  = { 1:'ones', 2:'twos', 3:'threes', 4:'fours', 5:'fives',
                    6:'sixes', 7:'sevens', 8:'eights', 9:'nines', 10:'tens' };
+  const COMBOS = ['easy1', 'easy2', 'all'];
+  const ORDER = [...TABLES, ...COMBOS];
+  const LABELS = {
+    easy1: { disc:'1-5', small:true, word:'starter mix', next:'the starter mix' },
+    easy2: { disc:'5&10', small:true, word:'fives & tens', next:'fives & tens' },
+    all:   { disc:'×', word:'hard mode', next:'hard mode' },
+  };
   const KEY = 'dotxdot.v1';
 
   const $ = id => document.getElementById(id);
@@ -236,26 +249,31 @@
   let state = load();                       // { done: { "2": "done" | "perfect", ... } }
   state.done = state.done || {};
 
-  const allTablesDone = () => TABLES.every(t => state.done[t]);
-  const unlocked = t => t === 'all' ? allTablesDone()
-                      : TABLES.indexOf(t) === 0 || !!state.done[TABLES[TABLES.indexOf(t) - 1]];
-
   /* ---------- home ---------- */
+  function makeChip(t) {
+    const label = LABELS[t];
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.style.setProperty('--c', COLORS[t]);
+    if (state.done[t] === 'done') b.classList.add('done');
+    if (state.done[t] === 'perfect') b.classList.add('done', 'perfect');
+    const disc = label ? label.disc : t;
+    const word = label ? label.word : 'the ' + NAMES[t];
+    b.innerHTML = `<span class="disc${label && label.small ? ' small' : ''}">${disc}</span>
+                   <span class="word">${word}</span>`;
+    b.onclick = () => startLevel(t);
+    return b;
+  }
+
   function renderHome() {
     const box = $('chips');
     box.innerHTML = '';
-    for (const t of [...TABLES, 'all']) {
-      const b = document.createElement('button');
-      b.className = 'chip';
-      b.style.setProperty('--c', COLORS[t]);
-      if (state.done[t] === 'done') b.classList.add('done');
-      if (state.done[t] === 'perfect') b.classList.add('done', 'perfect');
-      b.disabled = !unlocked(t);
-      b.innerHTML = `<span class="disc">${t === 'all' ? '×' : t}</span>
-                     <span class="word">${t === 'all' ? 'all of them' : 'the ' + NAMES[t]}</span>`;
-      b.onclick = () => startLevel(t);
-      box.appendChild(b);
-    }
+    for (const t of TABLES) box.appendChild(makeChip(t));
+
+    const combo = $('comboChips');
+    combo.innerHTML = '';
+    for (const t of COMBOS) combo.appendChild(makeChip(t));
+
     $('home').hidden = false;
     $('play').hidden = true;
     $('veil').hidden = true;
@@ -264,22 +282,26 @@
   /* ---------- level ---------- */
   let level, queue, qi, mistakes, missedHere;
 
+  function randomQueue(tables, factors, n = 12) {
+    const q = [];
+    let prev = 0;
+    for (let i = 0; i < n; i++) {
+      let tt;
+      do { tt = tables[Math.floor(Math.random() * tables.length)]; } while (tt === prev && tables.length > 1);
+      prev = tt;
+      q.push([tt, factors[Math.floor(Math.random() * factors.length)]]);
+    }
+    return q;
+  }
+
   function startLevel(t) {
     level = t;
     mistakes = 0;
     document.documentElement.style.setProperty('--c', COLORS[t]);
-    if (t === 'all') {
-      queue = [];
-      let prev = 0;
-      for (let i = 0; i < 12; i++) {
-        let tt;
-        do { tt = TABLES[Math.floor(Math.random() * TABLES.length)]; } while (tt === prev);
-        prev = tt;
-        queue.push([tt, 1 + Math.floor(Math.random() * 10)]);
-      }
-    } else {
-      queue = shuffle([1,2,3,4,5,6,7,8,9,10]).map(f => [t, f]);
-    }
+    if (t === 'all') queue = randomQueue(TABLES, TABLES);
+    else if (t === 'easy1') queue = randomQueue([1,2,3,4,5], [1,2,3,4,5]);
+    else if (t === 'easy2') queue = randomQueue([5,10], TABLES);
+    else queue = shuffle([1,2,3,4,5,6,7,8,9,10]).map(f => [t, f]);
     qi = -1;
     const meter = $('meter');
     meter.innerHTML = '<i></i>'.repeat(queue.length);
@@ -293,7 +315,7 @@
     if (qi >= queue.length) return finishLevel();
     missedHere = false;
     const [t, f] = queue[qi];
-    if (level === 'all') document.documentElement.style.setProperty('--c', COLORS[t]);
+    if (COMBOS.includes(level)) document.documentElement.style.setProperty('--c', COLORS[t]);
 
     $('stage').classList.remove('correct');
     $('qa').textContent = t;
@@ -349,6 +371,13 @@
   }
 
   /* ---------- level complete ---------- */
+  const MESSAGES = {
+    all:   { perfect:'Every single one. You know your times tables.',
+             done:'That was all of them. You know your times tables.' },
+    easy1: { perfect:'The starter mix is yours. Every one right.', done:'The starter mix is yours.' },
+    easy2: { perfect:'Fives and tens are yours. Every one right.', done:'Fives and tens are yours.' },
+  };
+
   function finishLevel() {
     const perfect = mistakes === 0;
     const prev = state.done[level];
@@ -356,20 +385,16 @@
     save(state);
 
     document.documentElement.style.setProperty('--c', COLORS[level]);
-    $('medalN').textContent = level === 'all' ? '×' : level;
-    $('veilMsg').textContent =
-      level === 'all'
-        ? (perfect ? 'Every single one. You know your times tables.'
-                   : 'That was all of them. You know your times tables.')
-        : (perfect ? `The ${NAMES[level]} are yours. Every one right.`
-                   : `The ${NAMES[level]} are yours.`);
+    $('medalN').textContent = LABELS[level] ? LABELS[level].disc : level;
+    $('veilMsg').textContent = MESSAGES[level]
+      ? (perfect ? MESSAGES[level].perfect : MESSAGES[level].done)
+      : (perfect ? `The ${NAMES[level]} are yours. Every one right.` : `The ${NAMES[level]} are yours.`);
 
-    const next = level === 'all' ? null
-               : TABLES[TABLES.indexOf(level) + 1] ?? (allTablesDone() ? 'all' : null);
+    const next = ORDER[ORDER.indexOf(level) + 1];
     const go = $('go');
     go.hidden = !next;
     if (next) {
-      go.textContent = next === 'all' ? 'next: all of them' : `next: the ${NAMES[next]}`;
+      go.textContent = `next: ${LABELS[next] ? LABELS[next].next : 'the ' + NAMES[next]}`;
       go.onclick = () => { $('veil').hidden = true; startLevel(next); };
     }
     // restart the ring-draw animation
