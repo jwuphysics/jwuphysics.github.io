@@ -41,8 +41,7 @@
   .tagline{ margin:0 0 7vh; color:var(--muted); font-size:15px; }
 
   .chips{ display:grid; grid-template-columns:repeat(4,1fr); gap:22px 14px; width:min(88vw,360px); }
-  .chips.combo{ grid-template-columns:repeat(3,1fr); width:min(78vw,320px); }
-  .section-label{ margin:26px 0 -8px; color:var(--muted); font-size:12px; letter-spacing:.04em; }
+  .chips.combo{ grid-template-columns:repeat(3,1fr); width:min(78vw,320px); margin-top:26px; }
   .chip{ display:flex; flex-direction:column; align-items:center; gap:8px; }
   .chip .disc{
     width:62px; height:62px; border-radius:50%;
@@ -192,7 +191,6 @@
   <h1 class="wordmark">Dot <span class="x">×</span> Dot</h1>
   <p class="tagline">multiplication, one rectangle at a time</p>
   <div class="chips" id="chips"></div>
-  <p class="section-label">or mix it up</p>
   <div class="chips combo" id="comboChips"></div>
   <button class="reset" id="reset">start fresh</button>
 </main>
