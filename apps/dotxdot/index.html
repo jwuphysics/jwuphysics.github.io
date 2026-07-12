@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F7F6F2">
+<title>Dot × Dot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F6F2;
+    --ink:#2E3238;
+    --muted:#9C9E99;
+    --line:#E5E4DD;
+    --c:#4FA36F; /* current level colour, set by JS */
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    font-family:"Quicksand", ui-rounded, system-ui, sans-serif;
+    font-weight:500;
+    background:var(--paper);
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    touch-action:manipulation;
+  }
+  button{ font:inherit; color:inherit; cursor:pointer; border:0; background:none; padding:0; }
+  button:focus-visible{ outline:3px solid var(--c); outline-offset:3px; border-radius:14px; }
+
+  .screen{ width:min(94vw,520px); min-height:100dvh; padding:24px 10px 32px;
+           display:flex; flex-direction:column; align-items:center; }
+  [hidden]{ display:none !important; }
+
+  /* ---------- home ---------- */
+  .wordmark{ margin:9vh 0 6px; font-size:clamp(30px,8vw,40px); font-weight:700; letter-spacing:.02em; }
+  .wordmark .x{ color:#E9B93B; padding:0 .12em; }
+  .tagline{ margin:0 0 7vh; color:var(--muted); font-size:15px; }
+
+  .chips{ display:grid; grid-template-columns:repeat(4,1fr); gap:22px 14px; width:min(88vw,360px); }
+  .chip{ display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .chip .disc{
+    width:62px; height:62px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:24px; font-weight:700;
+    border:2.5px solid var(--c); color:var(--c); background:#fff;
+    transition:transform .15s ease;
+  }
+  .chip .word{ font-size:12px; color:var(--muted); letter-spacing:.04em; }
+  .chip:not(:disabled):hover .disc,
+  .chip:not(:disabled):focus-visible .disc{ transform:scale(1.07); }
+  .chip:not(:disabled):active .disc{ transform:scale(.94); }
+  .chip.done .disc{ background:var(--c); color:#fff; }
+  .chip.perfect .disc{ box-shadow:0 0 0 3.5px var(--paper), 0 0 0 6px var(--c); }
+  .chip:disabled .disc{ border:2.5px dashed var(--line); color:#C9C8C1; background:none; }
+  .chip:disabled .word{ color:#C9C8C1; }
+
+  .reset{ margin-top:auto; padding-top:6vh; color:#C4C3BC; font-size:12.5px;
+          text-decoration:underline; text-underline-offset:3px; }
+
+  /* ---------- play ---------- */
+  .topbar{ width:100%; display:flex; align-items:center; gap:12px; }
+  .back{ font-size:24px; line-height:1; padding:8px 12px; color:var(--muted); border-radius:12px; }
+  .meter{ flex:1; display:flex; gap:5px; justify-content:center; padding-right:44px; }
+  .meter i{ width:16px; height:5px; border-radius:3px; background:var(--line); transition:background .3s; }
+  .meter i.on{ background:var(--c); }
+
+  .eq{ margin-top:5vh; font-size:clamp(42px,11vw,56px); font-weight:700; display:flex;
+       align-items:baseline; gap:.28em; min-height:1.25em; }
+  .eq .x{ color:var(--c); font-size:.82em; }
+  .eq .ans{ color:var(--c); opacity:0; transform:scale(.6); }
+  .stage.correct .eq .ans{ animation:pop-in .45s cubic-bezier(.2,1.4,.4,1) forwards; }
+
+  .caption{ margin:6px 0 0; color:var(--muted); font-size:14.5px; }
+
+  .stage{ width:100%; display:flex; flex-direction:column; align-items:center; flex:1; }
+  .board-wrap{ flex:1; min-height:min(44vh,330px); display:flex; align-items:center; justify-content:center; width:100%; }
+
+  .board{
+    --gap:clamp(5px,1.7vw,10px);
+    --size:min(32px,
+      calc((min(74vw,380px) - (var(--cols) - 1) * var(--gap)) / var(--cols)),
+      calc((min(38vh,300px) - (var(--rows) - 1) * var(--gap)) / var(--rows)));
+    position:relative;
+    display:flex; flex-direction:column; gap:var(--gap);
+    padding:22px 26px;
+    user-select:none; -webkit-user-select:none; -webkit-touch-callout:none;
+  }
+  .board::before{ /* the rectangle, revealed on a correct answer */
+    content:""; position:absolute; inset:6px;
+    border:2.5px solid var(--c); border-radius:16px;
+    opacity:0; transform:scale(1.05);
+  }
+  .stage.correct .board::before{ animation:frame-in .5s ease-out forwards; }
+
+  .row{ position:relative; display:flex; gap:var(--gap); }
+  .dot{
+    width:var(--size); height:var(--size); border-radius:50%;
+    background:var(--c);
+    animation:dot-in .3s cubic-bezier(.2,1.3,.5,1) both;
+    animation-delay:calc(var(--i) * 60ms);
+  }
+  .stage.correct .dot{ animation:dot-cheer .5s ease both; animation-delay:calc(var(--i) * 40ms); }
+
+  /* tap the board to count row by row; runs on its own once started */
+  .row::after{
+    content:attr(data-c);
+    position:absolute; left:100%; top:50%; translate:14px -50%;
+    font-size:max(13px, calc(var(--size) * .58)); font-weight:700; color:var(--c);
+    opacity:0;
+  }
+  .board.counting .row::after{
+    animation:
+      label-in .35s ease calc(var(--i) * .55s) forwards,
+      label-out .45s ease calc(var(--rows) * .55s + 1.2s) forwards;
+  }
+  .board.counting .dot{ animation:dot-count .5s ease both; animation-delay:calc(var(--i) * .55s); }
+
+  .hint{ color:#C4C3BC; font-size:12.5px; margin:0 0 14px; }
+
+  .answers{ display:flex; gap:clamp(14px,4.5vw,26px); padding-bottom:12px; }
+  .answers button{
+    width:clamp(68px,20vw,80px); height:clamp(68px,20vw,80px); border-radius:50%;
+    background:#fff; border:2.5px solid var(--line);
+    font-size:clamp(23px,6vw,27px); font-weight:700;
+    transition:transform .12s ease, border-color .15s ease;
+  }
+  .answers button:not(:disabled):hover,
+  .answers button:not(:disabled):focus-visible{ border-color:var(--c); transform:translateY(-2px); }
+  .answers button:not(:disabled):active{ transform:scale(.93); }
+  .answers button.hit{ background:var(--c); border-color:var(--c); color:#fff; }
+  .answers button.miss{ animation:shake .4s ease; opacity:.3; }
+
+  /* ---------- level complete ---------- */
+  .veil{
+    position:fixed; inset:0; z-index:10;
+    background:var(--paper);
+    background:color-mix(in srgb, var(--c) 9%, var(--paper));
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:26px; padding:24px; text-align:center;
+    animation:fade-in .4s ease;
+  }
+  .medal{ position:relative; width:150px; height:150px; }
+  .medal svg{ position:absolute; inset:0; }
+  .medal circle{
+    fill:none; stroke:var(--c); stroke-width:4; stroke-linecap:round;
+    stroke-dasharray:427; stroke-dashoffset:427;
+    animation:ring-draw 1s ease-out .15s forwards;
+  }
+  .medal .n{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:56px; font-weight:700; color:var(--c);
+  }
+  .veil p{ margin:0; font-size:19px; max-width:280px; line-height:1.5;
+           opacity:0; animation:rise-in .5s ease .9s forwards; }
+  .veil .go{
+    padding:14px 34px; border-radius:999px; background:var(--c); color:#fff;
+    font-size:17px; font-weight:700;
+    opacity:0; animation:rise-in .5s ease 1.2s forwards;
+    transition:transform .12s ease;
+  }
+  .veil .go:active{ transform:scale(.95); }
+  .veil .home-link{ color:var(--muted); font-size:14px; text-decoration:underline;
+                    text-underline-offset:3px; opacity:0; animation:rise-in .5s ease 1.4s forwards; }
+
+  @keyframes dot-in{ from{ transform:scale(0);} }
+  @keyframes dot-cheer{ 40%{ transform:scale(1.28);} }
+  @keyframes dot-count{ 45%{ transform:scale(1.3);} }
+  @keyframes label-in{ from{ opacity:0; translate:6px -50%;} to{ opacity:1; translate:14px -50%;} }
+  @keyframes label-out{ to{ opacity:0;} }
+  @keyframes frame-in{ to{ opacity:1; transform:scale(1);} }
+  @keyframes pop-in{ to{ opacity:1; transform:scale(1);} }
+  @keyframes shake{ 20%,60%{ transform:translateX(-5px);} 40%,80%{ transform:translateX(5px);} }
+  @keyframes fade-in{ from{ opacity:0;} }
+  @keyframes rise-in{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:none;} }
+  @keyframes ring-draw{ to{ stroke-dashoffset:0;} }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation-duration:.01ms !important; animation-delay:0ms !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<main id="home" class="screen">
+  <h1 class="wordmark">Dot <span class="x">×</span> Dot</h1>
+  <p class="tagline">multiplication, one rectangle at a time</p>
+  <div class="chips" id="chips"></div>
+  <button class="reset" id="reset">start fresh</button>
+</main>
+
+<main id="play" class="screen" hidden>
+  <div class="topbar">
+    <button class="back" id="back" aria-label="Back to all levels">←</button>
+    <div class="meter" id="meter"></div>
+  </div>
+  <div class="stage" id="stage">
+    <div class="eq" aria-live="polite">
+      <span id="qa">2</span><span class="x">×</span><span id="qb">3</span><span class="ans" id="ans"></span>
+    </div>
+    <p class="caption" id="caption"></p>
+    <div class="board-wrap" aria-hidden="true"><div class="board" id="board"></div></div>
+    <p class="hint">tap the dots to count along</p>
+    <div class="answers" id="answers"></div>
+  </div>
+</main>
+
+<div class="veil" id="veil" hidden>
+  <div class="medal">
+    <svg viewBox="0 0 150 150" aria-hidden="true"><circle cx="75" cy="75" r="68"/></svg>
+    <div class="n" id="medalN">2</div>
+  </div>
+  <p id="veilMsg"></p>
+  <button class="go" id="go">keep going</button>
+  <button class="home-link" id="veilHome">all levels</button>
+</div>
+
+<script>
+(() => {
+  const TABLES = [1,2,3,4,5,6,7,8,9,10];
+  const COLORS = { 1:'#D96A62', 2:'#4FA36F', 3:'#E0718F', 4:'#DFAE2B', 5:'#5A97CE',
+                   6:'#977BC6', 7:'#43ADA0', 8:'#B0794E', 9:'#47619E', 10:'#C6892F', all:'#2E3238' };
+  const NAMES  = { 1:'ones', 2:'twos', 3:'threes', 4:'fours', 5:'fives',
+                   6:'sixes', 7:'sevens', 8:'eights', 9:'nines', 10:'tens' };
+  const KEY = 'dotxdot.v1';
+
+  const $ = id => document.getElementById(id);
+  const shuffle = a => { for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } };
+  const save = d => { try { localStorage.setItem(KEY, JSON.stringify(d)); } catch {} };
+  let state = load();                       // { done: { "2": "done" | "perfect", ... } }
+  state.done = state.done || {};
+
+  const allTablesDone = () => TABLES.every(t => state.done[t]);
+  const unlocked = t => t === 'all' ? allTablesDone()
+                      : TABLES.indexOf(t) === 0 || !!state.done[TABLES[TABLES.indexOf(t) - 1]];
+
+  /* ---------- home ---------- */
+  function renderHome() {
+    const box = $('chips');
+    box.innerHTML = '';
+    for (const t of [...TABLES, 'all']) {
+      const b = document.createElement('button');
+      b.className = 'chip';
+      b.style.setProperty('--c', COLORS[t]);
+      if (state.done[t] === 'done') b.classList.add('done');
+      if (state.done[t] === 'perfect') b.classList.add('done', 'perfect');
+      b.disabled = !unlocked(t);
+      b.innerHTML = `<span class="disc">${t === 'all' ? '×' : t}</span>
+                     <span class="word">${t === 'all' ? 'all of them' : 'the ' + NAMES[t]}</span>`;
+      b.onclick = () => startLevel(t);
+      box.appendChild(b);
+    }
+    $('home').hidden = false;
+    $('play').hidden = true;
+    $('veil').hidden = true;
+  }
+
+  /* ---------- level ---------- */
+  let level, queue, qi, mistakes, missedHere;
+
+  function startLevel(t) {
+    level = t;
+    mistakes = 0;
+    document.documentElement.style.setProperty('--c', COLORS[t]);
+    if (t === 'all') {
+      queue = [];
+      let prev = 0;
+      for (let i = 0; i < 12; i++) {
+        let tt;
+        do { tt = TABLES[Math.floor(Math.random() * TABLES.length)]; } while (tt === prev);
+        prev = tt;
+        queue.push([tt, 1 + Math.floor(Math.random() * 10)]);
+      }
+    } else {
+      queue = shuffle([1,2,3,4,5,6,7,8,9,10]).map(f => [t, f]);
+    }
+    qi = -1;
+    const meter = $('meter');
+    meter.innerHTML = '<i></i>'.repeat(queue.length);
+    $('home').hidden = true;
+    $('play').hidden = false;
+    nextQuestion();
+  }
+
+  function nextQuestion() {
+    qi++;
+    if (qi >= queue.length) return finishLevel();
+    missedHere = false;
+    const [t, f] = queue[qi];
+    if (level === 'all') document.documentElement.style.setProperty('--c', COLORS[t]);
+
+    $('stage').classList.remove('correct');
+    $('qa').textContent = t;
+    $('qb').textContent = f;
+    $('ans').textContent = '';
+    $('caption').textContent = `${f} row${f > 1 ? 's' : ''} of ${t}`;
+
+    const board = $('board');
+    board.classList.remove('counting');
+    clearTimeout(countTimer);
+    board.style.setProperty('--cols', t);
+    board.style.setProperty('--rows', f);
+    board.innerHTML = '';
+    for (let r = 0; r < f; r++) {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.style.setProperty('--i', r);
+      row.dataset.c = (r + 1) * t;
+      row.innerHTML = '<span class="dot"></span>'.repeat(t);
+      board.appendChild(row);
+    }
+
+    const correct = t * f;
+    const pool = [...new Set([t * (f + 1), t * (f - 1), (t + 1) * f, (t - 1) * f]
+                  .filter(x => x > 0 && x !== correct))];
+    shuffle(pool);
+    while (pool.length < 2) pool.push(correct + pool.length + 2);
+    const opts = shuffle([correct, pool[0], pool[1]]);
+
+    const box = $('answers');
+    box.innerHTML = '';
+    for (const v of opts) {
+      const b = document.createElement('button');
+      b.textContent = v;
+      b.onclick = () => answer(b, v === correct);
+      box.appendChild(b);
+    }
+  }
+
+  function answer(btn, right) {
+    if (!right) {
+      btn.disabled = true;
+      btn.classList.add('miss');
+      if (!missedHere) { mistakes++; missedHere = true; }
+      return;
+    }
+    btn.classList.add('hit');
+    for (const b of $('answers').children) b.disabled = true;
+    $('ans').textContent = '= ' + (queue[qi][0] * queue[qi][1]);
+    $('stage').classList.add('correct');
+    $('meter').children[qi].classList.add('on');
+    setTimeout(nextQuestion, 1350);
+  }
+
+  /* ---------- level complete ---------- */
+  function finishLevel() {
+    const perfect = mistakes === 0;
+    const prev = state.done[level];
+    state.done[level] = perfect || prev === 'perfect' ? 'perfect' : 'done';
+    save(state);
+
+    document.documentElement.style.setProperty('--c', COLORS[level]);
+    $('medalN').textContent = level === 'all' ? '×' : level;
+    $('veilMsg').textContent =
+      level === 'all'
+        ? (perfect ? 'Every single one. You know your times tables.'
+                   : 'That was all of them. You know your times tables.')
+        : (perfect ? `The ${NAMES[level]} are yours. Every one right.`
+                   : `The ${NAMES[level]} are yours.`);
+
+    const next = level === 'all' ? null
+               : TABLES[TABLES.indexOf(level) + 1] ?? (allTablesDone() ? 'all' : null);
+    const go = $('go');
+    go.hidden = !next;
+    if (next) {
+      go.textContent = next === 'all' ? 'next: all of them' : `next: the ${NAMES[next]}`;
+      go.onclick = () => { $('veil').hidden = true; startLevel(next); };
+    }
+    // restart the ring-draw animation
+    const c = document.querySelector('.medal circle');
+    c.style.animation = 'none'; void c.offsetWidth; c.style.animation = '';
+    $('veil').hidden = false;
+  }
+
+  /* ---------- wiring ---------- */
+  $('back').onclick = renderHome;
+  $('veilHome').onclick = renderHome;
+  $('reset').onclick = () => {
+    if (confirm('Erase all progress and start again?')) { state = { done: {} }; save(state); renderHome(); }
+  };
+
+  const board = $('board');
+  let countTimer;
+  board.addEventListener('pointerdown', () => {
+    if (board.classList.contains('counting')) return;
+    board.classList.add('counting');
+    countTimer = setTimeout(() => board.classList.remove('counting'),
+                            board.children.length * 550 + 2000);
+  });
+  board.addEventListener('contextmenu', e => e.preventDefault());
+
+  renderHome();
+})();
+</script>
+</body>
+</html>
