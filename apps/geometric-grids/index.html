@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Geometric Grids</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f7f3ea;
+    --panel:#efe9db;
+    --ink:#5c574c;
+    --faint:#a49d8e;
+    --rule:#ddd6c5;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%; margin:0;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:'Libre Baskerville',Baskerville,Georgia,serif;
+    display:flex; flex-direction:column;
+    height:100dvh; overflow:hidden;
+    user-select:none; -webkit-user-select:none;
+    overscroll-behavior:none;
+  }
+  header{
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding:14px 20px 8px;
+  }
+  .wordmark{font-style:italic; font-size:17px; letter-spacing:.01em;}
+  .hint{
+    font-size:12px; color:var(--faint); font-style:italic;
+    transition:opacity .8s ease;
+  }
+  .hint.gone{opacity:0;}
+
+  .stage{position:relative; flex:1; min-height:0;}
+  canvas{
+    position:absolute; inset:0; width:100%; height:100%;
+    display:block; touch-action:none; cursor:crosshair;
+  }
+
+  .bar{
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    padding:12px 14px calc(14px + env(safe-area-inset-bottom));
+    background:var(--panel); border-top:1px solid var(--rule);
+  }
+  .swatches{display:flex; gap:9px; flex-wrap:nowrap;}
+  .swatch{
+    width:36px; height:36px; border-radius:50%;
+    border:2px solid rgba(92,87,76,.18); cursor:pointer; padding:0;
+    transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  }
+  .swatch.on{
+    transform:scale(1.18);
+    border-color:var(--ink);
+    box-shadow:0 0 0 3px var(--panel), 0 0 0 4px rgba(92,87,76,.35);
+  }
+  .divider{width:1px; height:30px; background:var(--rule);}
+  .hbtn{
+    width:40px; height:40px; border-radius:50%;
+    border:1px solid var(--rule); background:var(--paper);
+    color:var(--ink); cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:opacity .15s ease;
+  }
+  .hbtn:disabled{opacity:.32; cursor:default;}
+  .hbtn svg{width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
+
+  @media (max-width:560px){
+    .swatch{width:30px; height:30px;}
+    .hbtn{width:36px; height:36px;}
+    .bar{gap:10px; padding-left:10px; padding-right:10px;}
+    .swatches{gap:6px;}
+  }
+  @media (max-width:390px){
+    .swatch{width:26px; height:26px;}
+    .hbtn{width:33px; height:33px;}
+    .bar{gap:8px;}
+    .swatches{gap:5px;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <span class="wordmark">geometric grids</span>
+  <span class="hint" id="hint">drag a diagonal &middot; release to set</span>
+</header>
+
+<div class="stage"><canvas id="cv"></canvas></div>
+
+<div class="bar">
+  <div class="swatches" id="swatches"></div>
+  <div class="divider"></div>
+  <button class="hbtn" id="undo" aria-label="Undo" disabled>
+    <svg viewBox="0 0 24 24"><path d="M8.5 5.5 4 10l4.5 4.5M4 10h10a6 6 0 0 1 0 12h-3"/></svg>
+  </button>
+  <button class="hbtn" id="redo" aria-label="Redo" disabled>
+    <svg viewBox="0 0 24 24"><path d="M15.5 5.5 20 10l-4.5 4.5M20 10H10a6 6 0 0 0 0 12h3"/></svg>
+  </button>
+</div>
+
+<script>
+(() => {
+  // ---- constants -----------------------------------------------------
+  const COLS = 24, ROWS = 32, CELL = 32;          // world units
+  const GRID_W = COLS * CELL, GRID_H = ROWS * CELL;
+  const HOLD_MS = 380;                            // pause that locks in early
+  const LIFT_GRACE_MS = 90;                       // endpoint changes this close
+                                                  // to lift-off are finger roll
+  const PALETTE = [                               // Montessori-ish, low sat
+    '#c4796b',  // terracotta red
+    '#d9a06c',  // warm ochre
+    '#dcc27c',  // muted yellow
+    '#8fae8b',  // sage green
+    '#7e9cb4',  // dusty blue
+    '#a288a9',  // soft plum
+    '#a98a72',  // warm brown
+    '#9aa1a4',  // slate gray
+  ];
+
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const hint = document.getElementById('hint');
+  const undoBtn = document.getElementById('undo');
+  const redoBtn = document.getElementById('redo');
+
+  // ---- state ---------------------------------------------------------
+  let color = PALETTE[0];
+  let ops = [];        // committed rects: {c0,r0,c1,r1,color}
+  let redoStack = [];
+  let flash = null;    // {op, t0} commit animation
+
+  // view transform: screen = world * s + (ox, oy)   (CSS px)
+  let s = 1, ox = 0, oy = 0, fitS = 1;
+
+  // pointers & interaction
+  const pointers = new Map();   // id -> {x, y}
+  let draw = null;              // {c0,r0,c1,r1, px,py, lastMove, done}
+  let gesture = null;           // {d0, mx, my, s0, ox0, oy0}
+
+  // ---- palette UI ----------------------------------------------------
+  const swWrap = document.getElementById('swatches');
+  PALETTE.forEach((col, i) => {
+    const b = document.createElement('button');
+    b.className = 'swatch' + (i === 0 ? ' on' : '');
+    b.style.background = col;
+    b.setAttribute('aria-label', 'color ' + (i + 1));
+    b.addEventListener('click', () => {
+      color = col;
+      swWrap.querySelectorAll('.swatch').forEach(el => el.classList.remove('on'));
+      b.classList.add('on');
+    });
+    swWrap.appendChild(b);
+  });
+
+  // ---- history -------------------------------------------------------
+  function syncHistoryUI() {
+    undoBtn.disabled = ops.length === 0;
+    redoBtn.disabled = redoStack.length === 0;
+  }
+  function commit(op) {
+    ops.push(op);
+    redoStack = [];
+    flash = { op, t0: performance.now() };
+    if (navigator.vibrate) navigator.vibrate(12);
+    hint.classList.add('gone');
+    syncHistoryUI();
+  }
+  undoBtn.addEventListener('click', () => {
+    if (ops.length) { redoStack.push(ops.pop()); syncHistoryUI(); }
+  });
+  redoBtn.addEventListener('click', () => {
+    if (redoStack.length) { ops.push(redoStack.pop()); syncHistoryUI(); }
+  });
+  window.addEventListener('keydown', e => {
+    if (!(e.ctrlKey || e.metaKey)) return;
+    const k = e.key.toLowerCase();
+    if (k === 'z' && e.shiftKey || k === 'y') { redoBtn.click(); e.preventDefault(); }
+    else if (k === 'z') { undoBtn.click(); e.preventDefault(); }
+  });
+
+  // ---- view helpers --------------------------------------------------
+  let vw = 0, vh = 0, dpr = 1;
+
+  function resize() {
+    const r = cv.parentElement.getBoundingClientRect();
+    vw = r.width; vh = r.height;
+    dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(vw * dpr);
+    cv.height = Math.round(vh * dpr);
+    fitS = Math.min((vw - 32) / GRID_W, (vh - 32) / GRID_H);
+    clampView();
+  }
+  function fitView() {
+    resize();
+    s = fitS;
+    ox = (vw - GRID_W * s) / 2;
+    oy = (vh - GRID_H * s) / 2;
+  }
+  function clampView() {
+    s = Math.min(Math.max(s, fitS * 0.5), fitS * 12);
+    // keep the grid's center loosely on screen
+    const m = 48;
+    ox = Math.min(Math.max(ox, m - GRID_W * s / 2), vw - m - GRID_W * s / 2);
+    oy = Math.min(Math.max(oy, m - GRID_H * s / 2), vh - m - GRID_H * s / 2);
+  }
+  function cellAt(x, y, clamp) {
+    let c = Math.floor((x - ox) / s / CELL);
+    let r = Math.floor((y - oy) / s / CELL);
+    if (clamp) {
+      c = Math.min(Math.max(c, 0), COLS - 1);
+      r = Math.min(Math.max(r, 0), ROWS - 1);
+      return { c, r };
+    }
+    return (c >= 0 && c < COLS && r >= 0 && r < ROWS) ? { c, r } : null;
+  }
+
+  // ---- pointer input -------------------------------------------------
+  cv.addEventListener('contextmenu', e => e.preventDefault());
+
+  cv.addEventListener('pointerdown', e => {
+    cv.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, { x: e.offsetX, y: e.offsetY });
+
+    if (pointers.size === 1) {
+      const cell = cellAt(e.offsetX, e.offsetY, false);
+      if (cell) {
+        draw = {
+          c0: cell.c, r0: cell.r, c1: cell.c, r1: cell.r,
+          pc: cell.c, pr: cell.r,   // endpoint before the latest change
+          px: e.offsetX, py: e.offsetY,
+          t0: performance.now(), lastMove: performance.now(), done: false,
+        };
+      }
+    } else if (pointers.size === 2) {
+      draw = null;  // second finger cancels drawing -> pinch/pan
+      const [a, b] = [...pointers.values()];
+      gesture = {
+        d0: Math.hypot(b.x - a.x, b.y - a.y),
+        mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2,
+        s0: s, ox0: ox, oy0: oy,
+      };
+    } else {
+      draw = null; gesture = null;
+    }
+  });
+
+  cv.addEventListener('pointermove', e => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, { x: e.offsetX, y: e.offsetY });
+
+    if (gesture && pointers.size === 2) {
+      const [a, b] = [...pointers.values()];
+      const d = Math.hypot(b.x - a.x, b.y - a.y);
+      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      const k = gesture.d0 > 20 ? d / gesture.d0 : 1;   // pinch
+      s = gesture.s0 * k;
+      ox = mx - (gesture.mx - gesture.ox0) * (s / gesture.s0);  // pan + zoom about midpoint
+      oy = my - (gesture.my - gesture.oy0) * (s / gesture.s0);
+      clampView();
+    } else if (draw && !draw.done && pointers.size === 1) {
+      draw.px = e.offsetX; draw.py = e.offsetY;
+      // hysteresis: the endpoint only switches cells once the finger is
+      // clearly past the boundary, so it doesn't flicker along cell edges
+      const wx = (e.offsetX - ox) / s, wy = (e.offsetY - oy) / s;
+      const hy = Math.min(CELL * 0.2, 10 / s);
+      let c = draw.c1, r = draw.r1;
+      if (wx > (draw.c1 + 1) * CELL + hy) c = Math.floor((wx - hy) / CELL);
+      else if (wx < draw.c1 * CELL - hy) c = Math.floor((wx + hy) / CELL);
+      if (wy > (draw.r1 + 1) * CELL + hy) r = Math.floor((wy - hy) / CELL);
+      else if (wy < draw.r1 * CELL - hy) r = Math.floor((wy + hy) / CELL);
+      c = Math.min(Math.max(c, 0), COLS - 1);
+      r = Math.min(Math.max(r, 0), ROWS - 1);
+      if (c !== draw.c1 || r !== draw.r1) {
+        draw.pc = draw.c1; draw.pr = draw.r1;
+        draw.c1 = c; draw.r1 = r;
+        draw.lastMove = performance.now();
+      }
+    }
+  });
+
+  function endPointer(e) {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.delete(e.pointerId);
+
+    if (gesture && pointers.size < 2) gesture = null;
+
+    if (draw && pointers.size === 0) {
+      if (!draw.done) {
+        // lifting commits; if the endpoint jumped cells in the final
+        // instant it was finger roll on lift-off, so keep the cell the
+        // user was actually resting on
+        let c1 = draw.c1, r1 = draw.r1;
+        if (performance.now() - draw.lastMove < LIFT_GRACE_MS) {
+          c1 = draw.pc; r1 = draw.pr;
+        }
+        commit(rectOf({ c0: draw.c0, r0: draw.r0, c1, r1 }));
+      }
+      draw = null;
+    }
+  }
+  cv.addEventListener('pointerup', endPointer);
+  cv.addEventListener('pointercancel', endPointer);
+
+  function rectOf(d) {
+    return {
+      c0: Math.min(d.c0, d.c1), r0: Math.min(d.r0, d.r1),
+      c1: Math.max(d.c0, d.c1), r1: Math.max(d.r0, d.r1),
+      color,
+    };
+  }
+
+  // trackpad: two-finger scroll pans, pinch (ctrl+wheel) zooms;
+  // mouse users can zoom with ctrl/cmd + wheel
+  cv.addEventListener('wheel', e => {
+    e.preventDefault();
+    if (e.ctrlKey || e.metaKey) {
+      const k = Math.exp(-e.deltaY * 0.01);
+      const s1 = Math.min(Math.max(s * k, fitS * 0.5), fitS * 12);
+      ox = e.offsetX - (e.offsetX - ox) * (s1 / s);
+      oy = e.offsetY - (e.offsetY - oy) * (s1 / s);
+      s = s1;
+    } else {
+      ox -= e.deltaX; oy -= e.deltaY;
+    }
+    clampView();
+  }, { passive: false });
+
+  // ---- render loop ---------------------------------------------------
+  function frame(now) {
+    // lock in a rectangle after the finger pauses on a cell
+    if (draw && !draw.done && pointers.size === 1
+        && (draw.c1 !== draw.c0 || draw.r1 !== draw.r0)
+        && now - draw.lastMove >= HOLD_MS) {
+      commit(rectOf(draw));
+      draw.done = true;
+    }
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, vw, vh);
+    ctx.setTransform(dpr * s, 0, 0, dpr * s, dpr * ox, dpr * oy);
+
+    // paper
+    ctx.fillStyle = '#fcf9f2';
+    ctx.fillRect(0, 0, GRID_W, GRID_H);
+
+    // committed rectangles
+    for (const op of ops) {
+      ctx.fillStyle = op.color;
+      ctx.fillRect(op.c0 * CELL, op.r0 * CELL,
+                   (op.c1 - op.c0 + 1) * CELL, (op.r1 - op.r0 + 1) * CELL);
+    }
+
+    // live preview
+    if (draw && !draw.done) {
+      const p = rectOf(draw);
+      const x = p.c0 * CELL, y = p.r0 * CELL;
+      const w = (p.c1 - p.c0 + 1) * CELL, h = (p.r1 - p.r0 + 1) * CELL;
+      ctx.globalAlpha = 0.5;
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, w, h);
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2 / s;
+      ctx.setLineDash([6 / s, 5 / s]);
+      ctx.strokeRect(x, y, w, h);
+      ctx.setLineDash([]);
+    }
+
+    // grid lines
+    ctx.strokeStyle = 'rgba(92,87,76,.16)';
+    ctx.lineWidth = 1 / s;
+    ctx.beginPath();
+    for (let c = 0; c <= COLS; c++) { ctx.moveTo(c * CELL, 0); ctx.lineTo(c * CELL, GRID_H); }
+    for (let r = 0; r <= ROWS; r++) { ctx.moveTo(0, r * CELL); ctx.lineTo(GRID_W, r * CELL); }
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(92,87,76,.38)';
+    ctx.lineWidth = 1.5 / s;
+    ctx.strokeRect(0, 0, GRID_W, GRID_H);
+
+    // commit flash
+    if (flash) {
+      const t = (now - flash.t0) / 320;
+      if (t >= 1) flash = null;
+      else {
+        const op = flash.op;
+        ctx.globalAlpha = 0.45 * (1 - t);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(op.c0 * CELL, op.r0 * CELL,
+                     (op.c1 - op.c0 + 1) * CELL, (op.r1 - op.r0 + 1) * CELL);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    // hold-to-lock progress ring (screen space, at the fingertip)
+    if (draw && !draw.done && pointers.size === 1
+        && (draw.c1 !== draw.c0 || draw.r1 !== draw.r0)) {
+      const p = Math.min((now - draw.lastMove) / HOLD_MS, 1);
+      if (p > 0.15) {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.beginPath();
+        ctx.arc(draw.px, draw.py - 44, 15, -Math.PI / 2, -Math.PI / 2 + p * 2 * Math.PI);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('resize', resize);
+  fitView();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
