@@ -86,7 +86,7 @@
 <body>
 <header>
   <span class="wordmark">geometric grids</span>
-  <span class="hint" id="hint">drag a diagonal &middot; hold to set</span>
+  <span class="hint" id="hint">drag a diagonal &middot; release to set</span>
 </header>
 
 <div class="stage"><canvas id="cv"></canvas></div>
@@ -107,7 +107,9 @@
   // ---- constants -----------------------------------------------------
   const COLS = 24, ROWS = 32, CELL = 32;          // world units
   const GRID_W = COLS * CELL, GRID_H = ROWS * CELL;
-  const HOLD_MS = 380;                            // pause needed to lock in
+  const HOLD_MS = 380;                            // pause that locks in early
+  const LIFT_GRACE_MS = 90;                       // endpoint changes this close
+                                                  // to lift-off are finger roll
   const PALETTE = [                               // Montessori-ish, low sat
     '#c4796b',  // terracotta red
     '#d9a06c',  // warm ochre
@@ -228,6 +230,7 @@
       if (cell) {
         draw = {
           c0: cell.c, r0: cell.r, c1: cell.c, r1: cell.r,
+          pc: cell.c, pr: cell.r,   // endpoint before the latest change
           px: e.offsetX, py: e.offsetY,
           t0: performance.now(), lastMove: performance.now(), done: false,
         };
@@ -260,9 +263,20 @@
       clampView();
     } else if (draw && !draw.done && pointers.size === 1) {
       draw.px = e.offsetX; draw.py = e.offsetY;
-      const cell = cellAt(e.offsetX, e.offsetY, true);
-      if (cell.c !== draw.c1 || cell.r !== draw.r1) {
-        draw.c1 = cell.c; draw.r1 = cell.r;
+      // hysteresis: the endpoint only switches cells once the finger is
+      // clearly past the boundary, so it doesn't flicker along cell edges
+      const wx = (e.offsetX - ox) / s, wy = (e.offsetY - oy) / s;
+      const hy = Math.min(CELL * 0.2, 10 / s);
+      let c = draw.c1, r = draw.r1;
+      if (wx > (draw.c1 + 1) * CELL + hy) c = Math.floor((wx - hy) / CELL);
+      else if (wx < draw.c1 * CELL - hy) c = Math.floor((wx + hy) / CELL);
+      if (wy > (draw.r1 + 1) * CELL + hy) r = Math.floor((wy - hy) / CELL);
+      else if (wy < draw.r1 * CELL - hy) r = Math.floor((wy + hy) / CELL);
+      c = Math.min(Math.max(c, 0), COLS - 1);
+      r = Math.min(Math.max(r, 0), ROWS - 1);
+      if (c !== draw.c1 || r !== draw.r1) {
+        draw.pc = draw.c1; draw.pr = draw.r1;
+        draw.c1 = c; draw.r1 = r;
         draw.lastMove = performance.now();
       }
     }
@@ -275,10 +289,15 @@
     if (gesture && pointers.size < 2) gesture = null;
 
     if (draw && pointers.size === 0) {
-      // quick tap on a single square commits it; an unfinished swipe
-      // (no lock-in hold) is discarded
-      if (!draw.done && draw.c1 === draw.c0 && draw.r1 === draw.r0) {
-        commit(rectOf(draw));
+      if (!draw.done) {
+        // lifting commits; if the endpoint jumped cells in the final
+        // instant it was finger roll on lift-off, so keep the cell the
+        // user was actually resting on
+        let c1 = draw.c1, r1 = draw.r1;
+        if (performance.now() - draw.lastMove < LIFT_GRACE_MS) {
+          c1 = draw.pc; r1 = draw.pr;
+        }
+        commit(rectOf({ c0: draw.c0, r0: draw.r0, c1, r1 }));
       }
       draw = null;
     }
