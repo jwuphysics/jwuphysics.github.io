@@ -109,6 +109,8 @@
   const GRID_W = COLS * CELL, GRID_H = ROWS * CELL;
   const LIFT_GRACE_MS = 90;                       // endpoint changes this close
                                                   // to lift-off are finger roll
+  const PAPER = '#fcf9f2';                        // canvas ground; painting
+                                                  // with it clears colors
   const PALETTE = [                               // Montessori-ish, low sat
     '#c4796b',  // terracotta red
     '#d9a06c',  // warm ochre
@@ -118,6 +120,7 @@
     '#a288a9',  // soft plum
     '#a98a72',  // warm brown
     '#9aa1a4',  // slate gray
+    PAPER,      // paper white (eraser)
   ];
 
   const cv = document.getElementById('cv');
@@ -333,7 +336,7 @@
     ctx.setTransform(dpr * s, 0, 0, dpr * s, dpr * ox, dpr * oy);
 
     // paper
-    ctx.fillStyle = '#fcf9f2';
+    ctx.fillStyle = PAPER;
     ctx.fillRect(0, 0, GRID_W, GRID_H);
 
     // committed rectangles
@@ -352,7 +355,8 @@
       ctx.fillStyle = color;
       ctx.fillRect(x, y, w, h);
       ctx.globalAlpha = 1;
-      ctx.strokeStyle = color;
+      // a paper-white outline would vanish on paper, so ink it instead
+      ctx.strokeStyle = color === PAPER ? 'rgba(92,87,76,.5)' : color;
       ctx.lineWidth = 2 / s;
       ctx.setLineDash([6 / s, 5 / s]);
       ctx.strokeRect(x, y, w, h);
@@ -360,7 +364,7 @@
     }
 
     // grid lines
-    ctx.strokeStyle = 'rgba(92,87,76,.16)';
+    ctx.strokeStyle = 'rgba(92,87,76,.3)';
     ctx.lineWidth = 1 / s;
     ctx.beginPath();
     for (let c = 0; c <= COLS; c++) { ctx.moveTo(c * CELL, 0); ctx.lineTo(c * CELL, GRID_H); }
