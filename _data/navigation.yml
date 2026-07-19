@@ -20,9 +20,6 @@ main:
         
   - title: "Resources"
     url: /resources/
-
-  - title: "Apps"
-    url: /apps/
     
   - title: "CV"
     url: /cv/
