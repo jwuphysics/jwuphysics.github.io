@@ -75,8 +75,8 @@
 .deck li{padding-left:1.6em; position:relative}
 .deck ul > li::before{content:"—"; position:absolute; left:0; color:var(--green)}
 .deck ol{counter-reset:n}
-.deck ol > li{counter-increment:n; padding-left:2.4em}
-.deck ol > li::before{content:counter(n) "."; position:absolute; left:0; width:1.8em; text-align:right; color:var(--purple)}
+.deck ol > li{counter-increment:n}
+.deck ol > li::before{content:counter(n) "."; position:absolute; left:0; color:var(--purple)}
 .deck li ul{margin-top:.5em}
 .deck li ul > li::before{content:"·"; color:var(--muted)}
 .deck li.pend::before{opacity:0}
