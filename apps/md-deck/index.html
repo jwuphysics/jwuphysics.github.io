@@ -60,7 +60,7 @@
 .deck .out{flex:1; overflow:hidden; display:flex; flex-direction:column; gap:.7em; min-height:0}
 .deck .out > *{margin:0}
 .deck h4,.deck h5,.deck h6{font-size:1em; color:var(--yellow); font-weight:700; letter-spacing:.04em}
-.deck p{max-width:60ch}
+.deck p{max-width:70ch}
 .deck strong{color:var(--yellow)}
 .deck em{color:var(--cyan); font-style:normal; text-decoration:underline dotted}
 .deck del{color:var(--muted)}
@@ -71,7 +71,7 @@
   padding:.7em 1em; overflow:auto; max-height:100%; white-space:pre-wrap;
 }
 .deck pre code{background:none; border:0; padding:0; color:var(--fg)}
-.deck ul,.deck ol{list-style:none; padding:0; display:flex; flex-direction:column; gap:.35em; max-width:64ch}
+.deck ul,.deck ol{list-style:none; padding:0; display:flex; flex-direction:column; gap:.35em; max-width:74ch}
 .deck li{padding-left:1.6em; position:relative}
 .deck ul > li::before{content:"—"; position:absolute; left:0; color:var(--green)}
 .deck ol{counter-reset:n}
@@ -423,7 +423,7 @@ window.Deck = (function () {
     root.classList.add('deck');
     root.setAttribute('tabindex', '0');
     root.innerHTML = '<div class="stack"></div><div class="hud">' +
-      '<span class="pos"></span><span class="keys">&larr; &rarr; move &middot; click to skip</span>' +
+      '<span class="pos"></span>' +
       '<span class="grow"></span><button data-a="theme">theme</button><button data-a="full">full screen</button></div>';
 
     var stack = root.querySelector('.stack');
@@ -482,7 +482,7 @@ window.Deck = (function () {
 
     var ro = new ResizeObserver(function (en) {
       var w = en[0].contentRect.width;
-      root.style.fontSize = Math.max(9, Math.min(26, w / 58)) + 'px';
+      root.style.fontSize = Math.max(11, Math.min(32, w / 50)) + 'px';
     });
     ro.observe(root);
 
