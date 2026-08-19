@@ -142,15 +142,17 @@ body{
 .bar .logo b{color:var(--fg)}
 .bar .tip{color:var(--muted); font-size:.85em}
 .bar .grow{flex:1}
-button{
-  font:inherit; font-family:var(--mono); cursor:pointer;
+button,.btn{
+  font:inherit; font-family:var(--mono); cursor:pointer; display:inline-block;
   background:var(--bg); color:var(--fg); border:1px solid var(--border);
-  border-radius:5px; padding:.35rem .8rem;
+  border-radius:5px; padding:.5rem .8rem; -webkit-appearance:none; appearance:none;
+  touch-action:manipulation; -webkit-tap-highlight-color:transparent; white-space:nowrap;
 }
-button:hover{border-color:var(--fg)}
+button:hover,.btn:hover{border-color:var(--fg)}
 button.go{background:var(--green); border-color:var(--green); color:var(--bg); font-weight:700}
 :root[data-theme="light"] button.go{color:#fff}
-button:focus-visible,textarea:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+button:focus-visible,.btn:focus-within,textarea:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+#fileInput{position:absolute; width:1px; height:1px; opacity:0; pointer-events:none}
 
 .split{flex:1; display:grid; grid-template-columns:minmax(0,40fr) minmax(0,60fr); min-height:0}
 .pane{display:flex; flex-direction:column; min-width:0; min-height:0}
@@ -207,12 +209,28 @@ textarea#src{
 </head>
 
 <body>
+<script>
+// Surfaces JS errors on screen — phones have no console.
+window.addEventListener('error', function (e) {
+  var b = document.getElementById('boot');
+  if (!b) {
+    b = document.createElement('div');
+    b.id = 'boot';
+    b.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:99;background:#cf222e;' +
+      'color:#fff;font:12px ui-monospace,monospace;padding:.6rem;white-space:pre-wrap';
+    b.addEventListener('click', function () { b.remove(); });
+    (document.body || document.documentElement).appendChild(b);
+  }
+  b.textContent = 'error: ' + (e.message || 'unknown') + '\nline ' + (e.lineno || '?') + ' (tap to dismiss)';
+});
+</script>
+
 <header class="bar">
   <span class="logo">md<b>deck</b></span>
   <span class="tip">drop a zip (markdown + images) anywhere on this page</span>
   <span class="grow"></span>
-  <button id="themeBtn">theme</button>
-  <button id="uploadBtn">Upload files</button>
+  <button id="themeBtn" type="button">theme</button>
+  <label class="btn" for="fileInput">Upload files</label>
 </header>
 
 <main class="split">
@@ -245,7 +263,7 @@ textarea#src{
   </div>
 </div>
 
-<input type="file" id="fileInput" multiple accept=".md,.markdown,.zip,image/*" hidden>
+<input type="file" id="fileInput" multiple accept=".md,.markdown,.zip,image/*" aria-label="Upload markdown or zip">
 
 <!-- standalone page styles, copied verbatim into exports -->
 <script type="text/css" id="standaloneCss">
@@ -495,4 +513,336 @@ window.Deck = (function () {
     'Put a markdown file and its images in a folder, zip it, and drag it onto the page.',
     '',
     '### Controls',
-    '1. Right arrow or space for the n
+    '1. Right arrow or space for the next screen',
+    '2. Left arrow to go back',
+    '3. `f` for full screen, `t` to flip the theme'
+  ].join('\n');
+
+  var $ = function (s) { return document.querySelector(s); };
+  var src = $('#src'), deckEl = $('#deck'), assetsEl = $('#assets'), errEl = $('#err');
+  var images = new Map();  // basename + full path -> data url
+  var slides = [], deck = null, timer = null;
+
+  /* ---------------- markdown ---------------- */
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  // Strips anything that could break out of a quoted attribute, then allows only
+  // relative paths, http(s), mailto and image data URLs. Safe to run twice.
+  var DATA_IMG = /^data:image\/(?:png|jpeg|gif|svg\+xml|webp|avif|bmp);/i;
+  function safeURL(p) {
+    var u = String(p).trim().replace(/[\u0000-\u0020\u007f"'`<>\\]/g, '');
+    var scheme = u.match(/^([a-z][a-z0-9+.-]*):/i);
+    if (scheme) {
+      var s = scheme[1].toLowerCase();
+      var ok = s === 'http' || s === 'https' || s === 'mailto' || (s === 'data' && DATA_IMG.test(u));
+      if (!ok) return '#blocked';
+    }
+    return u;
+  }
+  function srcFor(p) {
+    var clean = String(p).replace(/^\.?\//, '').replace(/^\.\.\//, '');
+    var hit = images.get(clean) || images.get(clean.split('/').pop());
+    return hit || safeURL(p);
+  }
+  function inline(s) {
+    s = esc(s);
+    s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, function (m, alt, p) {
+      return '<img src="' + srcFor(p) + '" alt="' + alt + '">';
+    });
+    s = s.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, function (m, label, p) {
+      return '<a href="' + safeURL(p) + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
+    });
+    s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/(^|[^*\w])\*([^*]+)\*/g, '$1<em>$2</em>');
+    s = s.replace(/~~([^~]+)~~/g, '<del>$1</del>');
+    return s;
+  }
+  function slug(s) {
+    return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 22) || 'section';
+  }
+  function trunc(s, n) { return s.length > n ? s.slice(0, n - 1).trimEnd() + '\u2026' : s; }
+
+  function tokenize(text) {
+    var lines = text.replace(/\r\n?/g, '\n').split('\n'), toks = [], i = 0;
+    while (i < lines.length) {
+      var line = lines[i];
+      if (/^\s*```/.test(line)) {
+        var buf = []; i++;
+        while (i < lines.length && !/^\s*```/.test(lines[i])) { buf.push(lines[i]); i++; }
+        i++;
+        toks.push({ t: 'code', v: buf.join('\n') });
+        continue;
+      }
+      var h = line.match(/^(#{1,6})\s+(.*)$/);
+      if (h) { toks.push({ t: 'h' + h[1].length, v: h[2].trim() }); i++; continue; }
+      if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) { toks.push({ t: 'hr' }); i++; continue; }
+      if (!line.trim()) { i++; continue; }
+      if (/^\s*>/.test(line)) {
+        var q = [];
+        while (i < lines.length && /^\s*>/.test(lines[i])) { q.push(lines[i].replace(/^\s*>\s?/, '')); i++; }
+        toks.push({ t: 'quote', v: q.join(' ') });
+        continue;
+      }
+      if (/^\s*([-*+]|\d+[.)])\s+/.test(line)) {
+        var items = [], ordered = /^\s*\d+[.)]\s/.test(line);
+        while (i < lines.length && /^\s*([-*+]|\d+[.)])\s+/.test(lines[i])) {
+          var m = lines[i].match(/^(\s*)([-*+]|\d+[.)])\s+(.*)$/);
+          items.push({ depth: Math.floor(m[1].length / 2), v: m[3] });
+          i++;
+        }
+        toks.push({ t: 'list', ordered: ordered, items: items });
+        continue;
+      }
+      var para = [];
+      while (i < lines.length && lines[i].trim() &&
+             !/^\s*(#{1,6}\s|```|>|-{3,}$|([-*+]|\d+[.)])\s)/.test(lines[i])) {
+        para.push(lines[i].trim()); i++;
+      }
+      toks.push({ t: 'p', v: para.join(' ') });
+    }
+    return toks;
+  }
+
+  function toHTML(tok) {
+    switch (tok.t) {
+      case 'p': {
+        var only = tok.v.match(/^!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)$/);
+        if (only) {
+          return '<figure><img src="' + srcFor(only[2]) + '" alt="' + esc(only[1]) + '">' +
+                 (only[1] ? '<figcaption>' + esc(only[1]) + '</figcaption>' : '') + '</figure>';
+        }
+        return '<p>' + inline(tok.v) + '</p>';
+      }
+      case 'code': return '<pre><code>' + esc(tok.v) + '</code></pre>';
+      case 'quote': return '<blockquote>' + inline(tok.v) + '</blockquote>';
+      case 'hr': return '<hr>';
+      case 'list': {
+        var tag = tok.ordered ? 'ol' : 'ul', html = '<' + tag + '>', open = 0;
+        tok.items.forEach(function (it) {
+          while (it.depth > open) { html += '<ul>'; open++; }
+          while (it.depth < open) { html += '</ul>'; open--; }
+          html += '<li>' + inline(it.v) + '</li>';
+        });
+        while (open-- > 0) html += '</ul>';
+        return html + '</' + tag + '>';
+      }
+      case 'h4': case 'h5': case 'h6': return '<h4>' + inline(tok.v) + '</h4>';
+      default: return '';
+    }
+  }
+
+  function build(text) {
+    var toks = tokenize(text);
+    var sections = toks.filter(function (t) { return t.t === 'h2'; }).map(function (t) { return t.v; });
+    var out = [], cur = null, proto = null, si = -1;
+
+    function flush() {
+      if (cur && (cur.parts.length || cur.title)) { cur.html = cur.parts.join(''); delete cur.parts; out.push(cur); }
+      cur = null;
+    }
+    function ensure() {
+      if (!cur) cur = { type: proto ? proto.type : 'slide', title: proto ? proto.title : '', path: proto ? proto.path : '~', parts: [] };
+      return cur;
+    }
+
+    toks.forEach(function (tok) {
+      if (tok.t === 'h1') {
+        flush();
+        proto = { type: 'title', title: trunc(tok.v, 108), path: '~' };
+        cur = { type: 'title', title: proto.title, path: '~', parts: [] };
+      } else if (tok.t === 'h2') {
+        flush();
+        si++;
+        out.push({ type: 'toc', title: 'select section', path: '~', sections: sections, index: si, from: si === 0 ? 0 : si - 1 });
+        proto = { type: 'slide', title: trunc(tok.v, 108), path: '~/' + slug(tok.v) };
+        cur = null;
+      } else if (tok.t === 'h3') {
+        flush();
+        proto = { type: 'slide', title: trunc(tok.v, 108), path: si >= 0 ? '~/' + slug(sections[si]) : '~' };
+        cur = { type: 'slide', title: proto.title, path: proto.path, parts: [] };
+      } else {
+        ensure().parts.push(toHTML(tok));
+      }
+    });
+    flush();
+    return out;
+  }
+
+  /* ---------------- render ---------------- */
+  function render() {
+    try {
+      errEl.textContent = '';
+      slides = build(src.value);
+      if (deck) deck.destroy();
+      deck = window.Deck.mount(deckEl, slides);
+      $('#count').textContent = slides.length + ' screens';
+    } catch (e) {
+      errEl.textContent = 'Could not build the deck: ' + e.message;
+    }
+  }
+  function queueRender() { clearTimeout(timer); timer = setTimeout(render, 350); }
+
+  /* ---------------- export ---------------- */
+  function deckTitle() {
+    var m = src.value.match(/^#\s+(.*)$/m);
+    return m ? m[1].trim() : 'deck';
+  }
+  function buildFile() {
+    var data = JSON.stringify(slides).replace(/</g, '\\u003c');
+    return '<!doctype html>\n<html lang="en" data-theme="' + document.documentElement.dataset.theme + '">\n' +
+      '<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n' +
+      '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; ' +
+      'script-src \'unsafe-inline\'; style-src \'unsafe-inline\'; img-src data: https:; ' +
+      'object-src \'none\'; base-uri \'none\'; form-action \'none\'">\n' +
+      '<title>' + esc(deckTitle()) + '</title>\n' +
+      '<style>' + $('#deckStyle').textContent + '</style>\n' +
+      '<style>' + $('#standaloneCss').textContent + '</style>\n</head>\n' +
+      '<body>\n<div id="deck"></div>\n' +
+      '<script>window.__SLIDES__=' + data + ';<\/script>\n' +
+      '<script>' + $('#deckEngine').textContent + '<\/script>\n' +
+      '<script>Deck.mount(document.getElementById("deck"),window.__SLIDES__);' +
+      'document.getElementById("deck").focus();<\/script>\n</body>\n</html>';
+  }
+  function saveFile() {
+    var blob = new Blob([buildFile()], { type: 'text/html' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = slug(deckTitle()) + '.html';
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+  }
+
+  /* ---------------- files ---------------- */
+  function readAs(file, how) {
+    return new Promise(function (res, rej) {
+      var r = new FileReader();
+      r.onload = function () { res(r.result); };
+      r.onerror = function () { rej(new Error('Could not read ' + file.name)); };
+      how === 'text' ? r.readAsText(file) : how === 'buf' ? r.readAsArrayBuffer(file) : r.readAsDataURL(file);
+    });
+  }
+  function bytesToDataURL(bytes, name) {
+    var ext = name.split('.').pop().toLowerCase();
+    var type = ext === 'svg' ? 'image/svg+xml' : ext === 'jpg' ? 'image/jpeg' : 'image/' + ext;
+    return readAs(new File([bytes], name, { type: type }), 'url');
+  }
+  var MAX_ZIP = 200 * 1024 * 1024;      // archive on disk
+  var MAX_EXPANDED = 500 * 1024 * 1024; // everything inside it
+
+  async function unzip(buffer) {
+    var dv = new DataView(buffer), u8 = new Uint8Array(buffer), eocd = -1;
+    for (var i = u8.length - 22; i >= Math.max(0, u8.length - 66000); i--) {
+      if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+    }
+    if (eocd < 0) throw new Error('that zip file looks damaged');
+    var count = dv.getUint16(eocd + 10, true), p = dv.getUint32(eocd + 16, true), files = [], total = 0;
+    for (var k = 0; k < count; k++) {
+      if (dv.getUint32(p, true) !== 0x02014b50) break;
+      var method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true);
+      total += dv.getUint32(p + 24, true);
+      if (total > MAX_EXPANDED) throw new Error('the contents of that zip are too big to open');
+      var nlen = dv.getUint16(p + 28, true), elen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true);
+      var lho = dv.getUint32(p + 42, true);
+      var name = new TextDecoder().decode(u8.subarray(p + 46, p + 46 + nlen));
+      p += 46 + nlen + elen + clen;
+      if (name.endsWith('/') || name.startsWith('__MACOSX') || name.split('/').pop().startsWith('.')) continue;
+      var start = lho + 30 + dv.getUint16(lho + 26, true) + dv.getUint16(lho + 28, true);
+      var data = u8.slice(start, start + csize);
+      if (method === 8) {
+        data = new Uint8Array(await new Response(
+          new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))
+        ).arrayBuffer());
+      } else if (method !== 0) continue;
+      files.push({ name: name, data: data });
+    }
+    return files;
+  }
+
+  var IMG = /\.(png|jpe?g|gif|svg|webp|avif|bmp)$/i;
+  var MD = /\.(md|markdown|mdown|txt)$/i;
+
+  async function intake(fileList) {
+    errEl.textContent = '';
+    var list = Array.prototype.slice.call(fileList);
+    var md = null, found = new Map();
+    try {
+      var zip = list.filter(function (f) { return /\.zip$/i.test(f.name); })[0];
+      if (zip) {
+        if (zip.size > MAX_ZIP) throw new Error('that zip file is too big to open');
+        var entries = await unzip(await readAs(zip, 'buf'));
+        for (var e of entries) {
+          if (MD.test(e.name) && md === null) md = new TextDecoder().decode(e.data);
+          else if (IMG.test(e.name)) {
+            var url = await bytesToDataURL(e.data, e.name);
+            found.set(e.name, url); found.set(e.name.split('/').pop(), url);
+          }
+        }
+      } else {
+        for (var f of list) {
+          if (MD.test(f.name) && md === null) md = await readAs(f, 'text');
+          else if (IMG.test(f.name)) {
+            var u = await readAs(f, 'url');
+            found.set(f.name, u); found.set(f.name.split('/').pop(), u);
+          }
+        }
+      }
+      if (md === null && !found.size) {
+        errEl.textContent = 'No markdown or images in there. Drop a .zip, or a .md file with its images.';
+        return;
+      }
+      found.forEach(function (v, k) { images.set(k, v); });
+      if (md !== null) src.value = md;
+      showAssets();
+      render();
+      $('#modal').classList.add('on');
+      $('#modalSave').focus();
+    } catch (err) {
+      errEl.textContent = 'Could not open that: ' + err.message;
+    }
+  }
+  function showAssets() {
+    var out = [];
+    images.forEach(function (v, k) { if (k.indexOf('/') < 0) out.push('<span>' + esc(k) + '</span>'); });
+    assetsEl.innerHTML = out.join('');
+  }
+
+  /* ---------------- wiring ---------------- */
+  src.value = SAMPLE;
+  render();
+
+  // A missing element should never take down the listeners registered after it.
+  function on(sel, ev, fn) {
+    var n = typeof sel === 'string' ? $(sel) : sel;
+    if (n) n.addEventListener(ev, fn);
+  }
+
+  on(src, 'input', queueRender);
+  on('#exportBtn', 'click', saveFile);
+  on('#presentBtn', 'click', function () { deckEl.focus(); deck && deck.full(); });
+  on('#themeBtn', 'click', function () {
+    var r = document.documentElement;
+    r.dataset.theme = r.dataset.theme === 'light' ? 'dark' : 'light';
+  });
+  // "Upload files" is a <label for="fileInput">, so it needs no click handler.
+  on('#fileInput', 'change', function (e) { intake(e.target.files); e.target.value = ''; });
+
+  function closeModal() { $('#modal').classList.remove('on'); }
+  on('#modalSkip', 'click', closeModal);
+  on('#modalSave', 'click', function () { saveFile(); closeModal(); });
+  on('#modal', 'click', function (e) { if (e.target === $('#modal')) closeModal(); });
+  on(document, 'keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+  var dz = $('#drop'), depth = 0;
+  on(window, 'dragenter', function (e) { e.preventDefault(); depth++; dz.classList.add('on'); });
+  on(window, 'dragover', function (e) { e.preventDefault(); });
+  on(window, 'dragleave', function () { if (--depth <= 0) { depth = 0; dz.classList.remove('on'); } });
+  on(window, 'drop', function (e) {
+    e.preventDefault(); depth = 0; dz.classList.remove('on');
+    if (e.dataTransfer.files.length) intake(e.dataTransfer.files);
+  });
+})();
+</script>
+</body>
+</html>
