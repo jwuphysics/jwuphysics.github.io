@@ -81,9 +81,20 @@
 .deck li ul > li::before{content:"·"; color:var(--muted)}
 .deck blockquote{border-left:3px solid var(--purple); padding-left:.9em; color:var(--muted); max-width:60ch}
 .deck hr{border:0; border-top:1px dashed var(--border); width:100%}
-.deck figure{margin:0}
 .deck img{max-width:100%; max-height:14em; object-fit:contain; border:1px solid var(--border); background:var(--bg2)}
-.deck figcaption{color:var(--muted); font-size:.85em; margin-top:.3em}
+/* A standalone image fills whatever space the slide has left, centred, keeping
+   its aspect ratio — so it grows until the tighter of the two edges runs out. */
+.deck figure{
+  margin:0; flex:1 1 auto; min-height:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.4em;
+}
+.deck figure img{
+  flex:1 1 auto; min-height:0; width:100%; height:auto;
+  max-width:100%; max-height:100%;
+  object-fit:contain; object-position:center; border:0; background:none;
+}
+.deck figure .cur{display:none}
+.deck figcaption{color:var(--muted); font-size:.85em; margin-top:0; text-align:center}
 .deck table{border-collapse:collapse}
 .deck th,.deck td{border:1px solid var(--border); padding:.25em .7em; text-align:left}
 .deck th{color:var(--yellow)}
