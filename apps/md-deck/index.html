@@ -75,10 +75,11 @@
 .deck li{padding-left:1.6em; position:relative}
 .deck ul > li::before{content:"—"; position:absolute; left:0; color:var(--green)}
 .deck ol{counter-reset:n}
-.deck ol > li{counter-increment:n}
-.deck ol > li::before{content:counter(n,decimal-leading-zero); position:absolute; left:0; color:var(--purple)}
+.deck ol > li{counter-increment:n; padding-left:2.4em}
+.deck ol > li::before{content:counter(n) "."; position:absolute; left:0; width:1.8em; text-align:right; color:var(--purple)}
 .deck li ul{margin-top:.5em}
 .deck li ul > li::before{content:"·"; color:var(--muted)}
+.deck li.pend::before{opacity:0}
 .deck blockquote{border-left:3px solid var(--purple); padding-left:.9em; color:var(--muted); max-width:60ch}
 .deck hr{border:0; border-top:1px dashed var(--border); width:100%}
 .deck img{max-width:100%; max-height:14em; object-fit:contain; border:1px solid var(--border); background:var(--bg2)}
@@ -338,8 +339,30 @@ window.Deck = (function () {
 
     var blocks = isToc ? [] : Array.prototype.slice.call(out.children);
     var nodeMap = blocks.map(function (b) {
-      return textNodes(b).map(function (n) { return { n: n, full: n.nodeValue }; });
+      return textNodes(b).map(function (n) {
+        return { n: n, full: n.nodeValue, li: n.parentNode.closest('li') };
+      });
     });
+
+    // Pin every block and list item at the height it ends up with, in em so it
+    // survives a resize. Without this a line that wraps as it types shoves
+    // everything below it down the slide. Figures are skipped -- they rely on
+    // min-height:0 to shrink to fit.
+    var frozen = [], items = [];
+    function freeze(n) {
+      var fs = parseFloat(getComputedStyle(n).fontSize) || 16;
+      n.style.minHeight = (n.getBoundingClientRect().height / fs).toFixed(3) + 'em';
+      frozen.push(n);
+    }
+    blocks.forEach(function (b) {
+      if (b.tagName !== 'FIGURE') freeze(b);
+      Array.prototype.slice.call(b.querySelectorAll('li')).forEach(function (li) {
+        freeze(li);
+        li.classList.add('pend');   // hides its bullet until the text reaches it
+        items.push(li);
+      });
+    });
+
     blocks.forEach(function (b) { b.style.visibility = 'hidden'; });
     nodeMap.forEach(function (l) { l.forEach(function (o) { o.n.nodeValue = ''; }); });
 
@@ -355,6 +378,8 @@ window.Deck = (function () {
       cmdEl.textContent = title;
       blocks.forEach(function (b) { b.style.visibility = ''; });
       nodeMap.forEach(function (l) { l.forEach(function (o) { o.n.nodeValue = o.full; }); });
+      frozen.forEach(function (n) { n.style.minHeight = ''; });
+      items.forEach(function (li) { li.classList.remove('pend'); });
       if (isToc) {
         lis.forEach(function (li, i) {
           li.style.visibility = '';
@@ -378,13 +403,17 @@ window.Deck = (function () {
       if (i >= blocks.length) { T(finish, 140); return; }
       var b = blocks[i];
       b.style.visibility = '';
-      b.appendChild(cur);
+      if (!b.querySelector('li')) b.appendChild(cur);
       var list = nodeMap[i];
       if (!list.length) { T(function () { nextBlock(i + 1); }, SPEED.block); return; }
       var ni = 0, ci = 0;
       (function step() {
         if (ni >= list.length) { T(function () { nextBlock(i + 1); }, SPEED.block); return; }
         var o = list[ni];
+        if (o.li) {
+          o.li.classList.remove('pend');
+          if (cur.parentNode !== o.li) o.li.appendChild(cur);
+        }
         ci += 2;
         if (ci >= o.full.length) { o.n.nodeValue = o.full; ni++; ci = 0; }
         else o.n.nodeValue = o.full.slice(0, ci);
