@@ -57,7 +57,7 @@
 }
 
 /* ---- slide body ---- */
-.deck .out{flex:1; overflow:hidden; display:flex; flex-direction:column; gap:.7em; min-height:0}
+.deck .out{flex:1; overflow:hidden; display:flex; flex-direction:column; gap:.9em; min-height:0}
 .deck .out > *{margin:0}
 .deck h4,.deck h5,.deck h6{font-size:1em; color:var(--yellow); font-weight:700; letter-spacing:.04em}
 .deck p{max-width:70ch}
@@ -71,13 +71,13 @@
   padding:.7em 1em; overflow:auto; max-height:100%; white-space:pre-wrap;
 }
 .deck pre code{background:none; border:0; padding:0; color:var(--fg)}
-.deck ul,.deck ol{list-style:none; padding:0; display:flex; flex-direction:column; gap:.35em; max-width:74ch}
+.deck ul,.deck ol{list-style:none; padding:0; display:flex; flex-direction:column; gap:.9em; max-width:74ch}
 .deck li{padding-left:1.6em; position:relative}
 .deck ul > li::before{content:"—"; position:absolute; left:0; color:var(--green)}
 .deck ol{counter-reset:n}
 .deck ol > li{counter-increment:n}
 .deck ol > li::before{content:counter(n,decimal-leading-zero); position:absolute; left:0; color:var(--purple)}
-.deck li ul{margin-top:.35em}
+.deck li ul{margin-top:.5em}
 .deck li ul > li::before{content:"·"; color:var(--muted)}
 .deck blockquote{border-left:3px solid var(--purple); padding-left:.9em; color:var(--muted); max-width:60ch}
 .deck hr{border:0; border-top:1px dashed var(--border); width:100%}
