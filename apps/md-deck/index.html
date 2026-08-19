@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>md deck — markdown to terminal slides</title>
+
+<!-- ============================================================
+     SHARED DECK STYLES — this block is copied into exported files
+     ============================================================ -->
+<style id="deckStyle">
+:root{
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+:root[data-theme="dark"]{
+  --bg:#0d1117; --bg2:#161b22; --fg:#e6edf3; --muted:#8b949e; --border:#30363d;
+  --green:#3fb950; --blue:#58a6ff; --purple:#bc8cff; --yellow:#d29922; --red:#ff7b72; --cyan:#39c5cf;
+  --sel:#1f2d3d;
+}
+:root[data-theme="light"]{
+  --bg:#ffffff; --bg2:#f6f8fa; --fg:#1f2328; --muted:#59636e; --border:#d1d9e0;
+  --green:#1a7f37; --blue:#0969da; --purple:#8250df; --yellow:#9a6700; --red:#cf222e; --cyan:#1b7c83;
+  --sel:#ddf4ff;
+}
+
+/* ---- deck shell ---- */
+.deck{
+  position:relative; display:flex; flex-direction:column;
+  height:100%; overflow:hidden; outline:none;
+  background:var(--bg); color:var(--fg);
+  font-family:var(--mono); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.deck .stack{position:relative; flex:1; overflow:hidden}
+.deck .screen{
+  position:absolute; inset:0; padding:2.2em 2.6em;
+  display:flex; flex-direction:column; gap:1em; overflow:hidden;
+}
+.deck .screen.enter{animation:deckIn .34s cubic-bezier(.2,.75,.3,1) both}
+.deck .screen.exit{animation:deckOut .24s ease-in both; pointer-events:none}
+@keyframes deckIn{from{transform:translateY(30%);opacity:0}to{transform:none;opacity:1}}
+@keyframes deckOut{from{transform:none;opacity:1}to{transform:translateY(-26%);opacity:0}}
+
+/* ---- prompt line ---- */
+.deck .prompt{white-space:pre-wrap; word-break:break-word; font-size:1.15em}
+.deck .prompt .s{color:var(--green); font-weight:700}
+.deck .prompt .cmd{color:var(--fg); font-weight:700}
+
+.deck .cur{
+  display:inline-block; width:.6em; height:1.05em; margin-left:.08em;
+  background:var(--fg); vertical-align:-.18em;
+}
+.deck .cur.idle{animation:blink 1.05s steps(1) infinite}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+/* ---- slide body ---- */
+.deck .out{flex:1; overflow:hidden; display:flex; flex-direction:column; gap:.7em; min-height:0}
+.deck .out > *{margin:0}
+.deck h4,.deck h5,.deck h6{font-size:1em; color:var(--yellow); font-weight:700; letter-spacing:.04em}
+.deck p{max-width:60ch}
+.deck strong{color:var(--yellow)}
+.deck em{color:var(--cyan); font-style:normal; text-decoration:underline dotted}
+.deck del{color:var(--muted)}
+.deck a{color:var(--blue)}
+.deck code{background:var(--bg2); border:1px solid var(--border); border-radius:3px; padding:0 .3em; color:var(--purple)}
+.deck pre{
+  background:var(--bg2); border:1px solid var(--border); border-left:3px solid var(--green);
+  padding:.7em 1em; overflow:auto; max-height:100%; white-space:pre-wrap;
+}
+.deck pre code{background:none; border:0; padding:0; color:var(--fg)}
+.deck ul,.deck ol{list-style:none; padding:0; display:flex; flex-direction:column; gap:.35em; max-width:64ch}
+.deck li{padding-left:1.6em; position:relative}
+.deck ul > li::before{content:"—"; position:absolute; left:0; color:var(--green)}
+.deck ol{counter-reset:n}
+.deck ol > li{counter-increment:n}
+.deck ol > li::before{content:counter(n,decimal-leading-zero); position:absolute; left:0; color:var(--purple)}
+.deck li ul{margin-top:.35em}
+.deck li ul > li::before{content:"·"; color:var(--muted)}
+.deck blockquote{border-left:3px solid var(--purple); padding-left:.9em; color:var(--muted); max-width:60ch}
+.deck hr{border:0; border-top:1px dashed var(--border); width:100%}
+.deck figure{margin:0}
+.deck img{max-width:100%; max-height:14em; object-fit:contain; border:1px solid var(--border); background:var(--bg2)}
+.deck figcaption{color:var(--muted); font-size:.85em; margin-top:.3em}
+.deck table{border-collapse:collapse}
+.deck th,.deck td{border:1px solid var(--border); padding:.25em .7em; text-align:left}
+.deck th{color:var(--yellow)}
+
+/* ---- title screen ---- */
+.deck .screen.is-title .prompt{font-size:1.6em}
+.deck .screen.is-title .out{justify-content:flex-start; font-size:1.1em}
+
+/* ---- table of contents / section select ---- */
+.deck .tocmsg{color:var(--muted); min-height:1.6em}
+.deck ul.toc{gap:.15em; max-width:none}
+.deck ul.toc li{padding:.15em .7em .15em 2.4em; border:1px solid transparent}
+.deck ul.toc li::before{content:none}
+.deck ul.toc .ptr{position:absolute; left:.7em; color:var(--green); opacity:0}
+.deck ul.toc .n{color:var(--muted); margin-right:1em}
+.deck ul.toc li.on{background:var(--sel); border-color:var(--border)}
+.deck ul.toc li.on .ptr{opacity:1}
+.deck ul.toc li.done .n{color:var(--green)}
+.deck ul.toc li.sel .t{color:var(--yellow); font-weight:700}
+.deck ul.toc li.sel{border-color:var(--green)}
+
+/* ---- hud ---- */
+.deck .hud{
+  display:flex; align-items:center; gap:1em; flex-wrap:wrap;
+  padding:.55em 2.6em; border-top:1px solid var(--border);
+  background:var(--bg2); color:var(--muted); font-size:.72em;
+}
+.deck .hud .pos{color:var(--green)}
+.deck .hud .grow{flex:1}
+.deck .hud button{
+  font:inherit; font-family:var(--mono); color:var(--muted); background:none;
+  border:1px solid var(--border); border-radius:3px; padding:.15em .6em; cursor:pointer;
+}
+.deck .hud button:hover{color:var(--fg); border-color:var(--fg)}
+.deck .hud button:focus-visible,.deck:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+
+@media (prefers-reduced-motion: reduce){
+  .deck .screen.enter,.deck .screen.exit{animation:none}
+  .deck .cur.idle{animation:none}
+}
+</style>
+
+<!-- ============================================================
+     APP SHELL STYLES — editor page only, not exported
+     ============================================================ -->
+<style>
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:var(--mono); font-size:14px; display:flex; flex-direction:column;
+}
+.bar{
+  display:flex; align-items:center; gap:1rem; flex-wrap:wrap;
+  padding:.7rem 1rem; border-bottom:1px solid var(--border); background:var(--bg2);
+}
+.bar .logo{color:var(--green); font-weight:700}
+.bar .logo b{color:var(--fg)}
+.bar .tip{color:var(--muted); font-size:.85em}
+.bar .grow{flex:1}
+button{
+  font:inherit; font-family:var(--mono); cursor:pointer;
+  background:var(--bg); color:var(--fg); border:1px solid var(--border);
+  border-radius:5px; padding:.35rem .8rem;
+}
+button:hover{border-color:var(--fg)}
+button.go{background:var(--green); border-color:var(--green); color:var(--bg); font-weight:700}
+:root[data-theme="light"] button.go{color:#fff}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+
+.split{flex:1; display:grid; grid-template-columns:minmax(0,40fr) minmax(0,60fr); min-height:0}
+.pane{display:flex; flex-direction:column; min-width:0; min-height:0}
+.pane + .pane{border-left:1px solid var(--border)}
+.pane-head{
+  display:flex; align-items:center; gap:.6rem; padding:.5rem .8rem;
+  border-bottom:1px solid var(--border); color:var(--muted); font-size:.8rem;
+}
+.pane-head .grow{flex:1}
+textarea#src{
+  flex:1; width:100%; resize:none; border:0; padding:1rem;
+  background:var(--bg); color:var(--fg); font-family:var(--mono);
+  font-size:.85rem; line-height:1.7; tab-size:2;
+}
+.assets{
+  border-top:1px solid var(--border); padding:.5rem .8rem; color:var(--muted);
+  font-size:.75rem; display:flex; gap:.4rem; flex-wrap:wrap; max-height:5.5rem; overflow:auto;
+}
+.assets:empty{display:none}
+.assets span{border:1px solid var(--border); border-radius:3px; padding:.1rem .45rem}
+.stage{flex:1; display:grid; place-items:center; padding:1rem; min-height:0; background:var(--bg2)}
+.frame{
+  width:100%; max-height:100%; aspect-ratio:16/9;
+  border:1px solid var(--border); border-radius:6px; overflow:hidden; background:var(--bg);
+}
+#deck:fullscreen{border-radius:0}
+
+.drop{
+  position:fixed; inset:0; z-index:20; display:none; place-items:center;
+  background:color-mix(in srgb, var(--bg) 88%, transparent);
+}
+.drop.on{display:grid}
+.drop .box{
+  border:2px dashed var(--green); border-radius:10px; padding:3rem 4rem;
+  color:var(--green); font-size:1.1rem; text-align:center;
+}
+.modal{position:fixed; inset:0; z-index:30; display:none; place-items:center; background:rgba(0,0,0,.6)}
+.modal.on{display:grid}
+.card{
+  background:var(--bg); border:1px solid var(--border); border-radius:8px;
+  padding:1.5rem; width:min(26rem,90vw);
+}
+.card h2{margin:0 0 .4rem; font-size:1rem}
+.card p{margin:0 0 1.2rem; color:var(--muted); font-size:.85rem; line-height:1.6}
+.card .row{display:flex; gap:.6rem; justify-content:flex-end}
+.err{color:var(--red); padding:0 .8rem .5rem; font-size:.75rem}
+.err:empty{display:none}
+
+@media (max-width:820px){
+  .split{grid-template-columns:1fr; grid-template-rows:minmax(9rem,1fr) minmax(0,1.2fr)}
+  .pane + .pane{border-left:0; border-top:1px solid var(--border)}
+}
+</style>
+</head>
+
+<body>
+<header class="bar">
+  <span class="logo">md<b>deck</b></span>
+  <span class="tip">drop a zip (markdown + images) anywhere on this page</span>
+  <span class="grow"></span>
+  <button id="themeBtn">theme</button>
+  <button id="uploadBtn">Upload files</button>
+</header>
+
+<main class="split">
+  <section class="pane">
+    <div class="pane-head"><span>source.md</span><span class="grow"></span><span id="count"></span></div>
+    <textarea id="src" spellcheck="false" aria-label="Markdown source"></textarea>
+    <div class="err" id="err"></div>
+    <div class="assets" id="assets"></div>
+  </section>
+  <section class="pane">
+    <div class="pane-head">
+      <span>preview</span><span class="grow"></span>
+      <button id="presentBtn">Present</button>
+      <button id="exportBtn" class="go">Save deck.html</button>
+    </div>
+    <div class="stage"><div class="frame"><div id="deck"></div></div></div>
+  </section>
+</main>
+
+<div class="drop" id="drop"><div class="box">release to load your deck</div></div>
+
+<div class="modal" id="modal">
+  <div class="card" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <h2 id="mtitle">Save your slide deck</h2>
+    <p>One HTML file with the images built in. Open it anywhere, no internet needed.</p>
+    <div class="row">
+      <button id="modalSkip">Not now</button>
+      <button id="modalSave" class="go">Save deck.html</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" multiple accept=".md,.markdown,.zip,image/*" hidden>
+
+<!-- standalone page styles, copied verbatim into exports -->
+<script type="text/css" id="standaloneCss">
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg)}
+#deck{height:100%}
+</script>
+
+<!-- ============================================================
+     DECK ENGINE — runs here and is copied into exported files
+     ============================================================ -->
+<script id="deckEngine">
+window.Deck = (function () {
+  var SPEED = { cmd: 13, text: 9, block: 80, toc: 140, line: 55 };
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function el(tag, cls, html) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (html != null) n.innerHTML = html;
+    return n;
+  }
+  function textNodes(root) {
+    var out = [], w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    var n; while ((n = w.nextNode())) if (n.nodeValue.length) out.push(n);
+    return out;
+  }
+  function ps1() {
+    return '<span class="s">$</span> ';
+  }
+  function pad(i) { return (i < 9 ? '0' : '') + (i + 1); }
+
+  function screenFor(slide) {
+    var s = el('div', 'screen' + (slide.type === 'title' ? ' is-title' : ''));
+    s.appendChild(el('div', 'prompt', ps1() + '<span class="cmd"></span><b class="cur"></b>'));
+    var out = el('div', 'out');
+    if (slide.type === 'toc') {
+      out.appendChild(el('div', 'tocmsg'));
+      var ul = el('ul', 'toc');
+      slide.sections.forEach(function (name, i) {
+        var li = el('li', i < slide.index ? 'done' : '');
+        li.innerHTML = '<span class="ptr">&gt;</span><span class="n">' + pad(i) + '</span><span class="t"></span>';
+        li.querySelector('.t').textContent = name;
+        ul.appendChild(li);
+      });
+      out.appendChild(ul);
+    } else {
+      out.innerHTML = slide.html || '';
+    }
+    s.appendChild(out);
+    return s;
+  }
+
+  // Types out a screen. Returns { finish, done }
+  function play(node, slide, onIdle) {
+    var timers = [], state = { done: false };
+    var cmdEl = node.querySelector('.cmd');
+    var cur = node.querySelector('.cur');
+    var out = node.querySelector('.out');
+    var title = slide.title || '';
+    var isToc = slide.type === 'toc';
+
+    var blocks = isToc ? [] : Array.prototype.slice.call(out.children);
+    var nodeMap = blocks.map(function (b) {
+      return textNodes(b).map(function (n) { return { n: n, full: n.nodeValue }; });
+    });
+    blocks.forEach(function (b) { b.style.visibility = 'hidden'; });
+    nodeMap.forEach(function (l) { l.forEach(function (o) { o.n.nodeValue = ''; }); });
+
+    var lis = isToc ? Array.prototype.slice.call(node.querySelectorAll('.toc li')) : [];
+    if (isToc) lis.forEach(function (li) { li.style.visibility = 'hidden'; });
+
+    function T(fn, ms) { timers.push(setTimeout(fn, ms)); }
+
+    function finish() {
+      if (state.done) return;
+      state.done = true;
+      timers.forEach(clearTimeout); timers.length = 0;
+      cmdEl.textContent = title;
+      blocks.forEach(function (b) { b.style.visibility = ''; });
+      nodeMap.forEach(function (l) { l.forEach(function (o) { o.n.nodeValue = o.full; }); });
+      if (isToc) {
+        lis.forEach(function (li, i) {
+          li.style.visibility = '';
+          li.classList.toggle('on', i === slide.index);
+          li.classList.toggle('sel', i === slide.index);
+        });
+        node.querySelector('.tocmsg').textContent = 'entering ' + slide.sections[slide.index];
+      }
+      var rest = node.querySelector('.tocmsg') || blocks[blocks.length - 1] || node.querySelector('.prompt');
+      rest.appendChild(cur);
+      cur.className = 'cur idle';
+      if (onIdle) onIdle();
+    }
+
+    function typeCmd(i) {
+      if (i > title.length) { T(start, 230); return; }
+      cmdEl.textContent = title.slice(0, i);
+      T(function () { typeCmd(i + 1); }, SPEED.cmd);
+    }
+
+    function start() { isToc ? runToc() : nextBlock(0); }
+
+    function nextBlock(i) {
+      if (i >= blocks.length) { T(finish, 140); return; }
+      var b = blocks[i];
+      b.style.visibility = '';
+      b.appendChild(cur);
+      var list = nodeMap[i];
+      if (!list.length) { T(function () { nextBlock(i + 1); }, SPEED.block); return; }
+      var ni = 0, ci = 0;
+      (function step() {
+        if (ni >= list.length) { T(function () { nextBlock(i + 1); }, SPEED.block); return; }
+        var o = list[ni];
+        ci += 2;
+        if (ci >= o.full.length) { o.n.nodeValue = o.full; ni++; ci = 0; }
+        else o.n.nodeValue = o.full.slice(0, ci);
+        T(step, SPEED.text);
+      })();
+    }
+
+    function runToc() {
+      var msg = node.querySelector('.tocmsg');
+      var i = 0;
+      (function reveal() {
+        if (i >= lis.length) { T(function () { movePtr(slide.from); }, 220); return; }
+        lis[i].style.visibility = ''; i++;
+        T(reveal, SPEED.line);
+      })();
+      function movePtr(p) {
+        lis.forEach(function (li) { li.classList.remove('on'); });
+        if (lis[p]) lis[p].classList.add('on');
+        if (p === slide.index) {
+          T(function () {
+            lis[p].classList.add('sel');
+            msg.textContent = 'entering ' + slide.sections[p];
+            T(finish, 300);
+          }, 300);
+          return;
+        }
+        T(function () { movePtr(p + (slide.index > p ? 1 : -1)); }, SPEED.toc);
+      }
+    }
+
+    if (reduce) finish(); else typeCmd(0);
+    return { finish: finish, state: state };
+  }
+
+  function mount(root, slides, opts) {
+    opts = opts || {};
+    if (!slides || !slides.length) slides = [{ type: 'slide', title: 'empty deck', path: '~', html: '<p>Add a heading to get started.</p>' }];
+    root.classList.add('deck');
+    root.setAttribute('tabindex', '0');
+    root.innerHTML = '<div class="stack"></div><div class="hud">' +
+      '<span class="pos"></span><span class="keys">&larr; &rarr; move &middot; click to skip</span>' +
+      '<span class="grow"></span><button data-a="theme">theme</button><button data-a="full">full screen</button></div>';
+
+    var stack = root.querySelector('.stack');
+    var pos = root.querySelector('.pos');
+    var anim = null, idx = -1;
+
+    function show(i, animated) {
+      i = Math.max(0, Math.min(slides.length - 1, i));
+      var prev = stack.querySelector('.screen:not(.exit)');
+      if (prev) {
+        prev.classList.add('exit');
+        setTimeout(function () { prev.remove(); }, 260);
+      }
+      var node = screenFor(slides[i]);
+      if (animated && !reduce) node.classList.add('enter');
+      stack.appendChild(node);
+      anim = play(node, slides[i]);
+      idx = i;
+      pos.textContent = (i + 1) + '/' + slides.length;
+    }
+    function advance() {
+      if (anim && !anim.state.done) { anim.finish(); return; }
+      if (idx < slides.length - 1) show(idx + 1, true);
+    }
+    function back() { if (idx > 0) show(idx - 1, true); }
+    function full() {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (root.requestFullscreen) root.requestFullscreen();
+    }
+    function theme() {
+      var r = document.documentElement;
+      r.dataset.theme = r.dataset.theme === 'light' ? 'dark' : 'light';
+    }
+
+    root.addEventListener('click', function (e) {
+      var b = e.target.closest('button');
+      if (b) { b.dataset.a === 'full' ? full() : theme(); return; }
+      root.focus();
+      advance();
+    });
+    root.addEventListener('keydown', function (e) {
+      var k = e.key;
+      if (k === 'ArrowRight' || k === ' ' || k === 'Enter' || k === 'PageDown') { e.preventDefault(); advance(); }
+      else if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); back(); }
+      else if (k === 'Home') { show(0, true); }
+      else if (k === 'End') { show(slides.length - 1, true); }
+      else if (k === 'f' || k === 'F') { full(); }
+      else if (k === 't' || k === 'T') { theme(); }
+    });
+
+    var ro = new ResizeObserver(function (en) {
+      var w = en[0].contentRect.width;
+      root.style.fontSize = Math.max(9, Math.min(26, w / 58)) + 'px';
+    });
+    ro.observe(root);
+
+    show(0, false);
+    return {
+      goto: show, next: advance, prev: back, full: full,
+      destroy: function () { ro.disconnect(); root.innerHTML = ''; }
+    };
+  }
+
+  return { mount: mount };
+})();
+</script>
+
+<!-- ============================================================
+     APP — markdown parsing, files, export
+     ============================================================ -->
+<script>
+(function () {
+  var SAMPLE = [
+    '# md deck',
+    'Markdown in. A terminal that talks back.',
+    '',
+    '## Writing',
+    '',
+    '### Every ### heading is one screen',
+    'The heading is typed as a command. Everything under it prints out as the output.',
+    '',
+    '- Text arrives character by character',
+    '- Lists arrive line by line',
+    '- Images just appear',
+    '',
+    '### Sections come from ## headings',
+    'When a new `##` section starts, the deck shows a menu and walks the cursor down to it.',
+    '',
+    '## Using it',
+    '',
+    '### Drop a zip, get one file',
+    'Put a markdown file and its images in a folder, zip it, and drag it onto the page.',
+    '',
+    '### Controls',
+    '1. Right arrow or space for the n
