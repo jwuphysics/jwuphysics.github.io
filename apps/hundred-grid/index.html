@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hundred board</title>
+<meta name="description" content="Tap a number to see its multiples on the hundred board.">
+<meta name="theme-color" content="#E7E4DA">
+<style>
+:root {
+    --c1: #6F6A5C;
+    --c2: #4A6437;
+    --c3: #A9502A;
+    --c4: #2C5A61;
+    --c5: #40709B;
+    --c6: #663A57;
+    --c7: #5E7639;
+    --c8: #7C5133;
+    --c9: #3C4A72;
+    --c10: #8A6A17;
+  --page: #E7E4DA;
+  --board: #D3CEC0;
+  --paper: #FCFBF8;
+  --ink: #33302A;
+  --sans: "Avenir Next", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  padding: 16px 14px calc(16px + env(safe-area-inset-bottom));
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-feature-settings: "tnum" 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-text-size-adjust: 100%;
+}
+
+.app {
+  width: 100%;
+  max-width: 430px;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 5vw, 26px);
+}
+
+/* radios stay reachable by keyboard and screen readers, just out of sight */
+.pick {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* a square board with equal rows and columns makes every cell a true square */
+.board {
+  display: grid;
+  aspect-ratio: 1 / 1;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  gap: 1px;
+  padding: 1px;
+  background: var(--board);
+  border-radius: 4px;
+  overflow: hidden;
+  user-select: none;
+}
+
+.cell {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: clamp(0.78rem, 3.6vw, 1.05rem);
+  font-weight: 600;
+  line-height: 1;
+  transition: background-color 180ms ease, color 180ms ease;
+  transition-delay: calc(var(--i) * 3ms);
+}
+
+.keys {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  user-select: none;
+}
+
+.keys label {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1;
+  border: 2px solid var(--k);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--k);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+#t1:checked ~ .board .m1 { background: var(--c1); color: var(--paper); }
+#t1:checked ~ .keys label[for="t1"] { background: var(--c1); color: var(--paper); }
+#t2:checked ~ .board .m2 { background: var(--c2); color: var(--paper); }
+#t2:checked ~ .keys label[for="t2"] { background: var(--c2); color: var(--paper); }
+#t3:checked ~ .board .m3 { background: var(--c3); color: var(--paper); }
+#t3:checked ~ .keys label[for="t3"] { background: var(--c3); color: var(--paper); }
+#t4:checked ~ .board .m4 { background: var(--c4); color: var(--paper); }
+#t4:checked ~ .keys label[for="t4"] { background: var(--c4); color: var(--paper); }
+#t5:checked ~ .board .m5 { background: var(--c5); color: var(--paper); }
+#t5:checked ~ .keys label[for="t5"] { background: var(--c5); color: var(--paper); }
+#t6:checked ~ .board .m6 { background: var(--c6); color: var(--paper); }
+#t6:checked ~ .keys label[for="t6"] { background: var(--c6); color: var(--paper); }
+#t7:checked ~ .board .m7 { background: var(--c7); color: var(--paper); }
+#t7:checked ~ .keys label[for="t7"] { background: var(--c7); color: var(--paper); }
+#t8:checked ~ .board .m8 { background: var(--c8); color: var(--paper); }
+#t8:checked ~ .keys label[for="t8"] { background: var(--c8); color: var(--paper); }
+#t9:checked ~ .board .m9 { background: var(--c9); color: var(--paper); }
+#t9:checked ~ .keys label[for="t9"] { background: var(--c9); color: var(--paper); }
+#t10:checked ~ .board .m10 { background: var(--c10); color: var(--paper); }
+#t10:checked ~ .keys label[for="t10"] { background: var(--c10); color: var(--paper); }
+
+#t1:focus-visible ~ .keys label[for="t1"],
+#t2:focus-visible ~ .keys label[for="t2"],
+#t3:focus-visible ~ .keys label[for="t3"],
+#t4:focus-visible ~ .keys label[for="t4"],
+#t5:focus-visible ~ .keys label[for="t5"],
+#t6:focus-visible ~ .keys label[for="t6"],
+#t7:focus-visible ~ .keys label[for="t7"],
+#t8:focus-visible ~ .keys label[for="t8"],
+#t9:focus-visible ~ .keys label[for="t9"],
+#t10:focus-visible ~ .keys label[for="t10"] {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cell, .keys label { transition: none; transition-delay: 0s; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <input class="pick" type="radio" name="t" id="t1" aria-label="Count by 1">
+  <input class="pick" type="radio" name="t" id="t2" aria-label="Count by 2">
+  <input class="pick" type="radio" name="t" id="t3" aria-label="Count by 3">
+  <input class="pick" type="radio" name="t" id="t4" aria-label="Count by 4">
+  <input class="pick" type="radio" name="t" id="t5" aria-label="Count by 5">
+  <input class="pick" type="radio" name="t" id="t6" aria-label="Count by 6">
+  <input class="pick" type="radio" name="t" id="t7" aria-label="Count by 7">
+  <input class="pick" type="radio" name="t" id="t8" aria-label="Count by 8">
+  <input class="pick" type="radio" name="t" id="t9" aria-label="Count by 9">
+  <input class="pick" type="radio" name="t" id="t10" aria-label="Count by 10">
+
+  <div class="board">
+      <div class="cell m1" style="--i:1">1</div><div class="cell m1 m2" style="--i:2">2</div><div class="cell m1 m3" style="--i:3">3</div><div class="cell m1 m2 m4" style="--i:4">4</div><div class="cell m1 m5" style="--i:5">5</div><div class="cell m1 m2 m3 m6" style="--i:6">6</div><div class="cell m1 m7" style="--i:7">7</div><div class="cell m1 m2 m4 m8" style="--i:8">8</div><div class="cell m1 m3 m9" style="--i:9">9</div><div class="cell m1 m2 m5 m10" style="--i:10">10</div>
+      <div class="cell m1" style="--i:11">11</div><div class="cell m1 m2 m3 m4 m6" style="--i:12">12</div><div class="cell m1" style="--i:13">13</div><div class="cell m1 m2 m7" style="--i:14">14</div><div class="cell m1 m3 m5" style="--i:15">15</div><div class="cell m1 m2 m4 m8" style="--i:16">16</div><div class="cell m1" style="--i:17">17</div><div class="cell m1 m2 m3 m6 m9" style="--i:18">18</div><div class="cell m1" style="--i:19">19</div><div class="cell m1 m2 m4 m5 m10" style="--i:20">20</div>
+      <div class="cell m1 m3 m7" style="--i:21">21</div><div class="cell m1 m2" style="--i:22">22</div><div class="cell m1" style="--i:23">23</div><div class="cell m1 m2 m3 m4 m6 m8" style="--i:24">24</div><div class="cell m1 m5" style="--i:25">25</div><div class="cell m1 m2" style="--i:26">26</div><div class="cell m1 m3 m9" style="--i:27">27</div><div class="cell m1 m2 m4 m7" style="--i:28">28</div><div class="cell m1" style="--i:29">29</div><div class="cell m1 m2 m3 m5 m6 m10" style="--i:30">30</div>
+      <div class="cell m1" style="--i:31">31</div><div class="cell m1 m2 m4 m8" style="--i:32">32</div><div class="cell m1 m3" style="--i:33">33</div><div class="cell m1 m2" style="--i:34">34</div><div class="cell m1 m5 m7" style="--i:35">35</div><div class="cell m1 m2 m3 m4 m6 m9" style="--i:36">36</div><div class="cell m1" style="--i:37">37</div><div class="cell m1 m2" style="--i:38">38</div><div class="cell m1 m3" style="--i:39">39</div><div class="cell m1 m2 m4 m5 m8 m10" style="--i:40">40</div>
+      <div class="cell m1" style="--i:41">41</div><div class="cell m1 m2 m3 m6 m7" style="--i:42">42</div><div class="cell m1" style="--i:43">43</div><div class="cell m1 m2 m4" style="--i:44">44</div><div class="cell m1 m3 m5 m9" style="--i:45">45</div><div class="cell m1 m2" style="--i:46">46</div><div class="cell m1" style="--i:47">47</div><div class="cell m1 m2 m3 m4 m6 m8" style="--i:48">48</div><div class="cell m1 m7" style="--i:49">49</div><div class="cell m1 m2 m5 m10" style="--i:50">50</div>
+      <div class="cell m1 m3" style="--i:51">51</div><div class="cell m1 m2 m4" style="--i:52">52</div><div class="cell m1" style="--i:53">53</div><div class="cell m1 m2 m3 m6 m9" style="--i:54">54</div><div class="cell m1 m5" style="--i:55">55</div><div class="cell m1 m2 m4 m7 m8" style="--i:56">56</div><div class="cell m1 m3" style="--i:57">57</div><div class="cell m1 m2" style="--i:58">58</div><div class="cell m1" style="--i:59">59</div><div class="cell m1 m2 m3 m4 m5 m6 m10" style="--i:60">60</div>
+      <div class="cell m1" style="--i:61">61</div><div class="cell m1 m2" style="--i:62">62</div><div class="cell m1 m3 m7 m9" style="--i:63">63</div><div class="cell m1 m2 m4 m8" style="--i:64">64</div><div class="cell m1 m5" style="--i:65">65</div><div class="cell m1 m2 m3 m6" style="--i:66">66</div><div class="cell m1" style="--i:67">67</div><div class="cell m1 m2 m4" style="--i:68">68</div><div class="cell m1 m3" style="--i:69">69</div><div class="cell m1 m2 m5 m7 m10" style="--i:70">70</div>
+      <div class="cell m1" style="--i:71">71</div><div class="cell m1 m2 m3 m4 m6 m8 m9" style="--i:72">72</div><div class="cell m1" style="--i:73">73</div><div class="cell m1 m2" style="--i:74">74</div><div class="cell m1 m3 m5" style="--i:75">75</div><div class="cell m1 m2 m4" style="--i:76">76</div><div class="cell m1 m7" style="--i:77">77</div><div class="cell m1 m2 m3 m6" style="--i:78">78</div><div class="cell m1" style="--i:79">79</div><div class="cell m1 m2 m4 m5 m8 m10" style="--i:80">80</div>
+      <div class="cell m1 m3 m9" style="--i:81">81</div><div class="cell m1 m2" style="--i:82">82</div><div class="cell m1" style="--i:83">83</div><div class="cell m1 m2 m3 m4 m6 m7" style="--i:84">84</div><div class="cell m1 m5" style="--i:85">85</div><div class="cell m1 m2" style="--i:86">86</div><div class="cell m1 m3" style="--i:87">87</div><div class="cell m1 m2 m4 m8" style="--i:88">88</div><div class="cell m1" style="--i:89">89</div><div class="cell m1 m2 m3 m5 m6 m9 m10" style="--i:90">90</div>
+      <div class="cell m1 m7" style="--i:91">91</div><div class="cell m1 m2 m4" style="--i:92">92</div><div class="cell m1 m3" style="--i:93">93</div><div class="cell m1 m2" style="--i:94">94</div><div class="cell m1 m5" style="--i:95">95</div><div class="cell m1 m2 m3 m4 m6 m8" style="--i:96">96</div><div class="cell m1" style="--i:97">97</div><div class="cell m1 m2 m7" style="--i:98">98</div><div class="cell m1 m3 m9" style="--i:99">99</div><div class="cell m1 m2 m4 m5 m10" style="--i:100">100</div>
+  </div>
+
+  <div class="keys" role="group" aria-label="Choose a number to count by">
+    <label for="t1" style="--k: var(--c1)">1</label>
+    <label for="t2" style="--k: var(--c2)">2</label>
+    <label for="t3" style="--k: var(--c3)">3</label>
+    <label for="t4" style="--k: var(--c4)">4</label>
+    <label for="t5" style="--k: var(--c5)">5</label>
+    <label for="t6" style="--k: var(--c6)">6</label>
+    <label for="t7" style="--k: var(--c7)">7</label>
+    <label for="t8" style="--k: var(--c8)">8</label>
+    <label for="t9" style="--k: var(--c9)">9</label>
+    <label for="t10" style="--k: var(--c10)">10</label>
+  </div>
+</div>
+
+<script>
+// A second tap on the lit key clears it. The listener sits on the label,
+// not the hidden radio, because not every browser passes a click through.
+(function () {
+  var keys = document.querySelectorAll('.keys label');
+  for (var i = 0; i < keys.length; i++) {
+    keys[i].addEventListener('click', function (e) {
+      var pick = document.getElementById(this.htmlFor);
+      if (pick && pick.checked) {
+        e.preventDefault();      // stop the label re-selecting it
+        pick.checked = false;    // and clear the board
+      }
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
