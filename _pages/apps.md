@@ -56,7 +56,7 @@ author_profile: true
   .apps-more li:last-child { border-bottom: 1px solid var(--global-border-color); }
   .apps-more .app-name { font-weight: bold; }
   .apps-more .app-blurb { font-size: 0.9em; }
-  .blurb-todo { color: var(--global-text-color-light); font-style: italic; }
+  .app-blurb { color: var(--global-text-color-light); font-style: italic; }
 </style>
 
 <p class="apps-intro">
@@ -64,7 +64,7 @@ author_profile: true
 </p>
 
 
-<div class="apps-featured">
+<div class="apps-featured" markdown="0">
 
   <div class="app-card">
     <a class="app-shot" href="https://galaxy-manifold.github.io/">
@@ -73,7 +73,7 @@ author_profile: true
     <div class="app-body">
       <h3><a href="https://galaxy-manifold.github.io/">Galaxy Manifold</a></h3>
       <span class="app-url">galaxy-manifold.github.io</span>
-      <p class="blurb-todo">An astrophysics visualization tool that I wish I had back when I was a grad student.</p>
+      <p class="app-blurb">An astrophysics visualization tool that I wish I had back when I was a grad student.</p>
     </div>
   </div>
 
@@ -84,37 +84,36 @@ author_profile: true
     <div class="app-body">
       <h3><a href="https://ike-matrix.github.io/">Ike</a></h3>
       <span class="app-url">ike-matrix.github.io</span>
-      <p class="blurb-todo">I couldn't find a good Eisenhower Matrix app so I made my own.</p>
+      <p class="app-blurb">I couldn't find a good Eisenhower Matrix app so I made my own.</p>
     </div>
   </div>
 
 </div>
 
 
-<ul class="apps-more">
+<ul class="apps-more" markdown="0">
   <li>
     <a class="app-name" href="https://arithmos-game.github.io/">Arithmos</a>
-    <span class="app-blurb blurb-todo">Educational arithmetic game for ~6 year old kids. Can log in to record high scores.</span>
+    <span class="app-blurb">Educational arithmetic game for ~6 year old kids. Can log in to record high scores.</span>
   </li>
   <li>
     <a class="app-name" href="/apps/geometric-grids/">Geometric Grids</a>
-    <span class="app-blurb blurb-todo">A super simple grid coloring app.</span>
+    <span class="app-blurb">A super simple grid coloring app.</span>
   </li>
   <li>
     <a class="app-name" href="/apps/hundred-grid/">Hundred Board</a>
-    <!-- BLURB: hundred-grid -->
-    <span class="app-blurb blurb-todo">Visualize divisors for integers up to 100.</span>
+    <span class="app-blurb">Visualize divisors for integers up to 100.</span>
   </li>
   <li>
     <a class="app-name" href="/apps/md-deck/">md deck</a>
-    <span class="app-blurb blurb-todo">Turns markdown into a slide deck.</span>
+    <span class="app-blurb">Turns markdown into a slide deck.</span>
   </li>
   <li>
     <a class="app-name" href="/apps/tasto/">Tasto</a>
-    <span class="app-blurb blurb-todo">Cello fingerboard app.</span>
+    <span class="app-blurb">Cello fingerboard app.</span>
   </li>
   <li>
     <a class="app-name" href="/apps/terra/">Terra Defense</a>
-    <span class="app-blurb blurb-todo">A tower defense/asteroids-like game.</span>
+    <span class="app-blurb">A tower defense/asteroids-like game.</span>
   </li>
 </ul>
