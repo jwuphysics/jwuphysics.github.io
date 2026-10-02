@@ -52,7 +52,7 @@ Either way, we see that the result is a controlled product because each factor i
 
 ## Initialization near the identity
 
-If you've ever taken the [Fastai Practical Deep Learning courses](https://course.fast.ai/Lessons/lesson17.html), then you'll know that good initializations in deep learning are crticial for stabilizing the forward and backward signals. We accomplish is possible by intializing each layer to be a small perturbation of the identity. The usual rule of thumb is to choose the entries of \\( W_\ell \\) to be independent, mean-zero, and with variance matching the inverse of each layer's input dimension (i.e., fan-in dimension).
+If you've ever taken the [Fastai Practical Deep Learning courses](https://course.fast.ai/Lessons/lesson17.html), then you'll know that good initializations in deep learning are crticial for stabilizing the forward and backward signals. We accomplish this by intializing each layer to be a small perturbation of the identity. The usual rule of thumb is to choose the entries of \\( W_\ell \\) to be independent, mean-zero, and with variance matching the inverse of each layer's input dimension (i.e., fan-in dimension).
 
 We can investigate the pre-activation of neuron \\( i \\) in layer \\( \ell \\),
 

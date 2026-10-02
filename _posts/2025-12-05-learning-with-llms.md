@@ -45,7 +45,7 @@ This method of using LLMs should not make you reliant on AI. It does not outsour
 
 ## Supercriticality: The Late Phase of Learning
 
-At some point, the dots really start to connect. Beyond the critical point, all your knowledge is linked together. You have intuitions for concepts that you may not have heard of. You're so comfortable with addition, that you also intuitively grasp concepts like associativity (*1 + 3 = 3 + 1*) or inverses (*adding one to three makes four, so taking away one from four makes three*), even though you may not have heard of (or recall) the jargon from algebra or group theory. In any event, you have a robust conceptual understanding, and all that remains is to give names to these well-understood concepts. 
+At some point, the dots really start to connect. Beyond the critical point, all your knowledge is linked together. You have intuitions for concepts that you may not have heard of. You're so comfortable with addition, that you also intuitively grasp concepts like commutativity (*1 + 3 = 3 + 1*) or inverses (*adding one to three makes four, so taking away one from four makes three*), even though you may not have heard of (or recall) the jargon from algebra or group theory. In any event, you have a robust conceptual understanding, and all that remains is to give names to these well-understood concepts. 
 
 In this phase, learning *should* feel easy and fun. There are likely still gaps in your knowledge, but it's quite straightforward to fill them in. Your knowledge is robust even when you're missing certain pieces of information because you've trodden all around that *terra incognita*, so new knowledge doesn't dramatically upend your understanding. 
 
